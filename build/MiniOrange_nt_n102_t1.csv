@@ -1,0 +1,11 @@
+#class tools::wcsv::ntuple
+#title Gamma
+#separator 44
+#vector_separator 59
+#column double gx
+#column double gy
+#column double gz
+#column double ge
+#column double gpx
+#column double gpy
+#column double gpz

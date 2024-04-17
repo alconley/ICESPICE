@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+bd2daa25649fbc5657c7fedfaacebe73 CMakeFiles/mini_orange

@@ -1,0 +1,11 @@
+#class tools::wcsv::ntuple
+#title Positron
+#separator 44
+#vector_separator 59
+#column double px
+#column double py
+#column double pz
+#column double pe
+#column double ppx
+#column double ppy
+#column double ppz
