@@ -1,8 +1,0 @@
-/home/alconley/geant4/mini_orange/build/CMakeFiles/MiniOrange.dir
-/home/alconley/geant4/mini_orange/build/CMakeFiles/mini_orange.dir
-/home/alconley/geant4/mini_orange/build/CMakeFiles/edit_cache.dir
-/home/alconley/geant4/mini_orange/build/CMakeFiles/rebuild_cache.dir
-/home/alconley/geant4/mini_orange/build/CMakeFiles/list_install_components.dir
-/home/alconley/geant4/mini_orange/build/CMakeFiles/install.dir
-/home/alconley/geant4/mini_orange/build/CMakeFiles/install/local.dir
-/home/alconley/geant4/mini_orange/build/CMakeFiles/install/strip.dir
