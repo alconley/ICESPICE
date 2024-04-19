@@ -10,10 +10,9 @@ data['X'] = data['X'] / 1000
 data['Y'] = data['Y'] / 1000
 data['Z'] = data['Z'] / 1000
 
-print(data)
-
 # First, create a copy of the dataframe with the specified column transformations
 formatted_data = data.copy()
+formatted_data = formatted_data.fillna(0) # had to add otherwise it would not work on ubunutu lol but mac it would smh 
 
 # Convert coordinates from millimeters to meters and format them in scientific notation
 formatted_data['X'] = formatted_data['X'].apply(lambda x: f"{x:.12E}")
@@ -28,6 +27,8 @@ unique_x_values = formatted_data['X'].nunique()
 unique_y_values = formatted_data['Y'].nunique()
 unique_z_values = formatted_data['Z'].nunique()
 
+# look through formatted data and if there are any values that are NAN, replace them with 0
+
 # Prepare header and footer
 header_info = f"""
           {unique_x_values}          {unique_y_values}         {unique_z_values}
@@ -38,7 +39,7 @@ header_info = f"""
  5 BY                                                                             
  6 BZ                                                                             
  7 BMOD/HMOD                                                                       
- 0 [METRE] """
+00 [METRE] """ 
  
 # Write to file
 output_file_path = './MiniOrange3D.TABLE'

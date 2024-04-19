@@ -75,7 +75,7 @@ MiniOrangeTabulatedField3D::MiniOrangeTabulatedField3D(const char* filename,
   // Ignore first blank line
   char buffer[256];
   file.getline(buffer,256);
-  
+
   // Read table dimensions 
   file >> nx >> ny >> nz; // Note dodgy order
 
@@ -109,10 +109,22 @@ MiniOrangeTabulatedField3D::MiniOrangeTabulatedField3D(const char* filename,
   // Read in the data
   double xval,yval,zval,bx,by,bz;
   double permeability; // Not used in this example.
+
+  int totalDataPoints = nx * ny * nz; // Total number of data points
+  int count = 0; // Counter to track the number of data points read
+  int percentComplete = 0; // To track the completion percentage
+
   for (ix=0; ix<nx; ix++) {
     for (iy=0; iy<ny; iy++) {
       for (iz=0; iz<nz; iz++) {
         file >> xval >> yval >> zval >> bx >> by >> bz >> permeability;
+        if (!file.good()) {
+            G4cout << "Failed to read data at position: ix=" << ix << ", iy=" << iy << ", iz=" << iz << G4endl;
+            return; // Exit the loop if a read fails
+        }
+
+        // G4cout << "Data read: " << xval << " " << yval << " " << zval << " " << bx << " " << by << " " << bz << " " << permeability << G4endl;
+
         if ( ix==0 && iy==0 && iz==0 ) {
           minx = xval * lenUnit;
           miny = yval * lenUnit;
@@ -121,9 +133,19 @@ MiniOrangeTabulatedField3D::MiniOrangeTabulatedField3D(const char* filename,
         xField[ix][iy][iz] = bx * fieldUnit;
         yField[ix][iy][iz] = by * fieldUnit;
         zField[ix][iy][iz] = bz * fieldUnit;
+
+        // Update progress
+        count++;
+        int newPercentComplete = (100 * count) / totalDataPoints;
+        if (newPercentComplete > percentComplete) {
+          percentComplete = newPercentComplete;
+          G4cout << "Reading progress: " << percentComplete << "% complete" << G4endl;
+        }
       }
     }
   }
+  G4cout << "Reading complete." << G4endl;
+
   file.close();
 
   lock.unlock();
