@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 // Code developed by:
-//  S.Larsson
+//  S.Larsson and modified by Alex Conley
 //
 //    *****************************************
 //    *                                       *
@@ -64,6 +64,7 @@
 #include "G4HelixSimpleRunge.hh"
 #include "G4CashKarpRKF45.hh"
 #include "G4RKG3_Stepper.hh"
+#include "G4NistManager.hh"
 
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
@@ -75,34 +76,34 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define GAP 0          // Magnet geometric volume
-#define MAG 1          // Magnetic field grid
-#define MEASUREVOL 1   // Volume for measurement
-
+#define MAG 0          // Magnetic field grid
+#define MEASUREVOL 0   // Volume for measurement
+#define MAGNETS 1      // N42 1"X1"x1/8"
 #define ATTENUATOR 1   // AC: Volume for attenuator 
+#define DETECTOR 1     // AC: Volume for detector
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 MiniOrangeDetectorConstruction::MiniOrangeDetectorConstruction()
 
   :physiWorld(NULL), logicWorld(NULL), solidWorld(NULL),
-   physiGap1(NULL), logicGap1(NULL), solidGap1(NULL),
-   physiGap2(NULL), logicGap2(NULL), solidGap2(NULL),
-   physiAttenuator(NULL), logicAttenuator(NULL), solidAttenuator(NULL), // AC
-   physiMeasureVolume(NULL), logicMeasureVolume(NULL), 
-   solidMeasureVolume(NULL),
-   WorldMaterial(NULL), 
-   GapMaterial(NULL),
-   AttenuatorMaterial(NULL) // AC
+    physiAttenuator(NULL), logicAttenuator(NULL), solidAttenuator(NULL), // AC
+    physiMeasureVolume(NULL), logicMeasureVolume(NULL), solidMeasureVolume(NULL),
+    physiMagnet(NULL), logicMagnet(NULL), solidMagnet(NULL), // AC
+    physiDetector(NULL), logicDetector(NULL), solidDetector(NULL), // AC
+    physiDetectorWindow(NULL), logicDetectorWindow(NULL), solidDetectorWindow(NULL), // AC
+    WorldMaterial(NULL), 
+    AttenuatorMaterial(NULL), // AC
+    MagnetMaterial(NULL), // AC
+    DetectorMaterial(NULL) // AC
     
 {
   fField.Put(0);
   WorldSizeXY=WorldSizeZ=0;
-  GapSizeX1=GapSizeX2=GapSizeY1=GapSizeY2=GapSizeZ=0;
-  // MeasureVolumeSizeXY=MeasureVolumeSizeZ=0; // AC
-
+  MagnetWidth=MagnetHeight=MagnetLength=0;  
   MeasureVolumeRadius=MeasureVolumeHeight=0; // AC
   AttenuatorVolumeRadius=AttenuatorVolumeHeight=0; // AC
+  DetectorPosition=DetectorActiveArea=DetectorThickness=DetectorWindowThickness=0; // AC
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -144,22 +145,24 @@ void MiniOrangeDetectorConstruction::DefineMaterials()
 
   // AC 
   G4Element*   Ta = new G4Element ("Tantalum" , "Ta", 73., 180.9479*g/mole ); // mini-orange attenuator
-
   density = 16.65*g/cm3 ;
   G4Material* Tantalum = new G4Material(name="Tantalum", density, ncomponents=1);
   Tantalum->AddElement(Ta, 1);
   
+  // Define Elements
+  G4Element* Nd = new G4Element("Neodymium", "Nd", 60., 144.24*g/mole);
+  G4Element* Fe = new G4Element("Iron", "Fe", 26., 55.85*g/mole);
+  G4Element* B = new G4Element("Boron", "B", 5., 10.81*g/mole);
 
-  
-  // Define Material
-  // Example: G4Material* Notation = new G4Material("Material", z, a, density);
-  /* Not used in this setup, will be used in further development.
-  G4Material* He = new G4Material("Helium", 2., 4.00*g/mole, 0.178*mg/cm3);
-  G4Material* Be = new G4Material("Beryllium", 4., 9.01*g/mole, 1.848*g/cm3);
-  G4Material* W  = new G4Material("Tungsten", 74., 183.85*g/mole, 19.30*g/cm3);
-  G4Material* Cu = new G4Material("Copper", 29., 63.55*g/mole, 8.96*g/cm3);
-  */
-  G4Material* Fe = new G4Material("Iron", 26., 55.84*g/mole, 7.87*g/cm3);  
+  // Define N42 Magnet material (Neodymium Iron Boron)
+  density = 7.5*g/cm3;
+  G4Material* NdFeB = new G4Material(name="N42_Magnet", density, ncomponents=3);
+  NdFeB->AddElement(Nd, natoms=2);
+  NdFeB->AddElement(Fe, natoms=14);
+  NdFeB->AddElement(B, natoms=1);
+
+  G4NistManager* nist = G4NistManager::Instance();
+  G4Material* silicon = nist->FindOrBuildMaterial("G4_Si");
 
   // Define materials from elements.
   
@@ -219,9 +222,9 @@ void MiniOrangeDetectorConstruction::DefineMaterials()
 
   // Default materials in setup.
   WorldMaterial = LaboratoryVacuum;
-  GapMaterial = Fe;
   AttenuatorMaterial = Tantalum; // AC
-
+  MagnetMaterial = NdFeB; // AC
+  DetectorMaterial = silicon; // AC
 
   G4cout << "end material"<< G4endl;  
 }
@@ -232,27 +235,8 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
   // Complete the parameters definition
   
   //The World
-  /* AC
-  WorldSizeXY  = 300.*cm;  // Cube
-  WorldSizeZ   = 300.*cm;
-  */
-
   WorldSizeXY  = 100.*mm;  // Cube
   WorldSizeZ   = 300.*mm;
-
-  /*// AC: Commented out the following lines to change the measurement volume to a cylinder
-
-  //Measurement volume
-  MeasureVolumeSizeXY = 280.*cm;  // Cubic slice
-  MeasureVolumeSizeZ  = 1.*cm; 
-
-  // Position of measurement volume. 
-  // SSD is Source to Surface Distance. Source in origo and measurements 50 cm 
-  // below in the z-direction (symbolizin a patient at SSD = 50 cm)
- 
-  SSD = 50.*cm;
-  MeasureVolumePosition = -(SSD + MeasureVolumeSizeZ/2); 
-  */
 
   // AC: Define the cylindrical properties for the measurment volume (detector)
   MeasureVolumeRadius = 4.*mm;  // radius
@@ -264,33 +248,23 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
   AttenuatorVolumeHeight = 29.3*mm; // height
   AttenuatorVolumePosition = 0.; // 
 
-  // Geometric definition of the gap of the purging magnet. Approximation of
-  // the shape of the pole gap.    
+  // AC: Define the geometric size of the magnet in the array
+  // inch to cm conversion
+  G4double inch2cm = 2.54*cm;
+  MagnetWidth = 0.125*inch2cm; // 1/8"
+  MagnetHeight = 1.*inch2cm; // 1"
+  MagnetLength = 1.*inch2cm; // 1"
 
-  GapSizeY1 = 10.*cm;    // length along x at the surface positioned at -dz
-  GapSizeY2 = 10.*cm;    // length along x at the surface positioned at +dz
-  GapSizeX1 = 10.*cm;    // length along y at the surface positioned at -dz
-  GapSizeX2 = 18.37*cm;  // length along y at the surface positioned at +dz
-  GapSizeZ  = 11.5*cm;   // length along z axis
+  DetectorPosition = -30.*mm; // Position of the detector
+  DetectorActiveArea = 50.*mm2; // Active area of the detector
+  DetectorThickness = 500.*micrometer; // Thickness of the detector
+  DetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
 
-  Gap1PosY = 0.*cm;
-  Gap1PosX = -9.55*cm;
-  Gap1PosZ = -6.89*cm;
+  G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
+  G4double DetectorFacePosition = DetectorPosition - DetectorThickness/2;
 
-  Gap2PosY = 0.*cm;
-  Gap2PosX = 9.55*cm;
-  Gap2PosZ = -6.89*cm;
+  zOffset = 0.0*mm;  // Offset of the magnetic field grid
 
-
-  // Coordinate correction for field grif. 
-  // Gap opening at z = -11.4 mm.
-  // In field grid coordonates gap at z = -0.007m in field from z = 0.0m to 
-  // z = 0.087m.
-  // -> zOffset = -11.4-(-7) = 4.4 mm
-
-  zOffset = 0.0*mm;  
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -304,14 +278,13 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
 	 << "\n ---> " << "WorldSizeXY: " << G4BestUnit(WorldSizeXY,"Length")
 	 << "\n ---> " << "WorldSizeZ: " << G4BestUnit(WorldSizeZ,"Length");
   
-#if GAP
+#if MAGNETS
   G4cout << "\n-----------------------------------------------------------"
-	 << "\n ---> Purging Magnet:" 
-	 << "\n ---> " << "Gap made of "<< GapMaterial->GetName() 
-	 << "\n ---> " << "GapSizeY1: " << G4BestUnit(GapSizeY1,"Length") 
-	 << "\n ---> " << "GapSizeY2: " << G4BestUnit(GapSizeY2,"Length") 
-	 << "\n ---> " << "GapSizeX1: " << G4BestUnit(GapSizeX1,"Length") 
-	 << "\n ---> " << "GapSizeX2: " << G4BestUnit(GapSizeX2,"Length");
+   << "\n ---> Magnet:" 
+   << "\n ---> " << "Magnet made of "<< MagnetMaterial->GetName() 
+   << "\n ---> " << "MagnetWidth: " << G4BestUnit(MagnetWidth,"Length") 
+   << "\n ---> " << "MagnetHeight: " << G4BestUnit(MagnetHeight,"Length") 
+   << "\n ---> " << "MagnetLength: " << G4BestUnit(MagnetLength,"Length");
 #endif
 
 #if ATTENUATOR
@@ -323,17 +296,6 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
    << "\n ---> " << "AttenuatorVolumePosition =  " << G4BestUnit(AttenuatorVolumePosition,"Length");
 #endif
   
-/* AC: Commented out the following lines to change the measurement volume to a cylinder
-#if MEASUREVOL
-  G4cout << "\n-----------------------------------------------------------"
-	 << "\n ---> Measurement Volume:" 
-	 << "\n ---> " << WorldMaterial->GetName() << " in Measurement volume"
-	 << "\n ---> " << "MeasureVolumeXY: " << G4BestUnit(MeasureVolumeSizeXY,"Length") 
-	 << "\n ---> " << "MeasureVolumeZ: " << G4BestUnit(MeasureVolumeSizeZ,"Length")
-	 << "\n ---> " << "At SSD =  " << G4BestUnit(MeasureVolumePosition,"Length");
-#endif
-*/
-
 #if MEASUREVOL // AC
   G4cout << "\n-----------------------------------------------------------"
 	 << "\n ---> Measurement Volume:" 
@@ -342,20 +304,25 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
 	 << "\n ---> " << "MeasureVolumeHeight: " << G4BestUnit(MeasureVolumeHeight,"Length")
 	 << "\n ---> " << "MeasureVolumePosition =  " << G4BestUnit(MeasureVolumePosition,"Length");
 #endif // AC
+
+#if DETECTOR // AC
+  G4cout << "\n-----------------------------------------------------------"
+    << "\n ---> Detector:"
+    << "\n ---> " << WorldMaterial->GetName() << " in Detector"
+    << "\n ---> " << "DetectorRadius: " << G4BestUnit(DetectorRadius,"Length")
+    << "\n ---> " << "DetectorThickness: " << G4BestUnit(DetectorThickness,"Length")
+    << "\n ---> " << "DetectorWindowThickness: " << G4BestUnit(DetectorWindowThickness,"Length")
+    << "\n ---> " << "DetectorPosition =  " << G4BestUnit(DetectorPosition,"Length");
+#endif // AC
   
   G4cout << "\n-----------------------------------------------------------\n";
   
     
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-  //     
-  // World
-  //
-  
 
   solidWorld = new G4Box("World",				       //its name
 			   WorldSizeXY/2,WorldSizeXY/2,WorldSizeZ/2);  //its size
   
-
   logicWorld = new G4LogicalVolume(solidWorld,	        //its solid
 				   WorldMaterial,	//its material
 				   "World");		//its name
@@ -375,10 +342,6 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-  //     
-  // Measurement Volume
-  //
-  
 #if MEASUREVOL
 
   /*// AC: Commented out the following lines to change the measurement volume to a cylinder
@@ -415,69 +378,65 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
 #endif
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-  //                              
-  //Gap cone. Opening 20 deg. Two separate trapezoids. Iron.
-  // 
+#if DETECTOR
 
-#if GAP
+  // AC: Creating the solid cylinder volume for the main detector
+  solidDetector = new G4Tubs("Detector",
+                                      0,          // Inner radius
+                                      DetectorRadius,     // Outer radius
+                                      DetectorThickness/2., // height... make sure to divide by 2
+                                      0.*deg,     // Start angle
+                                      360.*deg);  // Spanning angle
 
-  //Gap part 1, placed in negative x-direction.
+  logicDetector = new G4LogicalVolume(solidDetector,	//its solid
+                                   DetectorMaterial,	        //its material
+                                   "Detector");		//its name
 
-  solidGap1 = new G4Trd("Gap1",
-			GapSizeX1/2,  // Half-length along x at the surface positioned at -dz
-			GapSizeX2/2,  // Half-length along x at the surface positioned at +dz
-			GapSizeY1/2,  // Half-length along y at the surface positioned at -dz
-			GapSizeY2/2,  // Half-length along y at the surface positioned at +dz
-			GapSizeZ/2 ); // Half-length along z axis
-  
-  logicGap1 = new G4LogicalVolume(solidGap1,   	        //its solid
-				  GapMaterial,          //its material
-				  "Gap1");              //its name
-  
-  physiGap1 = new G4PVPlacement(0,			                    //90 deg rotation
-				G4ThreeVector(Gap1PosX,Gap1PosY,Gap1PosZ),  //position
-				"Gap1",		             		    //its name
-				logicGap1,		                    //its logical volume
-				physiWorld,		                    //its mother  volume
-				false,			                    //no boolean operation
-				0);			                    //copy number
-  
-  //Gap part 2, placed in positive x-direction.
+  physiDetector = new G4PVPlacement(nullptr,  // no rotation
+                                    G4ThreeVector(0, 0, DetectorPosition),  // position
+                                    logicDetector,
+                                    "Detector",  // name
+                                    logicWorld,  // mother volume
+                                    false,  // no boolean operation
+                                    0);
 
-  solidGap2 = new G4Trd("Gap2",
-                	GapSizeX1/2,  // Half-length along x at the surface positioned at -dz
-		        GapSizeX2/2,  // Half-length along x at the surface positioned at +dz
-                	GapSizeY1/2,  // Half-length along y at the surface positioned at -dz
-			GapSizeY2/2,  // Half-length along y at the surface positioned at +dz
-                	GapSizeZ/2 ); // Half-length along z axis
-  
-  logicGap2 = new G4LogicalVolume(solidGap2,	        //its solid
-				  GapMaterial,          //its material
-				  "Gap2");              //its name
-  
-  physiGap2 = new G4PVPlacement(0,			                    //no rotation
-				G4ThreeVector(Gap2PosX,Gap2PosY,Gap2PosZ),  //position
-				"Gap2",		                 	    //its name
-				logicGap2,		             	    //its logical volume
-				physiWorld,		             	    //its mother  volume
-				false,			             	    //no boolean operation
-				0);			             	    //copy number
+  // Create the detector window
+  solidDetectorWindow = new G4Tubs("DetectorWindow",
+                                  0,  // Inner radius
+                                  DetectorRadius,  // Outer radius
+                                  DetectorWindowThickness / 2.,  // Half-height
+                                  0.*deg,  // Start angle
+                                  360.*deg);  // Spanning angle
 
-  // Visualization attributes
-  G4VisAttributes* simpleGap1VisAtt= new G4VisAttributes(G4Colour(0.0,0.0,1.0)); //yellow
-  simpleGap1VisAtt->SetVisibility(true);
-  simpleGap1VisAtt->SetForceSolid(true);
-  logicGap1->SetVisAttributes(simpleGap1VisAtt);
-  
-  G4VisAttributes* simpleGap2VisAtt= new G4VisAttributes(G4Colour(0.0,0.0,1.0)); //yellow
-  simpleGap2VisAtt->SetVisibility(true);
-  simpleGap2VisAtt->SetForceSolid(true);  
-  logicGap2->SetVisAttributes(simpleGap2VisAtt);
+  logicDetectorWindow = new G4LogicalVolume(solidDetectorWindow,
+                                            DetectorMaterial,
+                                            "DetectorWindow");
+
+  // Place the window at the front of the detector
+  G4double windowZPosition = (DetectorThickness / 2. - DetectorWindowThickness / 2.);
+  new G4PVPlacement(nullptr,  // no rotation
+                    G4ThreeVector(0, 0, windowZPosition),  // position relative to detector center
+                    logicDetectorWindow,
+                    "DetectorWindow",  // name
+                    logicDetector,  // mother volume (detector itself)
+                    false,  // no boolean operation
+                    0);  // copy number
+
+  // Visualization attributes for detector
+  G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green
+  visAttributesDetector->SetVisibility(true);
+  visAttributesDetector->SetForceSolid(true);
+  logicDetector->SetVisAttributes(visAttributesDetector);
+
+  // Visualization for window
+  G4VisAttributes* visAttributesWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // Red
+  visAttributesWindow->SetVisibility(true);
+  visAttributesWindow->SetForceSolid(true);
+  logicDetectorWindow->SetVisAttributes(visAttributesWindow);
 
 #endif
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
 #if ATTENUATOR
 
   //Attenuator 
@@ -503,11 +462,46 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
   
 
   // Visualization attributes
-  G4VisAttributes* simpleAttenuatorVisAtt= new G4VisAttributes(G4Colour(0.0,0.0,1.0)); //yellow
+  G4VisAttributes* simpleAttenuatorVisAtt= new G4VisAttributes(G4Colour(0.25, 0.25, 0.25)); //grey
   simpleAttenuatorVisAtt->SetVisibility(true);
   simpleAttenuatorVisAtt->SetForceSolid(true);
   logicAttenuator->SetVisAttributes(simpleAttenuatorVisAtt);
 
+#endif
+
+#if MAGNETS
+  solidMagnet = new G4Box("Magnet", MagnetWidth/2, MagnetHeight/2, MagnetLength/2);
+  logicMagnet = new G4LogicalVolume(solidMagnet, MagnetMaterial, "Magnet");
+
+  // Calculate the placement and rotation for each magnet
+  
+  // Calculate the half-diagonal of the square face for correct placement
+  G4double halfDiagonal = std::sqrt(2.0*MagnetHeight*MagnetHeight) / 2;
+  G4double placementRadius = 3.5*mm + halfDiagonal;  // Adjusting for the corner to be at 3.5mm
+  G4int numMagnets = 5;
+  G4double angleStep = 360.0*deg / numMagnets;
+
+  for (int i = 0; i < numMagnets; i++) {
+      G4double angle = i * angleStep;
+      G4ThreeVector pos(placementRadius * std::sin(angle), placementRadius * std::cos(angle), 0);
+      G4RotationMatrix* rot = new G4RotationMatrix();
+      rot->rotateZ(angle); // Rotation to spread magnets around the origin
+      rot->rotateX(45*deg);  // Tilt to align a corner radially
+
+      new G4PVPlacement(rot,          // rotation
+                        pos,          // position
+                        logicMagnet,  // logical volume
+                        "Magnet",     // name
+                        logicWorld,   // mother volume
+                        false,        // no boolean operations
+                        i);           // copy number
+  }
+
+  // Set visualization attributes to make it look shiny
+  G4VisAttributes* MagnetVisAtt = new G4VisAttributes(G4Colour(0.75, 0.75, 0.75));  // light grey color
+  MagnetVisAtt->SetVisibility(true);
+  MagnetVisAtt->SetForceSolid(true);
+  logicMagnet->SetVisAttributes(MagnetVisAtt);
 #endif
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

@@ -24,8 +24,8 @@
 // ********************************************************************
 //
 // Code developed by:
-//  S.Larsson
-//
+//  S.Larsson 
+//  Modified by: Alex Conley
 //    *****************************************
 //    *                                       *
 //    *    MiniOrangeDetectorConstruction.hh     *
@@ -78,43 +78,35 @@ public:
   G4double GetWorldSizeXY()  const       {return WorldSizeXY;};
   G4double GetWorldSizeZ() const          {return WorldSizeZ;}; 
 
-  /* // AC: Commented out the following lines to change the measurement volume to a cylinder
-  // G4double GetMeasureVolumeSizeXY() const {return MeasureVolumeSizeXY;}; 
-  // G4double GetMeasureVolumeSizeZ() const  {return MeasureVolumeSizeZ;};
-  */
-
   G4double GetMeasureVolumeRadius() const {return MeasureVolumeRadius;}; // AC
   G4double GetMeasureVolumeHeight() const {return MeasureVolumeHeight;}; // AC
 
   G4double GetAttenuatorVolumeRadius() const {return AttenuatorVolumeRadius;}; // AC
   G4double GetAttenuatorVolumeHeight() const {return AttenuatorVolumeHeight;}; // AC
 
-  G4double GetGapSizeX1()            {return GapSizeX1;}; 
-  G4double GetGapSizeX2()            {return GapSizeX2;}; 
-  G4double GetGapSizeY1()            {return GapSizeY1;}; 
-  G4double GetGapSizeY2()            {return GapSizeY2;}; 
-  G4double GetGapSizeZ()             {return GapSizeZ;};
+  G4double GetMagnetWidth()         {return MagnetWidth;}; // AC
+  G4double GetMagnetHeight()         {return MagnetHeight;}; // AC
+  G4double GetMagnetLength()         {return MagnetLength;}; // AC
 
   G4Material* GetWorldMaterial()         {return WorldMaterial;};
-  G4Material* GetGapMaterial()           {return GapMaterial;};
   G4Material* GetAttenuatorMaterial()           {return AttenuatorMaterial;}; // AC
+  G4Material* GetMagnetMaterial()           {return MagnetMaterial;}; // AC
 
+  G4double GetDetectorPosition() const {return DetectorPosition;}; // AC
+  G4double GetDetectorActiveArea() const {return DetectorActiveArea;}; // AC
+  G4double GetDetectorThickness() const {return DetectorThickness;}; // AC
+  G4double GetDetectorWindowThickness() const {return DetectorWindowThickness;}; // AC
+  
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
   const G4VPhysicalVolume* GetMeasureVolume() const  {return physiMeasureVolume;};           
-  const G4VPhysicalVolume* GetGap1() const           {return physiGap1;};
-  const G4VPhysicalVolume* GetGap2() const      {return physiGap2;};
-
   const G4VPhysicalVolume* GetAttenuator() const      {return physiAttenuator;}; // AC
+  const G4VPhysicalVolume* GetMagnet1() const      {return physiMagnet;}; // AC
 
 private:
   
   G4double           WorldSizeXY;
   G4double           WorldSizeZ;
 
-/*
-  // G4double           MeasureVolumeSizeXY;
-  // G4double           MeasureVolumeSizeZ;
-*/
   G4double           MeasureVolumeRadius; // AC
   G4double           MeasureVolumeHeight; // AC
   G4double           MeasureVolumePosition; // AC
@@ -123,17 +115,14 @@ private:
   G4double           AttenuatorVolumeHeight; // AC
   G4double           AttenuatorVolumePosition; // AC
 
-  G4double           GapSizeX1;
-  G4double           GapSizeX2;
-  G4double           GapSizeY1;
-  G4double           GapSizeY2;
-  G4double           GapSizeZ;
-  G4double           Gap1PosX; 
-  G4double           Gap1PosY; 
-  G4double           Gap1PosZ; 
-  G4double           Gap2PosX; 
-  G4double           Gap2PosY; 
-  G4double           Gap2PosZ; 
+  G4double           MagnetWidth; // AC
+  G4double           MagnetHeight; // AC
+  G4double           MagnetLength; // AC
+
+  G4double           DetectorPosition; // AC  
+  G4double           DetectorActiveArea; // AC
+  G4double           DetectorThickness; // AC
+  G4double           DetectorWindowThickness; // AC
 
   G4double           SSD;
   G4double           zOffset;
@@ -142,13 +131,9 @@ private:
   G4LogicalVolume*   logicWorld;  
   G4Box*             solidWorld;
   
-  G4VPhysicalVolume* physiGap1;
-  G4LogicalVolume*   logicGap1;
-  G4Trd*             solidGap1;
-
-  G4VPhysicalVolume* physiGap2;
-  G4LogicalVolume*   logicGap2;
-  G4Trd*             solidGap2;
+  G4VPhysicalVolume* physiMagnet;
+  G4LogicalVolume*   logicMagnet;
+  G4Box*             solidMagnet;
 
   G4VPhysicalVolume* physiAttenuator; // AC
   G4LogicalVolume*   logicAttenuator; // AC
@@ -156,12 +141,20 @@ private:
 
   G4VPhysicalVolume* physiMeasureVolume;
   G4LogicalVolume*   logicMeasureVolume;
-  // G4Box*             solidMeasureVolume;
   G4Tubs*            solidMeasureVolume; // AC
 
+  G4VPhysicalVolume* physiDetector; // AC
+  G4LogicalVolume*   logicDetector; // AC
+  G4Tubs*            solidDetector; // AC
+
+  G4VPhysicalVolume* physiDetectorWindow; // AC
+  G4LogicalVolume*   logicDetectorWindow; // AC
+  G4Tubs*            solidDetectorWindow; // AC
+
   G4Material*        WorldMaterial;
-  G4Material*        GapMaterial;
   G4Material*        AttenuatorMaterial; // AC
+  G4Material*        MagnetMaterial; // AC
+  G4Material*        DetectorMaterial; // AC
 
   G4Cache<G4MagneticField*> fField;  //pointer to the thread-local fields
 
