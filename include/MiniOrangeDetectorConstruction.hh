@@ -78,9 +78,6 @@ public:
   G4double GetWorldSizeXY()  const       {return WorldSizeXY;};
   G4double GetWorldSizeZ() const          {return WorldSizeZ;}; 
 
-  G4double GetMeasureVolumeRadius() const {return MeasureVolumeRadius;}; // AC
-  G4double GetMeasureVolumeHeight() const {return MeasureVolumeHeight;}; // AC
-
   G4double GetAttenuatorVolumeRadius() const {return AttenuatorVolumeRadius;}; // AC
   G4double GetAttenuatorVolumeHeight() const {return AttenuatorVolumeHeight;}; // AC
 
@@ -96,11 +93,13 @@ public:
   G4double GetDetectorActiveArea() const {return DetectorActiveArea;}; // AC
   G4double GetDetectorThickness() const {return DetectorThickness;}; // AC
   G4double GetDetectorWindowThickness() const {return DetectorWindowThickness;}; // AC
-  
+  G4double GetDetectorHousingThickness() const {return DetectorHousingThickness;}; // AC
+  G4double GetDetectorHousingOuterDiameter() const {return DetectorHousingOuterDiameter;}; // AC
+
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
-  const G4VPhysicalVolume* GetMeasureVolume() const  {return physiMeasureVolume;};           
   const G4VPhysicalVolume* GetAttenuator() const      {return physiAttenuator;}; // AC
-  const G4VPhysicalVolume* GetMagnet1() const      {return physiMagnet;}; // AC
+  const G4VPhysicalVolume* GetMagnet() const      {return physiMagnet;}; // AC
+  const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } // Assuming physiDetector is the measurement volume
 
 private:
   
@@ -123,6 +122,8 @@ private:
   G4double           DetectorActiveArea; // AC
   G4double           DetectorThickness; // AC
   G4double           DetectorWindowThickness; // AC
+  G4double           DetectorHousingThickness; // AC
+  G4double           DetectorHousingOuterDiameter; // AC
 
   G4double           SSD;
   G4double           zOffset;
@@ -139,10 +140,6 @@ private:
   G4LogicalVolume*   logicAttenuator; // AC
   G4Tubs*            solidAttenuator; // AC
 
-  G4VPhysicalVolume* physiMeasureVolume;
-  G4LogicalVolume*   logicMeasureVolume;
-  G4Tubs*            solidMeasureVolume; // AC
-
   G4VPhysicalVolume* physiDetector; // AC
   G4LogicalVolume*   logicDetector; // AC
   G4Tubs*            solidDetector; // AC
@@ -151,10 +148,15 @@ private:
   G4LogicalVolume*   logicDetectorWindow; // AC
   G4Tubs*            solidDetectorWindow; // AC
 
+  G4VPhysicalVolume* physiDetectorHousing; // AC
+  G4LogicalVolume*   logicDetectorHousing; // AC
+  G4Tubs*            solidDetectorHousing; // AC
+
   G4Material*        WorldMaterial;
   G4Material*        AttenuatorMaterial; // AC
   G4Material*        MagnetMaterial; // AC
   G4Material*        DetectorMaterial; // AC
+  G4Material*        DetectorHousingMaterial; // AC
 
   G4Cache<G4MagneticField*> fField;  //pointer to the thread-local fields
 

@@ -77,7 +77,6 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
 #define MAG 0          // Magnetic field grid
-#define MEASUREVOL 0   // Volume for measurement
 #define MAGNETS 1      // N42 1"X1"x1/8"
 #define ATTENUATOR 1   // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
@@ -88,22 +87,22 @@ MiniOrangeDetectorConstruction::MiniOrangeDetectorConstruction()
 
   :physiWorld(NULL), logicWorld(NULL), solidWorld(NULL),
     physiAttenuator(NULL), logicAttenuator(NULL), solidAttenuator(NULL), // AC
-    physiMeasureVolume(NULL), logicMeasureVolume(NULL), solidMeasureVolume(NULL),
     physiMagnet(NULL), logicMagnet(NULL), solidMagnet(NULL), // AC
     physiDetector(NULL), logicDetector(NULL), solidDetector(NULL), // AC
     physiDetectorWindow(NULL), logicDetectorWindow(NULL), solidDetectorWindow(NULL), // AC
+    physiDetectorHousing(NULL), logicDetectorHousing(NULL), solidDetectorHousing(NULL), // AC
     WorldMaterial(NULL), 
     AttenuatorMaterial(NULL), // AC
     MagnetMaterial(NULL), // AC
-    DetectorMaterial(NULL) // AC
+    DetectorMaterial(NULL), // AC
+    DetectorHousingMaterial(NULL) // AC
     
 {
   fField.Put(0);
   WorldSizeXY=WorldSizeZ=0;
   MagnetWidth=MagnetHeight=MagnetLength=0;  
-  MeasureVolumeRadius=MeasureVolumeHeight=0; // AC
   AttenuatorVolumeRadius=AttenuatorVolumeHeight=0; // AC
-  DetectorPosition=DetectorActiveArea=DetectorThickness=DetectorWindowThickness=0; // AC
+  DetectorPosition=DetectorActiveArea=DetectorThickness=DetectorWindowThickness=DetectorHousingOuterDiameter=DetectorHousingThickness=0; // AC
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -163,6 +162,8 @@ void MiniOrangeDetectorConstruction::DefineMaterials()
 
   G4NistManager* nist = G4NistManager::Instance();
   G4Material* silicon = nist->FindOrBuildMaterial("G4_Si");
+
+  G4Material* aluminum = nist->FindOrBuildMaterial("G4_Al");
 
   // Define materials from elements.
   
@@ -225,6 +226,7 @@ void MiniOrangeDetectorConstruction::DefineMaterials()
   AttenuatorMaterial = Tantalum; // AC
   MagnetMaterial = NdFeB; // AC
   DetectorMaterial = silicon; // AC
+  DetectorHousingMaterial = aluminum; // AC
 
   G4cout << "end material"<< G4endl;  
 }
@@ -237,11 +239,6 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
   //The World
   WorldSizeXY  = 100.*mm;  // Cube
   WorldSizeZ   = 300.*mm;
-
-  // AC: Define the cylindrical properties for the measurment volume (detector)
-  MeasureVolumeRadius = 4.*mm;  // radius
-  MeasureVolumeHeight = 1.*mm; // height
-  MeasureVolumePosition = -30.*mm - 1. * MeasureVolumeHeight/2.; 
 
   // AC: Define the cylindrical properties for the attentuator
   AttenuatorVolumeRadius = 4.765*mm;  // radius (half of a 3/8" diameter)
@@ -260,8 +257,12 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
   DetectorThickness = 500.*micrometer; // Thickness of the detector
   DetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
 
+  //housing thickness of 12.3 mm
+  DetectorHousingThickness = 12.3*mm; // Thickness of the detector housing
+  DetectorHousingOuterDiameter = 16.7*mm; // Outer diameter of the detector housing
+
   G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
-  G4double DetectorFacePosition = DetectorPosition - DetectorThickness/2;
+  G4double DetectorSurfaceToHousing = 1.*mm; // Distance from detector surface to housing
 
   zOffset = 0.0*mm;  // Offset of the magnetic field grid
 
@@ -296,15 +297,6 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
    << "\n ---> " << "AttenuatorVolumePosition =  " << G4BestUnit(AttenuatorVolumePosition,"Length");
 #endif
   
-#if MEASUREVOL // AC
-  G4cout << "\n-----------------------------------------------------------"
-	 << "\n ---> Measurement Volume:" 
-	 << "\n ---> " << WorldMaterial->GetName() << " in Measurement volume"
-	 << "\n ---> " << "MeasureVolumeRadius: " << G4BestUnit(MeasureVolumeRadius,"Length") 
-	 << "\n ---> " << "MeasureVolumeHeight: " << G4BestUnit(MeasureVolumeHeight,"Length")
-	 << "\n ---> " << "MeasureVolumePosition =  " << G4BestUnit(MeasureVolumePosition,"Length");
-#endif // AC
-
 #if DETECTOR // AC
   G4cout << "\n-----------------------------------------------------------"
     << "\n ---> Detector:"
@@ -312,7 +304,9 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
     << "\n ---> " << "DetectorRadius: " << G4BestUnit(DetectorRadius,"Length")
     << "\n ---> " << "DetectorThickness: " << G4BestUnit(DetectorThickness,"Length")
     << "\n ---> " << "DetectorWindowThickness: " << G4BestUnit(DetectorWindowThickness,"Length")
-    << "\n ---> " << "DetectorPosition =  " << G4BestUnit(DetectorPosition,"Length");
+    << "\n ---> " << "DetectorPosition =  " << G4BestUnit(DetectorPosition,"Length")
+    << "\n ---> " << "DetectorHousingThickness: " << G4BestUnit(DetectorHousingThickness,"Length")
+    << "\n ---> " << "DetectorHousingOuterDiameter: " << G4BestUnit(DetectorHousingOuterDiameter,"Length");
 #endif // AC
   
   G4cout << "\n-----------------------------------------------------------\n";
@@ -340,99 +334,118 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
   simpleWorldVisAtt->SetVisibility(true);
   logicWorld->SetVisAttributes(simpleWorldVisAtt);
  
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-#if MEASUREVOL
-
-  /*// AC: Commented out the following lines to change the measurement volume to a cylinder
-  solidMeasureVolume = new G4Box("MeasureVolume",				       //its name
-                   MeasureVolumeSizeXY/2,MeasureVolumeSizeXY/2,MeasureVolumeSizeZ/2);  //its size
-  */
-
-  // AC: Creating the solid cylinder volume
-  solidMeasureVolume = new G4Tubs("MeasureVolume",
-                                      0,          // Inner radius
-                                      MeasureVolumeRadius,     // Outer radius
-                                      MeasureVolumeHeight/2., // height... make sure to divide by 2
-                                      0.*deg,     // Start angle
-                                      360.*deg);  // Spanning angle
-
-  logicMeasureVolume = new G4LogicalVolume(solidMeasureVolume,	//its solid
-                                   WorldMaterial,	        //its material
-                                   "MeasureVolume");		//its name
-                                   
-  physiMeasureVolume = new G4PVPlacement(0,			             //no rotation
-  				 G4ThreeVector(0.,0.,MeasureVolumePosition), //at (0,0,0)
-                                 "MeasureVolume",		             //its name
-                                 logicMeasureVolume,		             //its logical volume
-                                 physiWorld,			             //its mother  volume
-                                 false,			                     //no boolean operation
-                                 0);			                     //copy number
-
-  // Visualization attributes
-  G4VisAttributes* simpleMeasureVolumeVisAtt= new G4VisAttributes(G4Colour(1.0,1.0,1.0)); //White
-  simpleMeasureVolumeVisAtt->SetVisibility(true);
-  simpleMeasureVolumeVisAtt->SetForceSolid(true);
-  logicMeasureVolume->SetVisAttributes(simpleMeasureVolumeVisAtt);
-
-#endif
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 #if DETECTOR
 
-  // AC: Creating the solid cylinder volume for the main detector
+  // Create the main detector volume as a cylindrical solid
   solidDetector = new G4Tubs("Detector",
-                                      0,          // Inner radius
-                                      DetectorRadius,     // Outer radius
-                                      DetectorThickness/2., // height... make sure to divide by 2
-                                      0.*deg,     // Start angle
-                                      360.*deg);  // Spanning angle
+                            0,  // Inner radius
+                            DetectorRadius,  // Outer radius
+                            DetectorThickness / 2.,  // Half-height
+                            0.*deg,  // Start angle
+                            360.*deg);  // Full angular span
 
-  logicDetector = new G4LogicalVolume(solidDetector,	//its solid
-                                   DetectorMaterial,	        //its material
-                                   "Detector");		//its name
+  logicDetector = new G4LogicalVolume(solidDetector,  // Geometry solid
+                                      DetectorMaterial,  // Material of the detector
+                                      "Detector");  // Logical volume name
 
-  physiDetector = new G4PVPlacement(nullptr,  // no rotation
-                                    G4ThreeVector(0, 0, DetectorPosition),  // position
-                                    logicDetector,
-                                    "Detector",  // name
-                                    logicWorld,  // mother volume
-                                    false,  // no boolean operation
-                                    0);
-
-  // Create the detector window
+  // Create the detector window as a cylindrical volume
   solidDetectorWindow = new G4Tubs("DetectorWindow",
                                   0,  // Inner radius
                                   DetectorRadius,  // Outer radius
                                   DetectorWindowThickness / 2.,  // Half-height
                                   0.*deg,  // Start angle
-                                  360.*deg);  // Spanning angle
+                                  360.*deg);  // Full angular span
 
   logicDetectorWindow = new G4LogicalVolume(solidDetectorWindow,
                                             DetectorMaterial,
                                             "DetectorWindow");
 
-  // Place the window at the front of the detector
+  // Position the window at the front center of the detector
   G4double windowZPosition = (DetectorThickness / 2. - DetectorWindowThickness / 2.);
-  new G4PVPlacement(nullptr,  // no rotation
-                    G4ThreeVector(0, 0, windowZPosition),  // position relative to detector center
+  new G4PVPlacement(nullptr,  // No rotation
+                    G4ThreeVector(0, 0, windowZPosition),  // Position in the detector
                     logicDetectorWindow,
-                    "DetectorWindow",  // name
-                    logicDetector,  // mother volume (detector itself)
+                    "DetectorWindow",
+                    logicDetector,  // Parent volume
+                    false,  // No boolean operation
+                    0);  // Copy number
+
+  // Create the outer housing for the detector
+  solidDetectorHousing = new G4Tubs("DetectorHousing",
+                                    DetectorRadius,  // Matches the outer radius of the detector
+                                    DetectorHousingOuterDiameter / 2.,  // Outer radius of the housing
+                                    DetectorHousingThickness / 2.,  // Half-height
+                                    0.*deg,  // Start angle
+                                    360.*deg);  // Full angular span
+
+  logicDetectorHousing = new G4LogicalVolume(solidDetectorHousing,
+                                            DetectorHousingMaterial,
+                                            "DetectorHousing");
+
+  // Calculate the position to set the detector such that the front surface is 1 mm from the housing front
+  G4double detectorHousingPositionZ = DetectorHousingThickness / 2. - DetectorThickness / 2. - 1.*mm;
+
+  // Place the detector within the housing
+  new G4PVPlacement(nullptr,  // No rotation
+                    G4ThreeVector(0, 0, -detectorHousingPositionZ),  // Position relative to housing center
+                    logicDetectorHousing,
+                    "Detector",
+                    logicDetector,  // Parent volume
+                    false,  // No boolean operation
+                    0);  // Copy number
+
+  // Create an additional housing section to fill the gap at the back of the detector
+  G4double extraHousingLength = DetectorHousingThickness - (DetectorThickness + 1.*mm);
+  G4Tubs* solidExtraHousing = new G4Tubs("ExtraHousing",
+                                        0,  // Inner radius
+                                        DetectorRadius,  // Matches outer radius of the detector
+                                        extraHousingLength / 2.,  // Half-height
+                                        0.*deg,  // Start angle
+                                        360.*deg);  // Full angular span
+
+  G4LogicalVolume* logicExtraHousing = new G4LogicalVolume(solidExtraHousing,
+                                                          DetectorHousingMaterial,
+                                                          "ExtraHousing");
+
+  // Position the additional housing section
+  G4double extraHousingPositionZ = DetectorThickness / 2. + extraHousingLength / 2.;
+  new G4PVPlacement(nullptr,  // No rotation
+                    G4ThreeVector(0, 0, -extraHousingPositionZ),  // Position relative to detector center
+                    logicExtraHousing,
+                    "ExtraHousing",
+                    logicDetector,  // Parent volume
+                    false,  // No boolean operation
+                    0);  // Copy number
+
+  physiDetector = new G4PVPlacement(nullptr,  // no rotation
+                    G4ThreeVector(0, 0, DetectorPosition),  // position in world
+                    logicDetector,  // logical volume to place
+                    "DetectorHousing",  // name
+                    logicWorld,  // parent volume (world)
                     false,  // no boolean operation
                     0);  // copy number
 
-  // Visualization attributes for detector
-  G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green
+  // Visualization attributes for various components
+  G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
   visAttributesDetector->SetVisibility(true);
   visAttributesDetector->SetForceSolid(true);
   logicDetector->SetVisAttributes(visAttributesDetector);
 
-  // Visualization for window
-  G4VisAttributes* visAttributesWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // Red
+  G4VisAttributes* visAttributesWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // Red for the window
   visAttributesWindow->SetVisibility(true);
   visAttributesWindow->SetForceSolid(true);
   logicDetectorWindow->SetVisAttributes(visAttributesWindow);
+
+  G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
+  visAttributesHousing->SetVisibility(true);
+  visAttributesHousing->SetForceSolid(true);
+  logicDetectorHousing->SetVisAttributes(visAttributesHousing);
+
+  G4VisAttributes* visAttributesExtraHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the extra housing
+  visAttributesExtraHousing->SetVisibility(true);
+  visAttributesExtraHousing->SetForceSolid(true);
+  logicExtraHousing->SetVisAttributes(visAttributesExtraHousing);
 
 #endif
 
