@@ -126,30 +126,30 @@ void MiniOrangeRunAction::Book()
   G4cout << "Ntuple-1 created" << G4endl;
 
   // Create 2nd ntuple (id = 2)
-  //    
-  man->CreateNtuple("n102", "Gamma");
-  man->CreateNtupleDColumn("gx");
-  man->CreateNtupleDColumn("gy");
-  man->CreateNtupleDColumn("gz");
-  man->CreateNtupleDColumn("ge");
-  man->CreateNtupleDColumn("gpx");
-  man->CreateNtupleDColumn("gpy");
-  man->CreateNtupleDColumn("gpz");
-  man->FinishNtuple();
-  G4cout << "Ntuple-2 created" << G4endl;
+  // //    
+  // man->CreateNtuple("n102", "Gamma");
+  // man->CreateNtupleDColumn("gx");
+  // man->CreateNtupleDColumn("gy");
+  // man->CreateNtupleDColumn("gz");
+  // man->CreateNtupleDColumn("ge");
+  // man->CreateNtupleDColumn("gpx");
+  // man->CreateNtupleDColumn("gpy");
+  // man->CreateNtupleDColumn("gpz");
+  // man->FinishNtuple();
+  // G4cout << "Ntuple-2 created" << G4endl;
  
-  // Create 3rd ntuple (id = 3)
-  //
-  man->CreateNtuple("n103", "Positron");
-  man->CreateNtupleDColumn("px");
-  man->CreateNtupleDColumn("py");
-  man->CreateNtupleDColumn("pz");
-  man->CreateNtupleDColumn("pe");
-  man->CreateNtupleDColumn("ppx");
-  man->CreateNtupleDColumn("ppy");
-  man->CreateNtupleDColumn("ppz");
-  man->FinishNtuple();
-  G4cout << "Ntuple-3 created" << G4endl;
+  // // Create 3rd ntuple (id = 3)
+  // //
+  // man->CreateNtuple("n103", "Positron");
+  // man->CreateNtupleDColumn("px");
+  // man->CreateNtupleDColumn("py");
+  // man->CreateNtupleDColumn("pz");
+  // man->CreateNtupleDColumn("pe");
+  // man->CreateNtupleDColumn("ppx");
+  // man->CreateNtupleDColumn("ppy");
+  // man->CreateNtupleDColumn("ppz");
+  // man->FinishNtuple();
+  // G4cout << "Ntuple-3 created" << G4endl;
 
   return;
 }
