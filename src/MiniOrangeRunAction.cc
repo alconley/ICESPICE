@@ -61,7 +61,7 @@ MiniOrangeRunAction::MiniOrangeRunAction()
     analysisManager->CreateH1("Esil","Edep in silicon", 1000, 0., 2.0*MeV);
     analysisManager->CreateH1("Lsil","trackL in silicon", 1000, 0., 1*mm);
 
-    analysisManager->CreateNtuple("B4", "Edep and TrackL");
+    analysisManager->CreateNtuple("MiniOrange", "Edep and TrackL");
     analysisManager->CreateNtupleDColumn("Esil");
     analysisManager->CreateNtupleDColumn("Lsil");
     analysisManager->FinishNtuple();
@@ -92,7 +92,7 @@ void MiniOrangeRunAction::BeginOfRunAction(const G4Run* aRun)
     auto analysisManager = G4AnalysisManager::Instance();
 
     // Open an output file
-    G4String fileName = "B4";
+    G4String fileName = "MiniOrange";
     analysisManager->OpenFile(fileName);
 }
 

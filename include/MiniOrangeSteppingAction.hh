@@ -48,18 +48,30 @@ class MiniOrangeAnalysisManager;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
+class MiniOrangeEventAction;
+
 class MiniOrangeSteppingAction : public G4UserSteppingAction
 {
 public:
-  MiniOrangeSteppingAction(const MiniOrangeDetectorConstruction*);
+  // MiniOrangeSteppingAction(const MiniOrangeDetectorConstruction*);
+  // ~MiniOrangeSteppingAction();
+
+  MiniOrangeSteppingAction(const MiniOrangeDetectorConstruction*, 
+                            MiniOrangeEventAction* eventAction);
   ~MiniOrangeSteppingAction();
+  
   
   void UserSteppingAction(const G4Step*);
   
 private:
-  const MiniOrangeDetectorConstruction* Detector; 
+  // const MiniOrangeDetectorConstruction* Detector; 
+
+  const MiniOrangeDetectorConstruction* fDetConstruction = nullptr;
+  MiniOrangeEventAction* fEventAction = nullptr;
   
 };
+
+
 
 #endif
 

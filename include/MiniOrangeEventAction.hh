@@ -57,13 +57,22 @@ class MiniOrangeEventAction : public G4UserEventAction
     
     void SetDrawFlag   (G4String val)  {drawFlag    = val;};
     void SetPrintModulo(G4int    val)  {printModulo = val;};
+
+    void AddSil(G4double de, G4double dl);
+
         
   private:
     G4String                 drawFlag;
     G4int                    printModulo;
-    G4double                 fEnergySilicon;
-    G4int                    fTrackLSilicon;         
+    G4double                 fEnergySilicon = 0.;
+    G4int                    fTrackLSilicon = 0.;         
 };
+
+
+inline void MiniOrangeEventAction::AddSil(G4double de, G4double dl) {
+  fEnergySilicon += de;
+  fTrackLSilicon += dl;
+}
 
 #endif
 

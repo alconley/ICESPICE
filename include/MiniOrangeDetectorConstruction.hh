@@ -100,6 +100,7 @@ public:
   const G4VPhysicalVolume* GetAttenuator() const      {return physiAttenuator;}; // AC
   const G4VPhysicalVolume* GetMagnet() const      {return physiMagnet;}; // AC
   const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } // AC
+  const G4VPhysicalVolume* GetSiliconPV() const { return physiDetector; } // AC
 
 private:
   

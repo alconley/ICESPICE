@@ -38,6 +38,7 @@
 
 #include "MiniOrangeSteppingAction.hh"
 #include "MiniOrangeRunAction.hh"
+#include "MiniOrangeEventAction.hh"
 #include "MiniOrangeDetectorConstruction.hh"
 
 #include "G4SteppingManager.hh"
@@ -52,10 +53,19 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-MiniOrangeSteppingAction::MiniOrangeSteppingAction(const 
-					     MiniOrangeDetectorConstruction* det)
-:Detector(det)
-{ }
+// MiniOrangeSteppingAction::MiniOrangeSteppingAction(const 
+// 					     MiniOrangeDetectorConstruction* det)
+// :Detector(det)
+// { }
+
+MiniOrangeSteppingAction::MiniOrangeSteppingAction(
+                      const MiniOrangeDetectorConstruction* detectorConstruction,
+                      MiniOrangeEventAction* eventAction)
+  : G4UserSteppingAction(),
+    fDetConstruction(detectorConstruction),
+    fEventAction(eventAction)
+{}
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -67,8 +77,24 @@ MiniOrangeSteppingAction::~MiniOrangeSteppingAction()
 void MiniOrangeSteppingAction::UserSteppingAction(const G4Step* aStep)
   
 { 
-  G4AnalysisManager* man = G4AnalysisManager::Instance();
-  
+//   G4AnalysisManager* man = G4AnalysisManager::Instance();
+
+    // get volume of the current step
+	auto volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
+	
+	// energy deposit
+	auto edep = aStep->GetTotalEnergyDeposit();
+	
+	// step length
+	G4double stepLength = 0.;
+	if ( aStep->GetTrack()->GetDefinition()->GetPDGCharge() != 0. ) {
+		stepLength = aStep->GetStepLength();
+	}
+		
+	if ( volume == fDetConstruction->GetSiliconPV() ) {
+		fEventAction->AddSil(edep,stepLength);
+	}
+	
 //   //Collection at SSD in N-tuples. Electrons and photons separated
 //   //Prestep point in World, next volume MeasureVolume, process transportation
 //   if ((aStep->GetPreStepPoint()->GetPhysicalVolume() == Detector->GetWorld())&&

@@ -58,7 +58,12 @@ void MiniOrangeActionInitializer::Build() const
   SetUserAction(new MiniOrangeRunAction());
   SetUserAction(new MiniOrangeEventAction());
   SetUserAction(new MiniOrangeTrackingAction()); 
-  SetUserAction(new MiniOrangeSteppingAction(detector));
+  // SetUserAction(new MiniOrangeSteppingAction(detector));
+
+  auto eventAction = new MiniOrangeEventAction;
+  SetUserAction(eventAction);
+  SetUserAction(new MiniOrangeSteppingAction(detector,eventAction));
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
