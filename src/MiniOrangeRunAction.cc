@@ -41,17 +41,38 @@
 #include "G4AnalysisManager.hh"
 #include "Randomize.hh"
 
+#include "G4RunManager.hh"
+#include "G4SystemOfUnits.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 MiniOrangeRunAction::MiniOrangeRunAction()
-{   
-  saveRndm = 1;  
-}
+  : G4UserRunAction()
+  {   
+    // set printing event number per each event
+    G4RunManager::GetRunManager()->SetPrintProgress(1);  
+
+    auto analysisManager = G4AnalysisManager::Instance();
+    G4cout << "Using " << analysisManager->GetType() << G4endl;
+
+    analysisManager->SetVerboseLevel(1);
+    analysisManager->SetNtupleMerging(true);
+
+    analysisManager->CreateH1("Esil","Edep in silicon", 1000, 0., 2.0*MeV);
+    analysisManager->CreateH1("Lsil","trackL in silicon", 1000, 0., 1*mm);
+
+    analysisManager->CreateNtuple("B4", "Edep and TrackL");
+    analysisManager->CreateNtupleDColumn("Esil");
+    analysisManager->CreateNtupleDColumn("Lsil");
+    analysisManager->FinishNtuple();
+  }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 MiniOrangeRunAction::~MiniOrangeRunAction()
-{}
+{
+  delete G4AnalysisManager::Instance();
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -65,16 +86,14 @@ void MiniOrangeRunAction::BeginOfRunAction(const G4Run* aRun)
 	   << G4endl;
   else
     G4cout << "---> Run " << aRun->GetRunID() << " (worker) start." 
-	   << G4endl;
+	   << G4endl;      
 
-  
-  // save Rndm status
-  if (saveRndm > 0 && IsMaster())
-    { 
-      G4Random::showEngineStatus();
-      G4Random::saveEngineStatus("beginOfRun.rndm");
-    }
-      
+    // Get analysis manager
+    auto analysisManager = G4AnalysisManager::Instance();
+
+    // Open an output file
+    G4String fileName = "B4";
+    analysisManager->OpenFile(fileName);
 }
 
 
@@ -91,13 +110,35 @@ void MiniOrangeRunAction::EndOfRunAction(const G4Run* aRun)
        
   if (IsMaster())
     {
-      // save Rndm status
-      if (saveRndm == 1)
-	{ 
-	  G4Random::showEngineStatus();
-	  G4Random::saveEngineStatus("endOfRun.rndm");
-	}             
-    }            
+      
+    }
+
+    // print histogram statistics
+    //
+    auto analysisManager = G4AnalysisManager::Instance();
+    if ( analysisManager->GetH1(1) ) {
+      G4cout << G4endl << " ----> print histograms statistic ";
+      if(isMaster) {
+        G4cout << "for the entire run " << G4endl << G4endl; 
+      }
+      else {
+        G4cout << "for the local thread " << G4endl << G4endl; 
+      }
+      
+      G4cout << " ESil : mean = " 
+        << G4BestUnit(analysisManager->GetH1(0)->mean(), "Energy") 
+        << " rms = " 
+        << G4BestUnit(analysisManager->GetH1(0)->rms(),  "Energy") << G4endl;
+      G4cout << " LSil : mean = " 
+        << G4BestUnit(analysisManager->GetH1(1)->mean(), "Length") 
+        << " rms = " 
+        << G4BestUnit(analysisManager->GetH1(1)->rms(),  "Length") << G4endl;
+    }
+
+    // save histograms & ntuple
+    //
+    analysisManager->Write();
+    analysisManager->CloseFile();            
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

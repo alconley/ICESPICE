@@ -46,22 +46,3 @@ output_file_path = './MiniOrange3D.TABLE'
 with open(output_file_path, 'w') as file:
     file.write(header_info + '\n')
     formatted_data.to_csv(file, header=False, index=False, sep=' ', mode='a')
-
-
-
-# Original file
-# Load the CSV file and skip the initial lines containing metadata
-# file_path = './MiniOrange3D_Backup.TABLE'
-# column_names = ['X', 'Y', 'Z', 'BX', 'BY', 'BZ', 'BMOD/HMOD']
-# data = pd.read_csv(file_path, comment='%', skiprows=10, names=column_names, delim_whitespace=True)
-# print(data)
-
-# # Calculate the number of unique values in the 'X' column
-# unique_x_values = data['X'].nunique()
-# unique_y_values = data['Y'].nunique()
-# unique_z_values = data['Z'].nunique()
-
-# # Display the number of unique 'X' values
-# print(f"Number of unique X values: {unique_x_values}")
-# print(f"Number of unique Y values: {unique_y_values}")
-# print(f"Number of unique Z values: {unique_z_values}")

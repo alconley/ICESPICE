@@ -99,7 +99,7 @@ public:
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
   const G4VPhysicalVolume* GetAttenuator() const      {return physiAttenuator;}; // AC
   const G4VPhysicalVolume* GetMagnet() const      {return physiMagnet;}; // AC
-  const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } // Assuming physiDetector is the measurement volume
+  const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } // AC
 
 private:
   

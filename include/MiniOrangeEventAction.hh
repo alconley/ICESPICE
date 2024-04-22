@@ -40,6 +40,7 @@
 #define MiniOrangeEventAction_h 1
 
 #include "G4UserEventAction.hh"
+#include "G4AnalysisManager.hh"
 #include "globals.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -59,7 +60,9 @@ class MiniOrangeEventAction : public G4UserEventAction
         
   private:
     G4String                 drawFlag;
-    G4int                    printModulo;         
+    G4int                    printModulo;
+    G4double                 fEnergySilicon;
+    G4int                    fTrackLSilicon;         
 };
 
 #endif

@@ -46,7 +46,10 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 MiniOrangeEventAction::MiniOrangeEventAction()
-  :drawFlag("all"),printModulo(10000)
+  // :drawFlag("all"),printModulo(10000)
+  : G4UserEventAction(),
+    fEnergySilicon(0.),
+    fTrackLSilicon(0.)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -57,7 +60,10 @@ MiniOrangeEventAction::~MiniOrangeEventAction()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void MiniOrangeEventAction::BeginOfEventAction(const G4Event* evt)
-{  
+{ 
+  fEnergySilicon = 0.;
+  fTrackLSilicon = 0.;
+
   G4int evtNb = evt->GetEventID();
  if (evtNb%printModulo == 0) 
    G4cout << "\n---> Begin Of Event: " << evtNb << G4endl;
@@ -65,7 +71,14 @@ void MiniOrangeEventAction::BeginOfEventAction(const G4Event* evt)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void MiniOrangeEventAction::EndOfEventAction(const G4Event*)
+void MiniOrangeEventAction::EndOfEventAction(const G4Event* evt)
 {  
+  auto analysisManager = G4AnalysisManager::Instance();
+  analysisManager->FillH1(0, fEnergySilicon);
+  analysisManager->FillH1(1, fTrackLSilicon);
+
+  analysisManager->FillNtupleDColumn(0, fEnergySilicon);
+  analysisManager->FillNtupleDColumn(1, fTrackLSilicon);
+  analysisManager->AddNtupleRow(); 
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
