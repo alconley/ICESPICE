@@ -55,7 +55,7 @@ int main(int argc,char** argv) {
  // Construct the default run manager
  //
   auto* runManager = G4RunManagerFactory::CreateRunManager();
-  G4int nThreads = 8;
+  G4int nThreads = 4;
   runManager->SetNumberOfThreads(nThreads);
 
   // set mandatory initialization classes
@@ -92,9 +92,9 @@ int main(int argc,char** argv) {
     }
 
   // Save histograms
-  // G4AnalysisManager* man = G4AnalysisManager::Instance();
-  // man->Write();
-  // man->CloseFile();
+  G4AnalysisManager* man = G4AnalysisManager::Instance();
+  man->Write();
+  man->CloseFile();
 
   // job termination
   delete visManager;

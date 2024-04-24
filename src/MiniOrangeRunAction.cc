@@ -76,6 +76,9 @@ MiniOrangeRunAction::~MiniOrangeRunAction()
 
 void MiniOrangeRunAction::BeginOfRunAction(const G4Run* aRun)
 {  
+
+  //inform the runManager to save random number seed
+  // G4RunManager::GetRunManager()->SetRandomNumberStore(false);
   
   if (IsMaster())    
     G4cout << "---> Run " << aRun->GetRunID() << " (master) start." 
@@ -117,7 +120,7 @@ void MiniOrangeRunAction::EndOfRunAction(const G4Run* aRun)
         << G4BestUnit(analysisManager->GetH1(0)->mean(), "Energy") 
         // get the counts greator than the first bin
         << " counts = " << analysisManager->GetH1(0)->entries()
-        
+
         << " rms = " 
         << G4BestUnit(analysisManager->GetH1(0)->rms(),  "Energy") << G4endl;
 
@@ -126,7 +129,7 @@ void MiniOrangeRunAction::EndOfRunAction(const G4Run* aRun)
     // save histograms & ntuple
     //
     analysisManager->Write();
-    analysisManager->CloseFile();            
+    analysisManager->CloseFile();      
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
