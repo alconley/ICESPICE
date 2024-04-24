@@ -6,6 +6,20 @@ A mini-orange spectrometer uses permanent magnets to seperate electrons from oth
 
 The goal is to take an external magnetic field from [COMSOL](https://www.comsol.com) and simulate electron trajectories and the detector response in [GEANT4](https://geant4.web.cern.ch). 
 
+### Running
+
+The field map is too large, (>1 Gb) so it won't let me put in the repository. If you want it, message me and I can send it over OneDrive or something. 
+
+My Geant4 version is 11.2.0, root 6.30/06, and cmake 3.29.2.
+
+In the repository:
+
+`mkdir build`
+`cd build`
+`cmake ..`
+`make`
+`./MiniOrange`
+
 ### COMSOL Magnetic Field
 
 In [COMSOL](https://www.comsol.com), I simulate the magnetic field of five 1"x1"x1/8" N42 Neodymium magnets around an attenuator made of tantalum (rod with a diameter of 1/8" and a height of ~30mm) in some vacuum volume. The attenuator is placed at the origin with the height in the z-direction. The magnets are placed in the circular pattern at some radius to form an toroidal magnetic field. If the source is placed at some positive z position away from the origin (f), the magnetic field must go in the negative phi (cylindrical coordinates) direction for the electrons to be focused at some negative z position away from the origin (g). 
