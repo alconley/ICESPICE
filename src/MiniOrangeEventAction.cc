@@ -37,7 +37,6 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 #include "MiniOrangeEventAction.hh"
-
 #include "MiniOrangeRunAction.hh"
 
 #include "G4Event.hh"
@@ -46,10 +45,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 MiniOrangeEventAction::MiniOrangeEventAction()
-  // :drawFlag("all"),printModulo(10000)
   : G4UserEventAction(),
-    fEnergySilicon(0.),
-    fTrackLSilicon(0.)
+    fEnergySilicon(0.)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -62,7 +59,6 @@ MiniOrangeEventAction::~MiniOrangeEventAction()
 void MiniOrangeEventAction::BeginOfEventAction(const G4Event* evt)
 { 
   fEnergySilicon = 0.;
-  fTrackLSilicon = 0.;
 
   G4int evtNb = evt->GetEventID();
  if (evtNb%printModulo == 0) 
@@ -75,10 +71,7 @@ void MiniOrangeEventAction::EndOfEventAction(const G4Event* evt)
 {  
   auto analysisManager = G4AnalysisManager::Instance();
   analysisManager->FillH1(0, fEnergySilicon);
-  analysisManager->FillH1(1, fTrackLSilicon);
-
   analysisManager->FillNtupleDColumn(0, fEnergySilicon);
-  analysisManager->FillNtupleDColumn(1, fTrackLSilicon);
   analysisManager->AddNtupleRow(); 
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

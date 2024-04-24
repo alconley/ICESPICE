@@ -61,8 +61,6 @@ public:
 
 private:
   G4int saveRndm;
-  void Book();
-
 };
 
 #endif

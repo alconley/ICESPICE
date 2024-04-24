@@ -1,0 +1,42 @@
+#
+# This file permits to customize, with commands,
+# the menu bar of the G4UIXm, G4UIQt, G4UIWin32 sessions.
+# It has no effect with G4UIterminal.
+#
+# File menu :
+/gui/addMenu file File
+/gui/addButton file Quit exit
+#
+# Run menu :
+/gui/addMenu run Run
+/gui/addButton run "beamOn 1" "/run/beamOn 1"
+/gui/addButton run "beamOn 100" "/run/beamOn 100"
+/gui/addButton run "beamOn 1000" "/run/beamOn 1000"
+/gui/addButton run "beamOn 10000" "/run/beamOn 10000"
+#
+# Gun menu :
+/gui/addMenu gun Gun
+/gui/addButton gun "100 keV"  "/gun/energy 100 keV"
+/gui/addButton gun "200 keV"  "/gun/energy 200 keV"
+/gui/addButton gun "300 keV"  "/gun/energy 300 keV"
+/gui/addButton gun "400 keV"  "/gun/energy 400 keV"
+/gui/addButton gun "500 keV"  "/gun/energy 500 keV"
+/gui/addButton gun "600 keV"  "/gun/energy 600 keV"
+/gui/addButton gun "700 keV"  "/gun/energy 700 keV"
+/gui/addButton gun "800 keV"  "/gun/energy 800 keV"
+/gui/addButton gun "900 keV"  "/gun/energy 900 keV"
+/gui/addButton gun "1000 keV"  "/gun/energy 1000 keV"
+/gui/addButton gun "1100 keV"  "/gun/energy 1100 keV"
+/gui/addButton gun "1200 keV"  "/gun/energy 1200 keV"
+/gui/addButton gun "1300 keV"  "/gun/energy 1300 keV"
+/gui/addButton gun "1400 keV"  "/gun/energy 1400 keV"
+/gui/addButton gun "1500 keV"  "/gun/energy 1500 keV"
+/gui/addButton gun "e-"      "/gun/particle e-"
+/gui/addButton gun "e+"      "/gun/particle e+"
+/gui/addButton gun "proton"  "/gun/particle proton"
+/gui/addButton gun "gamma"  "/gun/particle gamma"
+#
+#
+# To limit the output flow in the "dump" widget :
+/run/printProgress 100
+#

@@ -53,9 +53,6 @@ class MiniOrangeEventAction;
 class MiniOrangeSteppingAction : public G4UserSteppingAction
 {
 public:
-  // MiniOrangeSteppingAction(const MiniOrangeDetectorConstruction*);
-  // ~MiniOrangeSteppingAction();
-
   MiniOrangeSteppingAction(const MiniOrangeDetectorConstruction*, 
                             MiniOrangeEventAction* eventAction);
   ~MiniOrangeSteppingAction();
@@ -64,8 +61,6 @@ public:
   void UserSteppingAction(const G4Step*);
   
 private:
-  // const MiniOrangeDetectorConstruction* Detector; 
-
   const MiniOrangeDetectorConstruction* fDetConstruction = nullptr;
   MiniOrangeEventAction* fEventAction = nullptr;
   

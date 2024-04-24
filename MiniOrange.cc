@@ -78,6 +78,9 @@ int main(int argc,char** argv) {
     {
       G4UIExecutive* ui = new G4UIExecutive(argc, argv);
       UImanager->ApplyCommand("/control/execute vis.mac");
+      if (ui->IsGUI()) {
+        UImanager->ApplyCommand("/control/execute gui.mac");
+      }
       ui->SessionStart();
       delete ui;
     }
@@ -89,9 +92,9 @@ int main(int argc,char** argv) {
     }
 
   // Save histograms
-  G4AnalysisManager* man = G4AnalysisManager::Instance();
-  man->Write();
-  man->CloseFile();
+  // G4AnalysisManager* man = G4AnalysisManager::Instance();
+  // man->Write();
+  // man->CloseFile();
 
   // job termination
   delete visManager;

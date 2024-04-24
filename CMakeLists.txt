@@ -52,7 +52,10 @@ target_link_libraries(MiniOrange ${Geant4_LIBRARIES})
 # relies on these scripts being in the current working directory.
 #
 set(purging_magnet_SCRIPTS
-    MacroTesting.mac vis.mac MiniOrange3D.TABLE
+    MacroTesting.mac 
+    vis.mac 
+    gui.mac
+    MiniOrange3D.TABLE
   )
 
 foreach(_script ${purging_magnet_SCRIPTS})

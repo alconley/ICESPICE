@@ -101,6 +101,9 @@ void MiniOrangePrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double uz = std::cos(theta);  // Positive values only, pointing in the positive z-direction
   
   particleGun->SetParticleMomentumDirection(G4ThreeVector(ux, uy, uz));
+
+  // particleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., -1.));
+
   
   particleGun->GeneratePrimaryVertex(anEvent);
 

@@ -53,11 +53,6 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-// MiniOrangeSteppingAction::MiniOrangeSteppingAction(const 
-// 					     MiniOrangeDetectorConstruction* det)
-// :Detector(det)
-// { }
-
 MiniOrangeSteppingAction::MiniOrangeSteppingAction(
                       const MiniOrangeDetectorConstruction* detectorConstruction,
                       MiniOrangeEventAction* eventAction)
@@ -77,117 +72,14 @@ MiniOrangeSteppingAction::~MiniOrangeSteppingAction()
 void MiniOrangeSteppingAction::UserSteppingAction(const G4Step* aStep)
   
 { 
-//   G4AnalysisManager* man = G4AnalysisManager::Instance();
-
     // get volume of the current step
 	auto volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
 	
 	// energy deposit
 	auto edep = aStep->GetTotalEnergyDeposit();
-	
-	// step length
-	G4double stepLength = 0.;
-	if ( aStep->GetTrack()->GetDefinition()->GetPDGCharge() != 0. ) {
-		stepLength = aStep->GetStepLength();
-	}
-		
+			
 	if ( volume == fDetConstruction->GetSiliconPV() ) {
-		fEventAction->AddSil(edep,stepLength);
+		fEventAction->AddSil(edep);
 	}
-	
-//   //Collection at SSD in N-tuples. Electrons and photons separated
-//   //Prestep point in World, next volume MeasureVolume, process transportation
-//   if ((aStep->GetPreStepPoint()->GetPhysicalVolume() == Detector->GetWorld())&&
-//       (aStep->GetTrack()->GetNextVolume() == Detector->GetMeasureVolume())&&
-//       //(aStep->GetTrack()->GetMomentumDirection().z()>0.)&& // only particles with positive momentum
-//       (aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() == "Transportation"))
-//     {
-//       G4double gx, gy, gz, ge, gpx, gpy, gpz, ex, ey, ez, ee; 
-//       G4double epx, epy, epz, px, py, pz, pe, ppx, ppy, ppz;   
-		 
-//       // Electrons 
-//       if(aStep->GetTrack()->GetDynamicParticle()->GetDefinition()
-// 	 == G4Electron::Definition())
-// 	{//Position 
-//          ex = (aStep->GetTrack()->GetPosition().x())/cm;
-//          ey = (aStep->GetTrack()->GetPosition().y())/cm; 
-//          ez = (aStep->GetTrack()->GetPosition().z())/cm;
-// 	 // Energy
-// 	 ee = (aStep->GetTrack()->GetKineticEnergy())/MeV;
-// 	 // Momentum
-// 	 epx = aStep->GetTrack()->GetMomentum().x();
-// 	 epy = aStep->GetTrack()->GetMomentum().y();
-// 	 epz = aStep->GetTrack()->GetMomentum().z();
-	  
-// 	 // Fill N-tuple electrons  ( id = 1)
-// 	 man->FillNtupleDColumn(1,0, ex);
-// 	 man->FillNtupleDColumn(1,1, ey);
-// 	 man->FillNtupleDColumn(1,2, ez);
-// 	 man->FillNtupleDColumn(1,3, ee);
-// 	 man->FillNtupleDColumn(1,4, epx);
-// 	 man->FillNtupleDColumn(1,5, epy);
-// 	 man->FillNtupleDColumn(1,6, epz);
-// 	 man->AddNtupleRow(1);  
-//       }
-
-//       // Photons
-//       if (aStep->GetTrack()->GetDynamicParticle()->GetDefinition() == 
-// 	  G4Gamma::Definition())
-// 	{
-	  
-// 	  // Position
-//           gx = (aStep->GetTrack()->GetPosition().x())/cm;
-// 	  gy = (aStep->GetTrack()->GetPosition().y())/cm;
-// 	  gz = (aStep->GetTrack()->GetPosition().z())/cm;
-	  
-// 	  // Energy
-// 	  ge = (aStep->GetTrack()->GetKineticEnergy())/MeV;
-	  
-// 	  // Momentum
-// 	  gpx = aStep->GetTrack()->GetMomentum().x();
-// 	  gpy = aStep->GetTrack()->GetMomentum().y();
-// 	  gpz = aStep->GetTrack()->GetMomentum().z();
-
-// 	  // Fill N-tuple photons (id=2)
-// 	  man->FillNtupleDColumn(2,0, gx);
-// 	  man->FillNtupleDColumn(2,1, gy);
-// 	  man->FillNtupleDColumn(2,2, gz);
-// 	  man->FillNtupleDColumn(2,3, ge);
-// 	  man->FillNtupleDColumn(2,4, gpx);
-// 	  man->FillNtupleDColumn(2,5, gpy);
-// 	  man->FillNtupleDColumn(2,6, gpz);
-// 	  man->AddNtupleRow(2); 
-// 	}
-
-
-//       // Positrons
-//       if (aStep->GetTrack()->GetDynamicParticle()->GetDefinition() == 
-// 	  G4Positron::Definition())
-// 	{
-
-// 	  // Position
-//           px = (aStep->GetTrack()->GetPosition().x())/cm;
-// 	  py = (aStep->GetTrack()->GetPosition().y())/cm;
-// 	  pz = (aStep->GetTrack()->GetPosition().z())/cm;
-	  
-// 	  // Energy
-// 	  pe = (aStep->GetTrack()->GetKineticEnergy())/MeV;
-	  
-// 	  // Momentum
-// 	  ppx = aStep->GetTrack()->GetMomentum().x();
-// 	  ppy = aStep->GetTrack()->GetMomentum().y();
-// 	  ppz = aStep->GetTrack()->GetMomentum().z();
-	  
-// 	  // Fill Ntuple positrons ( id = 3)
-// 	  man->FillNtupleDColumn(3,0, px);
-// 	  man->FillNtupleDColumn(3,1, py);
-// 	  man->FillNtupleDColumn(3,2, pz);
-// 	  man->FillNtupleDColumn(3,3, pe);
-// 	  man->FillNtupleDColumn(3,4, ppx);
-// 	  man->FillNtupleDColumn(3,5, ppy);
-// 	  man->FillNtupleDColumn(3,6, ppz);
-// 	  man->AddNtupleRow(3);  
-// 	}
-//     }
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
