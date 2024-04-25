@@ -27,7 +27,7 @@ with open(macro_path, 'w') as file:
                 file.write(f'/ICESPICE/source/Energy {energy}\n')
                 
                 # Write the command to set the filename of the output root file
-                file.write(f'/analysis/setFileName ICESPICE_PIPS{thickness}_f50mm_g{position}mm_{energy}keV.root\n')
+                file.write(f'/analysis/setFileName ICESPICE_PIPS{thickness}_f50mm_g{abs(position)}mm_{energy}keV.root\n')
                 
                 # Write the command to run the simulation
                 file.write(f'/run/beamOn {n_particles}\n')
