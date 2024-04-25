@@ -71,6 +71,14 @@ MiniOrangePrimaryGeneratorAction::MiniOrangePrimaryGeneratorAction()
 
   //Momentum Direction
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,-1.));
+
+    //this function is called at the begining of event
+  //Start position of primaries
+  G4double z0 = 50.*mm;
+  G4double x0 = 0.*mm;
+  G4double y0 = 0.*mm;
+  particleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+
   
 }
 
@@ -85,12 +93,6 @@ MiniOrangePrimaryGeneratorAction::~MiniOrangePrimaryGeneratorAction()
 
 void MiniOrangePrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-  //this function is called at the begining of event
-  //Start position of primaries
-  G4double z0 = 50.*mm;
-  G4double x0 = 0.*mm;
-  G4double y0 = 0.*mm;
-  particleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
 
   // Set a random direction within the lower half-sphere
   G4double phi = CLHEP::twopi * G4UniformRand();  // Random azimuthal angle between 0 and 2pi
@@ -101,9 +103,6 @@ void MiniOrangePrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double uz = std::cos(theta);  // Positive values only, pointing in the positive z-direction
   
   particleGun->SetParticleMomentumDirection(G4ThreeVector(ux, uy, uz));
-
-  // particleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., -1.));
-
   
   particleGun->GeneratePrimaryVertex(anEvent);
 

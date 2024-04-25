@@ -56,6 +56,8 @@ class G4Material;
 class G4UniformMagField;
 class MiniOrangeTabulatedField3D;
 
+class G4GenericMessenger;
+
 class G4Tubs; // AC
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -89,8 +91,12 @@ public:
   G4Material* GetAttenuatorMaterial()           {return AttenuatorMaterial;}; // AC
   G4Material* GetMagnetMaterial()           {return MagnetMaterial;}; // AC
 
+  void UpdateDetectorComponents(); // AC
+  void SetDetectorPosition(G4double val); // AC
   G4double GetDetectorPosition() const {return DetectorPosition;}; // AC
   G4double GetDetectorActiveArea() const {return DetectorActiveArea;}; // AC
+
+  void SetDetectorThickness(G4double val); // AC
   G4double GetDetectorThickness() const {return DetectorThickness;}; // AC
   G4double GetDetectorWindowThickness() const {return DetectorWindowThickness;}; // AC
   G4double GetDetectorHousingThickness() const {return DetectorHousingThickness;}; // AC
@@ -161,9 +167,12 @@ private:
 
   G4Cache<G4MagneticField*> fField;  //pointer to the thread-local fields
 
+  G4GenericMessenger* fMessenger;  // Messenger for dynamic configuration
+
 private:
 
   void DefineMaterials();
+  void DefineCommands();
   G4VPhysicalVolume* ConstructCalorimeter();     
 };
 

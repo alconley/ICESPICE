@@ -36,7 +36,7 @@ Double_t max_transmission_prob = (Double_t)non_zero_events / (Double_t)total_cou
 
 // print the counts to terminal
 std::cout << "Total Counts (2π): " << total_counts << std::endl;
-std::cout << "Total Counts (4π): " << total_counts << std::endl;
+std::cout << "Total Counts (4π): " << total_counts_4pi << std::endl;
 std::cout << "Non-zero Counts: " << non_zero_events << std::endl;
 std::cout << "Max transmission (All counts above the first bin): " << max_transmission_prob << "%" << std::endl;
 

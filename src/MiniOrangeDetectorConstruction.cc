@@ -74,9 +74,12 @@
 
 #include "G4Tubs.hh"  // AC: Ensure this header is included for cylindrical volumes
 
+#include "G4GenericMessenger.hh"
+#include "G4RunManager.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 1          // Magnetic field grid
+#define MAG 0          // Magnetic field grid
 #define MAGNETS 1      // N42 1"X1"x1/8"
 #define ATTENUATOR 1   // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
@@ -84,7 +87,6 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 MiniOrangeDetectorConstruction::MiniOrangeDetectorConstruction()
-
   :physiWorld(NULL), logicWorld(NULL), solidWorld(NULL),
     physiAttenuator(NULL), logicAttenuator(NULL), solidAttenuator(NULL), // AC
     physiMagnet(NULL), logicMagnet(NULL), solidMagnet(NULL), // AC
@@ -95,20 +97,25 @@ MiniOrangeDetectorConstruction::MiniOrangeDetectorConstruction()
     AttenuatorMaterial(NULL), // AC
     MagnetMaterial(NULL), // AC
     DetectorMaterial(NULL), // AC
-    DetectorHousingMaterial(NULL) // AC
-    
+    DetectorHousingMaterial(NULL), // AC
+    fMessenger(0)  
 {
   fField.Put(0);
   WorldSizeXY=WorldSizeZ=0;
   MagnetWidth=MagnetHeight=MagnetLength=0;  
   AttenuatorVolumeRadius=AttenuatorVolumeHeight=0; // AC
-  DetectorPosition=DetectorActiveArea=DetectorThickness=DetectorWindowThickness=DetectorHousingOuterDiameter=DetectorHousingThickness=0; // AC
+  DetectorActiveArea=DetectorWindowThickness=DetectorHousingOuterDiameter=DetectorHousingThickness=0; // AC
+  DetectorPosition=-30.*mm; // AC
+  DetectorThickness=500.*micrometer; // AC
+  DefineCommands();
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 MiniOrangeDetectorConstruction::~MiniOrangeDetectorConstruction()
-{}
+{
+    delete fMessenger;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -252,9 +259,7 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
   MagnetHeight = 1.*inch2cm; // 1"
   MagnetLength = 1.*inch2cm; // 1"
 
-  DetectorPosition = -30.*mm; // Position of the detector
   DetectorActiveArea = 50.*mm2; // Active area of the detector
-  DetectorThickness = 500.*micrometer; // Thickness of the detector
   DetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
 
   //housing thickness of 12.3 mm
@@ -419,7 +424,7 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
                     0);  // Copy number
 
   physiDetector = new G4PVPlacement(nullptr,  // no rotation
-                    G4ThreeVector(0, 0, DetectorPosition),  // position in world
+                    G4ThreeVector(0, 0, DetectorPosition - DetectorThickness/2),  // position in world
                     logicDetector,  // logical volume to place
                     "DetectorHousing",  // name
                     logicWorld,  // parent volume (world)
@@ -439,7 +444,7 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
 
   G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
   visAttributesHousing->SetVisibility(true);
-  visAttributesHousing->SetForceSolid(true);
+  visAttributesHousing->SetForceSolid(false);
   logicDetectorHousing->SetVisAttributes(visAttributesHousing);
 
   G4VisAttributes* visAttributesExtraHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the extra housing
@@ -525,7 +530,7 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
 
 void MiniOrangeDetectorConstruction::ConstructSDandField()
 {
-//  Magnetic Field - Purging magnet
+//  Magnetic Field
 //
 #if MAG
   
@@ -548,3 +553,161 @@ void MiniOrangeDetectorConstruction::ConstructSDandField()
     }
 #endif
 }
+
+
+void MiniOrangeDetectorConstruction::DefineCommands() {
+
+    fMessenger = new G4GenericMessenger(this, 
+                                        "/MiniOrange/Detector/", 
+                                        "Detector control");
+
+    // Detector Position
+    G4GenericMessenger::Command& detectorPosition
+      = fMessenger->DeclareMethodWithUnit("Position","mm",
+                                  &MiniOrangeDetectorConstruction::SetDetectorPosition, 
+                                  "Set the position of the detector");
+    detectorPosition.SetParameterName("position", true);
+    detectorPosition.SetRange("position>-100. && position<=0.");
+    detectorPosition.SetDefaultValue("-30.");
+
+    // Detector Thickness
+    G4GenericMessenger::Command& detectorThickness
+      = fMessenger->DeclareMethodWithUnit("Thickness","micrometer",
+                                  &MiniOrangeDetectorConstruction::SetDetectorThickness, 
+                                  "Set the thickness of the detector");
+
+    detectorThickness.SetParameterName("thickness", true);
+    detectorThickness.SetRange("thickness>0. && thickness<=3000.");
+    detectorThickness.SetDefaultValue("500.");
+    
+}
+
+void MiniOrangeDetectorConstruction::SetDetectorPosition(G4double val) {
+    DetectorPosition = val - DetectorThickness/2;
+    physiDetector->SetTranslation(G4ThreeVector(0, 0, DetectorPosition));
+    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+    G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
+void MiniOrangeDetectorConstruction::SetDetectorThickness(G4double val) {
+
+    DetectorThickness = val;
+    DetectorActiveArea = 50.*mm2; // Active area of the detector
+    G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
+
+    solidDetector = new G4Tubs("Detector",
+                                   0, DetectorRadius,
+                                   DetectorThickness / 2.0,
+                                   0.*deg, 360.*deg);
+
+    logicDetector = new G4LogicalVolume(solidDetector,
+                                      DetectorMaterial,
+                                      "Detector");
+
+    physiDetector->SetLogicalVolume(logicDetector);
+
+    UpdateDetectorComponents();
+
+    physiDetector->SetTranslation(G4ThreeVector(0, 0, DetectorPosition - DetectorThickness/2.));
+
+    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+    G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
+void MiniOrangeDetectorConstruction::UpdateDetectorComponents() {
+    // Assuming that the detector window and housing are positioned relative to the detector's dimensions.
+
+      solidDetectorWindow = new G4Tubs("DetectorWindow",
+                                        0,  // Inner radius
+                                        std::sqrt(DetectorActiveArea / 3.14),  // Outer radius
+                                        DetectorWindowThickness / 2.,  // Half-height
+                                        0.*deg,  // Start angle
+                                        360.*deg);  // Spanning angle
+
+      logicDetectorWindow = new G4LogicalVolume(solidDetectorWindow,
+                                          DetectorMaterial,
+                                          "DetectorWindow");
+
+      // Recalculate the position if it's dependent on the detector's thickness
+      G4double windowZPosition = (DetectorThickness / 2. - DetectorWindowThickness / 2.);
+
+      new G4PVPlacement(nullptr,  // No rotation
+                  G4ThreeVector(0, 0, windowZPosition),  // Position in the detector
+                  logicDetectorWindow,
+                  "DetectorWindow",
+                  logicDetector,  // Parent volume
+                  false,  // No boolean operation
+                  0);  // Copy number
+
+      DetectorActiveArea = 50.*mm2; // Active area of the detector
+      G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
+
+      // Create the outer housing for the detector
+      solidDetectorHousing = new G4Tubs("DetectorHousing",
+                                        DetectorRadius,  // Matches the outer radius of the detector
+                                        DetectorHousingOuterDiameter / 2.,  // Outer radius of the housing
+                                        DetectorHousingThickness / 2.,  // Half-height
+                                        0.*deg,  // Start angle
+                                        360.*deg);  // Full angular span
+
+      logicDetectorHousing = new G4LogicalVolume(solidDetectorHousing,
+                                                DetectorHousingMaterial,
+                                                "DetectorHousing");
+
+      // Calculate the position to set the detector such that the front surface is 1 mm from the housing front
+      G4double detectorHousingPositionZ = DetectorHousingThickness / 2. - DetectorThickness / 2. - 1.*mm;
+
+      // Place the detector within the housing
+      new G4PVPlacement(nullptr,  // No rotation
+                        G4ThreeVector(0, 0, -detectorHousingPositionZ),  // Position relative to housing center
+                        logicDetectorHousing,
+                        "Detector",
+                        logicDetector,  // Parent volume
+                        false,  // No boolean operation
+                        0);  // Copy number
+
+            // Create an additional housing section to fill the gap at the back of the detector
+      G4double extraHousingLength = DetectorHousingThickness - (DetectorThickness + 1.*mm);
+      G4Tubs* solidExtraHousing = new G4Tubs("ExtraHousing",
+                                            0,  // Inner radius
+                                            DetectorRadius,  // Matches outer radius of the detector
+                                            extraHousingLength / 2.,  // Half-height
+                                            0.*deg,  // Start angle
+                                            360.*deg);  // Full angular span
+
+      G4LogicalVolume* logicExtraHousing = new G4LogicalVolume(solidExtraHousing,
+                                                              DetectorHousingMaterial,
+                                                              "ExtraHousing");
+
+      // Position the additional housing section
+      G4double extraHousingPositionZ = DetectorThickness / 2. + extraHousingLength / 2.;
+      new G4PVPlacement(nullptr,  // No rotation
+                        G4ThreeVector(0, 0, -extraHousingPositionZ),  // Position relative to detector center
+                        logicExtraHousing,
+                        "ExtraHousing",
+                        logicDetector,  // Parent volume
+                        false,  // No boolean operation
+                        0);  // Copy number
+
+      // Visualization attributes for various components
+      G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
+      visAttributesDetector->SetVisibility(true);
+      visAttributesDetector->SetForceSolid(true);
+      logicDetector->SetVisAttributes(visAttributesDetector);
+
+      G4VisAttributes* visAttributesWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // Red for the window
+      visAttributesWindow->SetVisibility(true);
+      visAttributesWindow->SetForceSolid(true);
+      logicDetectorWindow->SetVisAttributes(visAttributesWindow);
+
+      G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
+      visAttributesHousing->SetVisibility(true);
+      visAttributesHousing->SetForceSolid(false);
+      logicDetectorHousing->SetVisAttributes(visAttributesHousing);
+
+      G4VisAttributes* visAttributesExtraHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the extra housing
+      visAttributesExtraHousing->SetVisibility(true);
+      visAttributesExtraHousing->SetForceSolid(true);
+      logicExtraHousing->SetVisAttributes(visAttributesExtraHousing);
+
+    }
