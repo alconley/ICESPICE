@@ -65,7 +65,7 @@ To simulate different detector behaviors based on their thickness, use the follo
 /MiniOrange/Detector/Thickness value
 ```
 
-Here, `value` can range from 0 to 3000 micrometers. T
+Here, `value` can range from 0 to 3000 micrometers. 
 
 
 #### Changing Detector Position
@@ -117,34 +117,3 @@ root -x plotHisto.C
 ```
 
 This command initiates a ROOT session that executes the `plotHisto.C` script, providing a graphical representation of the energy spectrum captured by the detectors.
-
-
-
-
-
-
-
-
-
-
-
-
-
-### PIPS Detectors
-
-A goal is also to create a simulation for our [PIPS Detectors](https://www.mirion.com/products/technologies/spectroscopy-scientific-analysis/research-education-and-industrial-solutions/passivated-implanted-planar-silicon-pips-detectors/standard-pips-detectors/pips-detectors-passivated-implanted-planar-silicon-detectors). At FSU, we have 4 different detectors. All detectors have an active area of 50mm^2, but have thicknesses 100, 300, 500, 1000 microns. The thickness of the detectors can be changed in the GUI with
-
-/MiniOrange/Detector/Thickness value
-
-where value is any value between 0 and 3000. Units are in micrometers.
-
-The position of the detector can be changed using  
-
-/MiniOrange/Detector/Position value
-
-where value is any value between -60 and 0. Units are in millimeters.
-
-The energy deposited in the detector for each event is stored in a root file. The histogram can be plotted using
-
-root -x plotHisto.C
-
