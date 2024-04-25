@@ -24,7 +24,7 @@ with open(macro_path, 'w') as file:
             # Loop through energies from 50 keV to 2000 keV in steps of 50 keV
             for energy in range(50, 2050, 50):
                 # Write the command to set the energy
-                file.write(f'/ICESPICE/source/Energy {energy}\n')
+                file.write(f'/gun/energy {energy} keV\n')
                 
                 # Write the command to set the filename of the output root file
                 file.write(f'/analysis/setFileName ICESPICE_PIPS{thickness}_f50mm_g{abs(position)}mm_{energy}keV.root\n')
