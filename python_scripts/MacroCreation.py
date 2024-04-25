@@ -1,5 +1,5 @@
 # Define the file path for the macro
-macro_path = './ICESPICE_V1_All_Configurations.mac'
+macro_path = './ICESPICE.mac'
 
 n_particles = 10000
 

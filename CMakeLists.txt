@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 3.16...3.21)
-project(mini_orange)
+project(ice_spice)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -51,14 +51,14 @@ target_link_libraries(ICESPICE ${Geant4_LIBRARIES})
 # build purging_magnet. This is so that we can run the executable directly because it
 # relies on these scripts being in the current working directory.
 #
-set(purging_magnet_SCRIPTS
-    MacroTesting.mac 
+set(ICESPICE_SCRIPT
+    ICESPICE.mac 
     vis.mac 
     gui.mac
     ICESPICE3D.TABLE
   )
 
-foreach(_script ${purging_magnet_SCRIPTS})
+foreach(_script ${ICESPICE_SCRIPT})
   configure_file(
     ${PROJECT_SOURCE_DIR}/${_script}
     ${PROJECT_BINARY_DIR}/${_script}
@@ -70,7 +70,7 @@ endforeach()
 # Add program to the project targets
 # (this avoids the need of typing the program name after make)
 #
-add_custom_target(mini_orange DEPENDS ICESPICE)
+add_custom_target(ice_spice DEPENDS ICESPICE)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
