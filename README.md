@@ -43,7 +43,7 @@ For more information or to request the large field map file, please reach out vi
 
 ## PIPS Detectors
 
-This project includes simulations of [PIPS Detectors](https://www.mirion.com/products/technologies/spectroscopy-scientific-analysis/research-education-and-industrial-solutions/passivated-implanted-planar-silicon-pips-detectors/standard-pips-detectors/pips-detectors-passivated-implanted-planar-silicon-detectors), commonly used at Florida State University (FSU) for various radiation detection applications. PIPS (Passivated Implanted Planar Silicon) detectors are known for their high precision and reliability.
+This project includes simulations of [PIPS Detectors](https://www.mirion.com/products/technologies/spectroscopy-scientific-analysis/research-education-and-industrial-solutions/passivated-implanted-planar-silicon-pips-detectors/standard-pips-detectors/pips-detectors-passivated-implanted-planar-silicon-detectors).
 
 ### Detector Specifications
 
