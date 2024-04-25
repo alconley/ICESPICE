@@ -24,46 +24,55 @@
 // ********************************************************************
 //
 // Code developed by:
-//  S.Larsson and J. Generowicz.
+//  S.Larsson
 //
-//    *************************************
-//    *                                   *
-//    *    MiniOrangeTabulatedField3D.hh     *
-//    *                                   *
-//    *************************************
+//    ********************************
+//    *                              *
+//    *    ICESPICEEventAction.cc     *
+//    *                              *
+//    ********************************
 //
 //
 
-#include "globals.hh"
-#include "G4MagneticField.hh"
-#include "G4ios.hh"
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-#include <fstream>
-#include <vector>
-#include <cmath>
+#include "ICESPICEEventAction.hh"
+#include "ICESPICERunAction.hh"
 
-class MiniOrangeTabulatedField3D
-#ifndef STANDALONE
- : public G4MagneticField
-#endif
-{
-  
-  // Storage space for the table
-  std::vector< std::vector< std::vector< double > > > xField;
-  std::vector< std::vector< std::vector< double > > > yField;
-  std::vector< std::vector< std::vector< double > > > zField;
-  // The dimensions of the table
-  int nx,ny,nz; 
-  // The physical limits of the defined region
-  double minx, maxx, miny, maxy, minz, maxz;
-  // The physical extent of the defined region
-  double dx, dy, dz;
-  double fZoffset;
-  bool invertX, invertY, invertZ;
+#include "G4Event.hh"
+#include "G4EventManager.hh"
 
-public:
-  MiniOrangeTabulatedField3D(const char* filename, double zOffset );
-  void  GetFieldValue( const  double Point[4],
-		       double *Bfield          ) const;
-};
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
+ICESPICEEventAction::ICESPICEEventAction()
+  : G4UserEventAction(),
+    fEnergySilicon(0.)
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+
+ICESPICEEventAction::~ICESPICEEventAction()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+
+void ICESPICEEventAction::BeginOfEventAction(const G4Event* evt)
+{ 
+  fEnergySilicon = 0.;
+
+  G4int evtNb = evt->GetEventID();
+ if (evtNb%printModulo == 0) 
+   G4cout << "\n---> Begin Of Event: " << evtNb << G4endl;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+
+void ICESPICEEventAction::EndOfEventAction(const G4Event* evt)
+{  
+  auto analysisManager = G4AnalysisManager::Instance();
+  analysisManager->FillH1(0, fEnergySilicon);
+
+  // analysisManager->FillNtupleDColumn(0, fEnergySilicon);
+  // analysisManager->AddNtupleRow(); 
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

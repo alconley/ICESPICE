@@ -28,13 +28,13 @@
 //
 //    *****************************************
 //    *                                       *
-//    *    MiniOrangeDetectorConstruction.cc     *
+//    *    ICESPICEDetectorConstruction.cc     *
 //    *                                       *
 //    *****************************************
 //
 //
-#include "MiniOrangeDetectorConstruction.hh"
-#include "MiniOrangeTabulatedField3D.hh"
+#include "ICESPICEDetectorConstruction.hh"
+#include "ICESPICETabulatedField3D.hh"
 #include "globals.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
@@ -79,14 +79,14 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 0          // Magnetic field grid
+#define MAG 1          // Magnetic field grid
 #define MAGNETS 1      // N42 1"X1"x1/8"
 #define ATTENUATOR 1   // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-MiniOrangeDetectorConstruction::MiniOrangeDetectorConstruction()
+ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
   :physiWorld(NULL), logicWorld(NULL), solidWorld(NULL),
     physiAttenuator(NULL), logicAttenuator(NULL), solidAttenuator(NULL), // AC
     physiMagnet(NULL), logicMagnet(NULL), solidMagnet(NULL), // AC
@@ -112,14 +112,14 @@ MiniOrangeDetectorConstruction::MiniOrangeDetectorConstruction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-MiniOrangeDetectorConstruction::~MiniOrangeDetectorConstruction()
+ICESPICEDetectorConstruction::~ICESPICEDetectorConstruction()
 {
     delete fMessenger;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-G4VPhysicalVolume* MiniOrangeDetectorConstruction::Construct()
+G4VPhysicalVolume* ICESPICEDetectorConstruction::Construct()
 
 {
   DefineMaterials();
@@ -128,7 +128,7 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::Construct()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void MiniOrangeDetectorConstruction::DefineMaterials()
+void ICESPICEDetectorConstruction::DefineMaterials()
 { 
   //This function illustrates the possible ways to define materials.
   //Density and mass per mole taken from Physics Handbook for Science
@@ -239,7 +239,7 @@ void MiniOrangeDetectorConstruction::DefineMaterials()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
+G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
 {
   // Complete the parameters definition
   
@@ -471,7 +471,7 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
 				  "Attenuator");              //its name
   
   physiAttenuator = new G4PVPlacement(0,			             //no rotation
-  				 G4ThreeVector(0.,0.,AttenuatorVolumePosition), //at (0,0,0)
+  				 G4ThreeVector(0.,0.,AttenuatorVolumePosition+2.0*mm), //at (0,0,0)
                                  "Attenuator",		             //its name
                                  logicAttenuator,		             //its logical volume
                                  physiWorld,			             //its mother  volume
@@ -528,7 +528,7 @@ G4VPhysicalVolume* MiniOrangeDetectorConstruction::ConstructCalorimeter()
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void MiniOrangeDetectorConstruction::ConstructSDandField()
+void ICESPICEDetectorConstruction::ConstructSDandField()
 {
 //  Magnetic Field
 //
@@ -537,15 +537,15 @@ void MiniOrangeDetectorConstruction::ConstructSDandField()
   if (fField.Get() == 0)
     {
       //Field grid in A9.TABLE. File must be in accessible from run urn directory. 
-      G4MagneticField* MiniOrangeField= new MiniOrangeTabulatedField3D("MiniOrange3D.TABLE", zOffset);
-      fField.Put(MiniOrangeField);
+      G4MagneticField* ICESPICEField= new ICESPICETabulatedField3D("ICESPICE3D.TABLE", zOffset);
+      fField.Put(ICESPICEField);
       
       //This is thread-local
       G4FieldManager* pFieldMgr = 
 	G4TransportationManager::GetTransportationManager()->GetFieldManager();
            
       G4cout<< "DeltaStep "<<pFieldMgr->GetDeltaOneStep()/mm <<"mm" <<G4endl;
-      //G4ChordFinder *pChordFinder = new G4ChordFinder(MiniOrangeField);
+      //G4ChordFinder *pChordFinder = new G4ChordFinder(ICESPICEField);
 
       pFieldMgr->SetDetectorField(fField.Get());
       pFieldMgr->CreateChordFinder(fField.Get());
@@ -555,16 +555,16 @@ void MiniOrangeDetectorConstruction::ConstructSDandField()
 }
 
 
-void MiniOrangeDetectorConstruction::DefineCommands() {
+void ICESPICEDetectorConstruction::DefineCommands() {
 
     fMessenger = new G4GenericMessenger(this, 
-                                        "/MiniOrange/Detector/", 
+                                        "/ICESPICE/Detector/", 
                                         "Detector control");
 
     // Detector Position
     G4GenericMessenger::Command& detectorPosition
       = fMessenger->DeclareMethodWithUnit("Position","mm",
-                                  &MiniOrangeDetectorConstruction::SetDetectorPosition, 
+                                  &ICESPICEDetectorConstruction::SetDetectorPosition, 
                                   "Set the position of the detector");
     detectorPosition.SetParameterName("position", true);
     detectorPosition.SetRange("position>-100. && position<=0.");
@@ -573,7 +573,7 @@ void MiniOrangeDetectorConstruction::DefineCommands() {
     // Detector Thickness
     G4GenericMessenger::Command& detectorThickness
       = fMessenger->DeclareMethodWithUnit("Thickness","micrometer",
-                                  &MiniOrangeDetectorConstruction::SetDetectorThickness, 
+                                  &ICESPICEDetectorConstruction::SetDetectorThickness, 
                                   "Set the thickness of the detector");
 
     detectorThickness.SetParameterName("thickness", true);
@@ -582,14 +582,14 @@ void MiniOrangeDetectorConstruction::DefineCommands() {
     
 }
 
-void MiniOrangeDetectorConstruction::SetDetectorPosition(G4double val) {
+void ICESPICEDetectorConstruction::SetDetectorPosition(G4double val) {
     DetectorPosition = val - DetectorThickness/2;
     physiDetector->SetTranslation(G4ThreeVector(0, 0, DetectorPosition));
     G4RunManager::GetRunManager()->GeometryHasBeenModified();
     G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
-void MiniOrangeDetectorConstruction::SetDetectorThickness(G4double val) {
+void ICESPICEDetectorConstruction::SetDetectorThickness(G4double val) {
 
     DetectorThickness = val;
     DetectorActiveArea = 50.*mm2; // Active area of the detector
@@ -614,7 +614,7 @@ void MiniOrangeDetectorConstruction::SetDetectorThickness(G4double val) {
     G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
-void MiniOrangeDetectorConstruction::UpdateDetectorComponents() {
+void ICESPICEDetectorConstruction::UpdateDetectorComponents() {
     // Assuming that the detector window and housing are positioned relative to the detector's dimensions.
 
       solidDetectorWindow = new G4Tubs("DetectorWindow",

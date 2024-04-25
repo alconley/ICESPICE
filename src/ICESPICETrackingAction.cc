@@ -26,47 +26,31 @@
 // Code developed by:
 //  S.Larsson
 //
-//    ******************************
-//    *                            *
-//    *    MiniOrangeRunAction.hh     *
-//    *                            *
-//    ******************************
+//    ***********************************
+//    *                                 *
+//    *    ICESPICETrackingAction.cc     *
+//    *                                 *
+//    ***********************************
 //
 //
 
-#ifndef MiniOrangeRunAction_h
-#define MiniOrangeRunAction_h 1
+#include "ICESPICETrackingAction.hh"
+#include "ICESPICERunAction.hh"
 
-#include "G4UserRunAction.hh"
-#include "globals.hh"
-#include <iostream>
+#include "G4TrackingManager.hh"
+#include "G4Track.hh"
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-class G4Run;
+ICESPICETrackingAction::ICESPICETrackingAction()
+{ }
 
-class MiniOrangeRunAction : public G4UserRunAction
-{
-public:
-  
-  MiniOrangeRunAction();
-  ~MiniOrangeRunAction();
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-  void BeginOfRunAction(const G4Run*);
-  void EndOfRunAction(const G4Run*);
-    
-  void  SetRndmFreq(G4int   val)  {saveRndm = val;}
-  G4int GetRndmFreq()             {return saveRndm;}
-
-
-private:
-  G4int saveRndm;
-};
-
-#endif
-
-
-
+void ICESPICETrackingAction::PostUserTrackingAction(const G4Track*)
+{   
+}
 
 
 

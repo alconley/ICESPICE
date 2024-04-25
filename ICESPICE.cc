@@ -28,7 +28,7 @@
 //
 //    *********************
 //    *                   *
-//    *    MiniOrange.cc     *
+//    *    ICESPICE.cc     *
 //    *                   *
 //    *********************
 //
@@ -43,9 +43,9 @@
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
 #include "G4AnalysisManager.hh"
-#include "MiniOrangeDetectorConstruction.hh"
-#include "MiniOrangePhysicsList.hh"
-#include "MiniOrangeActionInitializer.hh"
+#include "ICESPICEDetectorConstruction.hh"
+#include "ICESPICEPhysicsList.hh"
+#include "ICESPICEActionInitializer.hh"
 
 int main(int argc,char** argv) {
 
@@ -59,9 +59,9 @@ int main(int argc,char** argv) {
   runManager->SetNumberOfThreads(nThreads);
 
   // set mandatory initialization classes
-  runManager->SetUserInitialization(new MiniOrangeDetectorConstruction);
-  runManager->SetUserInitialization(new MiniOrangePhysicsList);
-  runManager->SetUserInitialization(new MiniOrangeActionInitializer());
+  runManager->SetUserInitialization(new ICESPICEDetectorConstruction);
+  runManager->SetUserInitialization(new ICESPICEPhysicsList);
+  runManager->SetUserInitialization(new ICESPICEActionInitializer());
 
   // visualization manager
   G4VisManager* visManager = new G4VisExecutive;
@@ -91,10 +91,10 @@ int main(int argc,char** argv) {
       UImanager->ApplyCommand(command+fileName);
     }
 
-  // Save histograms
-  G4AnalysisManager* man = G4AnalysisManager::Instance();
-  man->Write();
-  man->CloseFile();
+  // // Save histograms
+  // G4AnalysisManager* man = G4AnalysisManager::Instance();
+  // man->Write();
+  // man->CloseFile();
 
   // job termination
   delete visManager;

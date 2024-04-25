@@ -43,8 +43,8 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(MiniOrange MiniOrange.cc ${sources} ${headers})
-target_link_libraries(MiniOrange ${Geant4_LIBRARIES})
+add_executable(ICESPICE ICESPICE.cc ${sources} ${headers})
+target_link_libraries(ICESPICE ${Geant4_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
@@ -55,7 +55,7 @@ set(purging_magnet_SCRIPTS
     MacroTesting.mac 
     vis.mac 
     gui.mac
-    MiniOrange3D.TABLE
+    ICESPICE3D.TABLE
   )
 
 foreach(_script ${purging_magnet_SCRIPTS})
@@ -70,10 +70,10 @@ endforeach()
 # Add program to the project targets
 # (this avoids the need of typing the program name after make)
 #
-add_custom_target(mini_orange DEPENDS MiniOrange)
+add_custom_target(mini_orange DEPENDS ICESPICE)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS MiniOrange DESTINATION bin)
+install(TARGETS ICESPICE DESTINATION bin)
 

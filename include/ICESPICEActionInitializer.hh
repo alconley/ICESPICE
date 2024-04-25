@@ -23,36 +23,32 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// ********************************************************************
-// Code developed by:
-//  S.Larsson
 //
-//    ************************************
-//    *                                  *
-//    *    MiniOrangeSteppingVerbose.hh     *
-//    *                                  *
-//    ************************************
-//
-//
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class MiniOrangeSteppingVerbose;
+#ifndef ICESPICEActionInitializer_h
+#define ICESPICEActionInitializer_h 1
 
-#ifndef MiniOrangeSteppingVerbose_h
-#define MiniOrangeSteppingVerbose_h 1
+#include "G4VUserActionInitialization.hh"
+#include "G4VSteppingVerbose.hh"
+#include "globals.hh"
 
-#include "G4SteppingVerbose.hh"
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class MiniOrangeSteppingVerbose : public G4SteppingVerbose {
+class ICESPICEActionInitializer : public G4VUserActionInitialization
+{
+public:
 
-public:   
+  ICESPICEActionInitializer();
+  ~ICESPICEActionInitializer(){;};
   
-  //Constructor/Destructor
-  MiniOrangeSteppingVerbose();
-  ~MiniOrangeSteppingVerbose();
-  
-  void StepInfo();
-  void TrackingStarted();
-
+  void Build() const;
+  void BuildForMaster() const;
+  G4VSteppingVerbose* InitializeSteppingVerbose() const;
 };
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 #endif
+

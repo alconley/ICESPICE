@@ -28,7 +28,7 @@
 //  Modified by: Alex Conley
 //    *****************************************
 //    *                                       *
-//    *    MiniOrangeDetectorConstruction.hh     *
+//    *    ICESPICEDetectorConstruction.hh     *
 //    *                                       *
 //    *****************************************
 //
@@ -36,8 +36,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-#ifndef MiniOrangeDetectorConstruction_h
-#define MiniOrangeDetectorConstruction_h 1
+#ifndef ICESPICEDetectorConstruction_h
+#define ICESPICEDetectorConstruction_h 1
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
@@ -54,7 +54,7 @@ class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4Material;
 class G4UniformMagField;
-class MiniOrangeTabulatedField3D;
+class ICESPICETabulatedField3D;
 
 class G4GenericMessenger;
 
@@ -62,11 +62,11 @@ class G4Tubs; // AC
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-class MiniOrangeDetectorConstruction : public G4VUserDetectorConstruction
+class ICESPICEDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-  MiniOrangeDetectorConstruction();
-  ~MiniOrangeDetectorConstruction();
+  ICESPICEDetectorConstruction();
+  ~ICESPICEDetectorConstruction();
 
 public:  
      

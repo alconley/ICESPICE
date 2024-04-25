@@ -26,57 +26,60 @@
 // Code developed by:
 //  S.Larsson
 //
-//    ********************************
-//    *                              *
-//    *    MiniOrangePhysicsList.hh     *
-//    *                              *
-//    ********************************
+//    ***********************************
+//    *                                 *
+//    *    ICESPICESteppingAction.cc     *
+//    *                                 *
+//    ***********************************
+//
 //
 
-#ifndef MiniOrangePhysicsList_h
-#define MiniOrangePhysicsList_h 1
-#include "G4VModularPhysicsList.hh"
-#include "globals.hh"
-#include "G4EmConfigurator.hh"
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-class MiniOrangePhysicsList: public G4VModularPhysicsList
-{
-public:
-  MiniOrangePhysicsList();
-  ~MiniOrangePhysicsList();
-  
-protected:
-  // Construct particle and physics
-  void ConstructParticle();
-  void ConstructProcess();
-  
-  void SetCuts();
-  
-public: 
-  // Set Cuts
-  void SetGammaCut(G4double);
-  void SetElectronCut(G4double);
-  void SetPositronCut(G4double);
-  void SetProtonCut(G4double);
-  
-  void SetGammaLowLimit(G4double);
-  void SetElectronLowLimit(G4double);
-  void SetPositronLowLimit(G4double);
-  void SetProtonLowLimit(G4double);
-  void SetGEPLowLimit(G4double);
+#include "ICESPICESteppingAction.hh"
+#include "ICESPICERunAction.hh"
+#include "ICESPICEEventAction.hh"
+#include "ICESPICEDetectorConstruction.hh"
 
-  void SetGELowLimit(G4double);
-  
-private:
-  
-  G4double cutForGamma;
-  G4double cutForElectron;
-  G4double cutForPositron;
-  G4double cutForProton;
-  G4VPhysicsConstructor* fEmPhysicsList;
-  G4VPhysicsConstructor* fDecPhysicsList;
-};
-#endif
+#include "G4SteppingManager.hh"
+#include "G4Electron.hh"
+#include "G4Gamma.hh"
+#include "G4Positron.hh"
+#include "G4VTouchable.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4AnalysisManager.hh"
+
+#include "G4SystemOfUnits.hh"
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+
+ICESPICESteppingAction::ICESPICESteppingAction(
+                      const ICESPICEDetectorConstruction* detectorConstruction,
+                      ICESPICEEventAction* eventAction)
+  : G4UserSteppingAction(),
+    fDetConstruction(detectorConstruction),
+    fEventAction(eventAction)
+{}
 
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
+ICESPICESteppingAction::~ICESPICESteppingAction()
+{ }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+
+void ICESPICESteppingAction::UserSteppingAction(const G4Step* aStep)
+  
+{ 
+    // get volume of the current step
+	auto volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
+	
+	// energy deposit
+	auto edep = aStep->GetTotalEnergyDeposit();
+			
+	if ( volume == fDetConstruction->GetSiliconPV() ) {
+		fEventAction->AddSil(edep);
+	}
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

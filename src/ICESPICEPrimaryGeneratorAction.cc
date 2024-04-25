@@ -28,7 +28,7 @@
 //
 //    ********************************************
 //    *                                          *
-//    *    MiniOrangePrimaryGeneratorAction.cc     *
+//    *    ICESPICEPrimaryGeneratorAction.cc     *
 //    *                                          *
 //    ********************************************
 //
@@ -36,9 +36,9 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-#include "MiniOrangePrimaryGeneratorAction.hh"
+#include "ICESPICEPrimaryGeneratorAction.hh"
 
-#include "MiniOrangeDetectorConstruction.hh"
+#include "ICESPICEDetectorConstruction.hh"
 
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
@@ -56,7 +56,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-MiniOrangePrimaryGeneratorAction::MiniOrangePrimaryGeneratorAction()
+ICESPICEPrimaryGeneratorAction::ICESPICEPrimaryGeneratorAction()
   :rndmVertex(false)
 {
   //default kinematic
@@ -84,14 +84,14 @@ MiniOrangePrimaryGeneratorAction::MiniOrangePrimaryGeneratorAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-MiniOrangePrimaryGeneratorAction::~MiniOrangePrimaryGeneratorAction()
+ICESPICEPrimaryGeneratorAction::~ICESPICEPrimaryGeneratorAction()
 {
   delete particleGun;
   }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void MiniOrangePrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
+void ICESPICEPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
 
   // Set a random direction within the lower half-sphere

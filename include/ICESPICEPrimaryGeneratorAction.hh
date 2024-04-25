@@ -23,53 +23,46 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+// ********************************************************************
 // Code developed by:
 //  S.Larsson
 //
-//    ***********************************
-//    *                                 *
-//    *    MiniOrangeSteppingAction.hh     *
-//    *                                 *
-//    ***********************************
+//    ********************************************
+//    *                                          *
+//    *    ICESPICEPrimaryGeneratorAction.hh     *
+//    *                                          *
+//    ********************************************
 //
 //
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-#ifndef MiniOrangeSteppingAction_h
-#define MiniOrangeSteppingAction_h 1
-
-#include "G4UserSteppingAction.hh"
-#include "G4VPVParameterisation.hh"
-#include "G4PVParameterised.hh"
-#include "G4Tubs.hh"
-
-class MiniOrangeDetectorConstruction;
-class MiniOrangeAnalysisManager;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-class MiniOrangeEventAction;
+#ifndef ICESPICEPrimaryGeneratorAction_h
+#define ICESPICEPrimaryGeneratorAction_h 1
 
-class MiniOrangeSteppingAction : public G4UserSteppingAction
+#include "G4VUserPrimaryGeneratorAction.hh"
+#include "globals.hh"
+
+class G4ParticleGun;
+class G4Event;
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+
+class ICESPICEPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-  MiniOrangeSteppingAction(const MiniOrangeDetectorConstruction*, 
-                            MiniOrangeEventAction* eventAction);
-  ~MiniOrangeSteppingAction();
+  ICESPICEPrimaryGeneratorAction();    
+  ~ICESPICEPrimaryGeneratorAction();
   
-  
-  void UserSteppingAction(const G4Step*);
+public:
+  void GeneratePrimaries(G4Event*);
+  void SetRndmVertex(G4bool val) { rndmVertex = val;} 
   
 private:
-  const MiniOrangeDetectorConstruction* fDetConstruction = nullptr;
-  MiniOrangeEventAction* fEventAction = nullptr;
-  
+  G4ParticleGun*                  particleGun;
+  G4bool                       rndmVertex;      
 };
 
-
-
 #endif
-
-
 
 

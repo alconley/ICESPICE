@@ -42,7 +42,7 @@ header_info = f"""
 00 [METRE] """ 
  
 # Write to file
-output_file_path = './MiniOrange3D.TABLE'
+output_file_path = './ICESPICE3D.TABLE'
 with open(output_file_path, 'w') as file:
     file.write(header_info + '\n')
     formatted_data.to_csv(file, header=False, index=False, sep=' ', mode='a')

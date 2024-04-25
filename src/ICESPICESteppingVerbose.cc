@@ -28,30 +28,30 @@
 //
 //    ************************************
 //    *                                  *
-//    *    MiniOrangeSteppingVerbose.cc     *
+//    *    ICESPICESteppingVerbose.cc     *
 //    *                                  *
 //    ************************************
 //
 //
 
-#include "MiniOrangeSteppingVerbose.hh"
+#include "ICESPICESteppingVerbose.hh"
 #include "G4SteppingManager.hh"
 
 #include "G4UnitsTable.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-MiniOrangeSteppingVerbose::MiniOrangeSteppingVerbose()
+ICESPICESteppingVerbose::ICESPICESteppingVerbose()
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-MiniOrangeSteppingVerbose::~MiniOrangeSteppingVerbose()
+ICESPICESteppingVerbose::~ICESPICESteppingVerbose()
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void MiniOrangeSteppingVerbose::StepInfo()
+void ICESPICESteppingVerbose::StepInfo()
 {
   CopyState();
   
@@ -138,12 +138,12 @@ void MiniOrangeSteppingVerbose::StepInfo()
     
   }
   G4cout.precision(prec);
-  G4cout<< "exit MiniOrangeSteppingVerbose::StepInfo   " <<G4endl;
+  G4cout<< "exit ICESPICESteppingVerbose::StepInfo   " <<G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void MiniOrangeSteppingVerbose::TrackingStarted()
+void ICESPICESteppingVerbose::TrackingStarted()
 {
   CopyState();
 G4int prec = G4cout.precision(3);
@@ -177,5 +177,5 @@ G4int prec = G4cout.precision(3);
     G4cout << std::setw(10) << "initStep" << G4endl;
   }
   G4cout.precision(prec);
-  G4cout<< "exit MiniOrangeSteppingVerbose::TrackingStarted()   " <<G4endl;
+  G4cout<< "exit ICESPICESteppingVerbose::TrackingStarted()   " <<G4endl;
 }

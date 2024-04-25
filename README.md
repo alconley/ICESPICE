@@ -22,7 +22,7 @@ mkdir build
 cd build
 cmake ..
 make
-./MiniOrange
+./ICESPICE
 ```
 
 ## COMSOL Magnetic Field Configuration
@@ -62,7 +62,7 @@ All detectors share an active area of 50 mm², making them suitable for detailed
 To simulate different detector behaviors based on their thickness, use the following command in the GEANT4 GUI:
 
 ```bash
-/MiniOrange/Detector/Thickness value
+/ICESPICE/Detector/Thickness value
 ```
 
 Here, `value` can range from 0 to 3000 micrometers. 
@@ -73,7 +73,7 @@ Here, `value` can range from 0 to 3000 micrometers.
 The position of the detector can also be modified to better understand its detection capabilities under different spatial configurations:
 
 ```bash
-/MiniOrange/Detector/Position value
+/ICESPICE/Detector/Position value
 ```
 
 Where `value` can range from -60 to 0 millimeters and represents the value from the origin to the surface of the detector.

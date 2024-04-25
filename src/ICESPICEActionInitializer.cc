@@ -27,56 +27,56 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "MiniOrangeActionInitializer.hh"
-#include "MiniOrangeDetectorConstruction.hh"
-#include "MiniOrangePrimaryGeneratorAction.hh"
-#include "MiniOrangeRunAction.hh"
-#include "MiniOrangeEventAction.hh"
-#include "MiniOrangeTrackingAction.hh"
-#include "MiniOrangeSteppingAction.hh"
-#include "MiniOrangeSteppingVerbose.hh"
+#include "ICESPICEActionInitializer.hh"
+#include "ICESPICEDetectorConstruction.hh"
+#include "ICESPICEPrimaryGeneratorAction.hh"
+#include "ICESPICERunAction.hh"
+#include "ICESPICEEventAction.hh"
+#include "ICESPICETrackingAction.hh"
+#include "ICESPICESteppingAction.hh"
+#include "ICESPICESteppingVerbose.hh"
 
 #include "G4RunManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-MiniOrangeActionInitializer::MiniOrangeActionInitializer() : 
+ICESPICEActionInitializer::ICESPICEActionInitializer() : 
   G4VUserActionInitialization()
 {;}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MiniOrangeActionInitializer::Build() const 
+void ICESPICEActionInitializer::Build() const 
 {
-  const MiniOrangeDetectorConstruction* detector = 
-        static_cast<const MiniOrangeDetectorConstruction*>
+  const ICESPICEDetectorConstruction* detector = 
+        static_cast<const ICESPICEDetectorConstruction*>
         (G4RunManager::GetRunManager()->GetUserDetectorConstruction()); 
 
-  SetUserAction(new MiniOrangePrimaryGeneratorAction());
+  SetUserAction(new ICESPICEPrimaryGeneratorAction());
 
   //Optional user classes
-  SetUserAction(new MiniOrangeRunAction());
-  SetUserAction(new MiniOrangeEventAction());
-  SetUserAction(new MiniOrangeTrackingAction()); 
-  // SetUserAction(new MiniOrangeSteppingAction(detector));
+  SetUserAction(new ICESPICERunAction());
+  SetUserAction(new ICESPICEEventAction());
+  SetUserAction(new ICESPICETrackingAction()); 
+  // SetUserAction(new ICESPICESteppingAction(detector));
 
-  auto eventAction = new MiniOrangeEventAction;
+  auto eventAction = new ICESPICEEventAction;
   SetUserAction(eventAction);
-  SetUserAction(new MiniOrangeSteppingAction(detector,eventAction));
+  SetUserAction(new ICESPICESteppingAction(detector,eventAction));
 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MiniOrangeActionInitializer::BuildForMaster() const
+void ICESPICEActionInitializer::BuildForMaster() const
 {
-  SetUserAction(new MiniOrangeRunAction());
+  SetUserAction(new ICESPICERunAction());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-G4VSteppingVerbose* MiniOrangeActionInitializer::InitializeSteppingVerbose() const
+G4VSteppingVerbose* ICESPICEActionInitializer::InitializeSteppingVerbose() const
 {
   // Verbose output class
-  return new MiniOrangeSteppingVerbose();
+  return new ICESPICESteppingVerbose();
 }
 

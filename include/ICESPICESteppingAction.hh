@@ -28,58 +28,48 @@
 //
 //    ***********************************
 //    *                                 *
-//    *    MiniOrangeSteppingAction.cc     *
+//    *    ICESPICESteppingAction.hh     *
 //    *                                 *
 //    ***********************************
 //
 //
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+
+#ifndef ICESPICESteppingAction_h
+#define ICESPICESteppingAction_h 1
+
+#include "G4UserSteppingAction.hh"
+#include "G4VPVParameterisation.hh"
+#include "G4PVParameterised.hh"
+#include "G4Tubs.hh"
+
+class ICESPICEDetectorConstruction;
+class ICESPICEAnalysisManager;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-#include "MiniOrangeSteppingAction.hh"
-#include "MiniOrangeRunAction.hh"
-#include "MiniOrangeEventAction.hh"
-#include "MiniOrangeDetectorConstruction.hh"
+class ICESPICEEventAction;
 
-#include "G4SteppingManager.hh"
-#include "G4Electron.hh"
-#include "G4Gamma.hh"
-#include "G4Positron.hh"
-#include "G4VTouchable.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4AnalysisManager.hh"
-
-#include "G4SystemOfUnits.hh"
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-MiniOrangeSteppingAction::MiniOrangeSteppingAction(
-                      const MiniOrangeDetectorConstruction* detectorConstruction,
-                      MiniOrangeEventAction* eventAction)
-  : G4UserSteppingAction(),
-    fDetConstruction(detectorConstruction),
-    fEventAction(eventAction)
-{}
-
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-MiniOrangeSteppingAction::~MiniOrangeSteppingAction()
-{ }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-void MiniOrangeSteppingAction::UserSteppingAction(const G4Step* aStep)
+class ICESPICESteppingAction : public G4UserSteppingAction
+{
+public:
+  ICESPICESteppingAction(const ICESPICEDetectorConstruction*, 
+                            ICESPICEEventAction* eventAction);
+  ~ICESPICESteppingAction();
   
-{ 
-    // get volume of the current step
-	auto volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
-	
-	// energy deposit
-	auto edep = aStep->GetTotalEnergyDeposit();
-			
-	if ( volume == fDetConstruction->GetSiliconPV() ) {
-		fEventAction->AddSil(edep);
-	}
-}
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+  
+  void UserSteppingAction(const G4Step*);
+  
+private:
+  const ICESPICEDetectorConstruction* fDetConstruction = nullptr;
+  ICESPICEEventAction* fEventAction = nullptr;
+  
+};
+
+
+
+#endif
+
+
+
+

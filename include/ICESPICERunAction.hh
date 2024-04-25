@@ -23,46 +23,57 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// ********************************************************************
 // Code developed by:
 //  S.Larsson
 //
-//    ********************************************
-//    *                                          *
-//    *    MiniOrangePrimaryGeneratorAction.hh     *
-//    *                                          *
-//    ********************************************
+//    ******************************
+//    *                            *
+//    *    ICESPICERunAction.hh     *
+//    *                            *
+//    ******************************
 //
 //
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+#ifndef ICESPICERunAction_h
+#define ICESPICERunAction_h 1
 
-#ifndef MiniOrangePrimaryGeneratorAction_h
-#define MiniOrangePrimaryGeneratorAction_h 1
-
-#include "G4VUserPrimaryGeneratorAction.hh"
+#include "G4UserRunAction.hh"
 #include "globals.hh"
-
-class G4ParticleGun;
-class G4Event;
+#include <iostream>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-class MiniOrangePrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
+class G4Run;
+
+class ICESPICERunAction : public G4UserRunAction
 {
 public:
-  MiniOrangePrimaryGeneratorAction();    
-  ~MiniOrangePrimaryGeneratorAction();
   
-public:
-  void GeneratePrimaries(G4Event*);
-  void SetRndmVertex(G4bool val) { rndmVertex = val;} 
-  
+  ICESPICERunAction();
+  ~ICESPICERunAction();
+
+  void BeginOfRunAction(const G4Run*);
+  void EndOfRunAction(const G4Run*);
+    
+  void  SetRndmFreq(G4int   val)  {saveRndm = val;}
+  G4int GetRndmFreq()             {return saveRndm;}
+
+
 private:
-  G4ParticleGun*                  particleGun;
-  G4bool                       rndmVertex;      
+  G4int saveRndm;
 };
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
 
 

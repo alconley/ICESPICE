@@ -28,13 +28,13 @@
 //
 //    ******************************
 //    *                            *
-//    *    MiniOrangeRunAction.cc     *
+//    *    ICESPICERunAction.cc     *
 //    *                            *
 //    ******************************
 //
 //
 
-#include "MiniOrangeRunAction.hh"
+#include "ICESPICERunAction.hh"
 
 #include "G4Run.hh"
 #include "G4UnitsTable.hh"
@@ -46,35 +46,38 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-MiniOrangeRunAction::MiniOrangeRunAction()
+ICESPICERunAction::ICESPICERunAction()
   : G4UserRunAction()
   {   
     // set printing event number per each event
     // G4RunManager::GetRunManager()->SetPrintProgress(1);  
 
-    auto analysisManager = G4AnalysisManager::Instance();
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
     G4cout << "Using " << analysisManager->GetType() << G4endl;
 
+    // Default settings
     analysisManager->SetVerboseLevel(1);
-    analysisManager->SetNtupleMerging(true);
+    analysisManager->SetFileName("ICESPICE.root");
 
-    analysisManager->CreateH1("Esil","Edep in silicon", 1200, 0., 1200.0*keV);
+    // analysisManager->SetNtupleMerging(true);
 
-    analysisManager->CreateNtuple("MiniOrange", "Edep");
-    analysisManager->CreateNtupleDColumn("Esil");
-    analysisManager->FinishNtuple();
+    analysisManager->CreateH1("Esil","Edep in silicon", 2000, 0., 2000.0*keV);
+
+    // analysisManager->CreateNtuple("ICESPICE", "Edep");
+    // analysisManager->CreateNtupleDColumn("Esil");
+    // analysisManager->FinishNtuple();
   }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-MiniOrangeRunAction::~MiniOrangeRunAction()
+ICESPICERunAction::~ICESPICERunAction()
 {
   delete G4AnalysisManager::Instance();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void MiniOrangeRunAction::BeginOfRunAction(const G4Run* aRun)
+void ICESPICERunAction::BeginOfRunAction(const G4Run* aRun)
 {  
 
   //inform the runManager to save random number seed
@@ -88,17 +91,17 @@ void MiniOrangeRunAction::BeginOfRunAction(const G4Run* aRun)
 	   << G4endl;      
 
     // Get analysis manager
-    auto analysisManager = G4AnalysisManager::Instance();
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
-    // Open an output file
-    G4String fileName = "MiniOrange.root";
-    analysisManager->OpenFile(fileName);
+  // Open an output file 
+  // it can be overwritten in a macro
+    analysisManager->OpenFile();
 }
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void MiniOrangeRunAction::EndOfRunAction(const G4Run* aRun)
+void ICESPICERunAction::EndOfRunAction(const G4Run* aRun)
 {      
   if (IsMaster())    
     G4cout << "Total number of event = " << aRun->GetNumberOfEvent() << G4endl;
@@ -112,24 +115,24 @@ void MiniOrangeRunAction::EndOfRunAction(const G4Run* aRun)
       
     }
 
-    // print histogram statistics
-    //
-    auto analysisManager = G4AnalysisManager::Instance();
-    if ( analysisManager->GetH1(0) ) {      
-      G4cout << " ESil : mean = " 
-        << G4BestUnit(analysisManager->GetH1(0)->mean(), "Energy") 
-        // get the counts greator than the first bin
-        << " counts = " << analysisManager->GetH1(0)->entries()
+  // print histogram statistics
+  //
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  if ( analysisManager->GetH1(0) ) {      
+    G4cout << " ESil : mean = " 
+      << G4BestUnit(analysisManager->GetH1(0)->mean(), "Energy") 
+      // get the counts greator than the first bin
+      << " counts = " << analysisManager->GetH1(0)->entries()
 
-        << " rms = " 
-        << G4BestUnit(analysisManager->GetH1(0)->rms(),  "Energy") << G4endl;
+      << " rms = " 
+      << G4BestUnit(analysisManager->GetH1(0)->rms(),  "Energy") << G4endl;
 
-    }
+  }
 
-    // save histograms & ntuple
-    //
-    analysisManager->Write();
-    analysisManager->CloseFile();      
+  // save histograms & ntuple
+  //
+  analysisManager->Write();
+  analysisManager->CloseFile();      
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

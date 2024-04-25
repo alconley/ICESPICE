@@ -28,12 +28,12 @@
 //
 //    ********************************
 //    *                              *
-//    *    MiniOrangePhysicsList.cc     *
+//    *    ICESPICEPhysicsList.cc     *
 //    *                              *
 //    ********************************
 //
 
-#include "MiniOrangePhysicsList.hh"
+#include "ICESPICEPhysicsList.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleWithCuts.hh"
@@ -47,7 +47,7 @@
 #include "G4VPhysicsConstructor.hh"
 #include "G4DecayPhysics.hh"
 
-MiniOrangePhysicsList::MiniOrangePhysicsList():  G4VUserPhysicsList()
+ICESPICEPhysicsList::ICESPICEPhysicsList():  G4VUserPhysicsList()
 {
   defaultCutValue = 1*micrometer;
   cutForGamma     = defaultCutValue;
@@ -60,18 +60,18 @@ MiniOrangePhysicsList::MiniOrangePhysicsList():  G4VUserPhysicsList()
   SetVerboseLevel(1);
 }
 
-MiniOrangePhysicsList::~MiniOrangePhysicsList()
+ICESPICEPhysicsList::~ICESPICEPhysicsList()
 {
  delete fDecPhysicsList;
  delete fEmPhysicsList;
 }
 
-void MiniOrangePhysicsList::ConstructParticle()
+void ICESPICEPhysicsList::ConstructParticle()
 {
  fDecPhysicsList -> ConstructParticle();
 } 
 
-void MiniOrangePhysicsList::ConstructProcess()
+void ICESPICEPhysicsList::ConstructProcess()
 {
   AddTransportation();
   fEmPhysicsList -> ConstructProcess();
@@ -84,10 +84,10 @@ void MiniOrangePhysicsList::ConstructProcess()
 //de -> SetAuger(true);
 }
 
-void MiniOrangePhysicsList::SetCuts()
+void ICESPICEPhysicsList::SetCuts()
 {
   if (verboseLevel >0){
-    G4cout << "MiniOrangePhysicsList::SetCuts:";
+    G4cout << "ICESPICEPhysicsList::SetCuts:";
     G4cout << "CutLength : " << G4BestUnit(defaultCutValue,"Length") << G4endl;
   }  
   
@@ -107,10 +107,10 @@ void MiniOrangePhysicsList::SetCuts()
   if (verboseLevel>0) DumpCutValuesTable();
 }
 
-void MiniOrangePhysicsList::SetGammaLowLimit(G4double lowcut)
+void ICESPICEPhysicsList::SetGammaLowLimit(G4double lowcut)
 {
   if (verboseLevel >0){
-    G4cout << "MiniOrangePhysicsList::SetCuts:";
+    G4cout << "ICESPICEPhysicsList::SetCuts:";
     G4cout << "Gamma cut in energy: " << lowcut*MeV << " (MeV)" << G4endl;
   }  
 
@@ -118,11 +118,11 @@ void MiniOrangePhysicsList::SetGammaLowLimit(G4double lowcut)
   SetGELowLimit(lowcut);
 }
 
-void MiniOrangePhysicsList::SetElectronLowLimit(G4double lowcut)
+void ICESPICEPhysicsList::SetElectronLowLimit(G4double lowcut)
 {
   if (verboseLevel >0){
     
-    G4cout << "MiniOrangePhysicsList::SetCuts:";
+    G4cout << "ICESPICEPhysicsList::SetCuts:";
     G4cout << "Electron cut in energy: " << lowcut*MeV << " (MeV)" << G4endl;
   }  
 
@@ -130,42 +130,42 @@ void MiniOrangePhysicsList::SetElectronLowLimit(G4double lowcut)
   SetGELowLimit(lowcut);
 }
 
-void MiniOrangePhysicsList::SetPositronLowLimit(G4double lowcut)
+void ICESPICEPhysicsList::SetPositronLowLimit(G4double lowcut)
 {
   if (verboseLevel >0){
     
-    G4cout << "MiniOrangePhysicsList::SetCuts:";
+    G4cout << "ICESPICEPhysicsList::SetCuts:";
     G4cout << "Positron cut in energy: " << lowcut*MeV << " (MeV)" << G4endl;
   }  
 
-  G4cerr << "MiniOrangePhysicsList::SetPositronLowLimit: Not currently able to set Positron LowLimit." << G4endl;
-  G4Exception("MiniOrangePhysicsList::SetPositronLowLimit()","PurMag001",
-	      FatalException,"Positron Low Limit: not implemented in MiniOrangePhysicsList"); 
+  G4cerr << "ICESPICEPhysicsList::SetPositronLowLimit: Not currently able to set Positron LowLimit." << G4endl;
+  G4Exception("ICESPICEPhysicsList::SetPositronLowLimit()","PurMag001",
+	      FatalException,"Positron Low Limit: not implemented in ICESPICEPhysicsList"); 
   //
   // G4Positron::SetEnergyRange(lowcut,1e5);
 }
 
 
-void MiniOrangePhysicsList::SetProtonLowLimit(G4double lowcut)
+void ICESPICEPhysicsList::SetProtonLowLimit(G4double lowcut)
 {
   if (verboseLevel >0){
     
-    G4cout << "MiniOrangePhysicsList::SetCuts:";
+    G4cout << "ICESPICEPhysicsList::SetCuts:";
     G4cout << "Proton cut in energy: " << lowcut*MeV << " (MeV)" << G4endl;  
   }  
 
-  G4cerr << "MiniOrangePhysicsList::SetProtonLowLimit: Not currently able to set Proton LowLimit." << G4endl;
-  G4Exception("MiniOrangePhysicsList::SetProtonLowLimit()","PurMag002",
-	      FatalException,"Proton Low Limit: not implemented in MiniOrangePhysicsList"); 
+  G4cerr << "ICESPICEPhysicsList::SetProtonLowLimit: Not currently able to set Proton LowLimit." << G4endl;
+  G4Exception("ICESPICEPhysicsList::SetProtonLowLimit()","PurMag002",
+	      FatalException,"Proton Low Limit: not implemented in ICESPICEPhysicsList"); 
   //
   // G4Proton::SetEnergyRange(lowcut,1e5);
   // G4AntiProton::SetEnergyRange(lowcut,1e5);
 }
 
-void MiniOrangePhysicsList::SetGEPLowLimit(G4double lowcut)
+void ICESPICEPhysicsList::SetGEPLowLimit(G4double lowcut)
 {
   if (verboseLevel >0){
-    G4cout << "MiniOrangePhysicsList::SetGEPLowLimit:";
+    G4cout << "ICESPICEPhysicsList::SetGEPLowLimit:";
     G4cout << "Gamma and Electron cut in energy: " << lowcut*MeV << " (MeV)" << G4endl;
   }  
 
@@ -177,31 +177,31 @@ void MiniOrangePhysicsList::SetGEPLowLimit(G4double lowcut)
   G4cerr << " SetGEPLowLimit : Uncertain whether setting Positron low limit " << G4endl;
 }
 
-void MiniOrangePhysicsList::SetGELowLimit(G4double lowcut)
+void ICESPICEPhysicsList::SetGELowLimit(G4double lowcut)
 {
   if (verboseLevel >0){
-    G4cout << "MiniOrangePhysicsList::SetGELowLimit:";
+    G4cout << "ICESPICEPhysicsList::SetGELowLimit:";
     G4cout << "Gamma and Electron cut in energy: " << lowcut*MeV << " (MeV)" << G4endl;
   }  
  
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(lowcut,1e5);
 }
-void MiniOrangePhysicsList::SetGammaCut(G4double val)
+void ICESPICEPhysicsList::SetGammaCut(G4double val)
 {
   cutForGamma = val;
 }
 
-void MiniOrangePhysicsList::SetElectronCut(G4double val)
+void ICESPICEPhysicsList::SetElectronCut(G4double val)
 {
   cutForElectron = val;
 }
 
-void MiniOrangePhysicsList::SetPositronCut(G4double val)
+void ICESPICEPhysicsList::SetPositronCut(G4double val)
 {
   cutForPositron = val;
 }
 
-void MiniOrangePhysicsList::SetProtonCut(G4double val)
+void ICESPICEPhysicsList::SetProtonCut(G4double val)
 {
   cutForProton = val;
 }

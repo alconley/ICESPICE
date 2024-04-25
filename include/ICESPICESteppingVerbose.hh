@@ -23,55 +23,36 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+// ********************************************************************
 // Code developed by:
 //  S.Larsson
 //
-//    ********************************
-//    *                              *
-//    *    MiniOrangeEventAction.hh     *
-//    *                              *
-//    ********************************
+//    ************************************
+//    *                                  *
+//    *    ICESPICESteppingVerbose.hh     *
+//    *                                  *
+//    ************************************
 //
 //
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+class ICESPICESteppingVerbose;
 
-#ifndef MiniOrangeEventAction_h
-#define MiniOrangeEventAction_h 1
+#ifndef ICESPICESteppingVerbose_h
+#define ICESPICESteppingVerbose_h 1
 
-#include "G4UserEventAction.hh"
-#include "G4AnalysisManager.hh"
-#include "globals.hh"
+#include "G4SteppingVerbose.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+class ICESPICESteppingVerbose : public G4SteppingVerbose {
 
-class MiniOrangeEventAction : public G4UserEventAction
-{
-  public:
+public:   
   
-    MiniOrangeEventAction();
-   ~MiniOrangeEventAction();
+  //Constructor/Destructor
+  ICESPICESteppingVerbose();
+  ~ICESPICESteppingVerbose();
+  
+  void StepInfo();
+  void TrackingStarted();
 
-    void BeginOfEventAction(const G4Event*);
-    void   EndOfEventAction(const G4Event*);
-    
-    void SetDrawFlag   (G4String val)  {drawFlag    = val;};
-    void SetPrintModulo(G4int    val)  {printModulo = val;};
-
-    void AddSil(G4double de);
-
-        
-  private:
-    G4String                 drawFlag;
-    G4int                    printModulo;
-    G4double                 fEnergySilicon = 0.;
 };
 
-
-inline void MiniOrangeEventAction::AddSil(G4double de) {
-  fEnergySilicon += de;
-}
-
 #endif
-
-    

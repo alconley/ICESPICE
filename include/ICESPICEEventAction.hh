@@ -26,38 +26,52 @@
 // Code developed by:
 //  S.Larsson
 //
-//    ***********************************
-//    *                                 *
-//    *    MiniOrangeTrackingAction.cc     *
-//    *                                 *
-//    ***********************************
+//    ********************************
+//    *                              *
+//    *    ICESPICEEventAction.hh     *
+//    *                              *
+//    ********************************
 //
 //
 
-#include "MiniOrangeTrackingAction.hh"
-#include "MiniOrangeRunAction.hh"
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-#include "G4TrackingManager.hh"
-#include "G4Track.hh"
+#ifndef ICESPICEEventAction_h
+#define ICESPICEEventAction_h 1
 
+#include "G4UserEventAction.hh"
+#include "G4AnalysisManager.hh"
+#include "globals.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-MiniOrangeTrackingAction::MiniOrangeTrackingAction()
-{ }
+class ICESPICEEventAction : public G4UserEventAction
+{
+  public:
+  
+    ICESPICEEventAction();
+   ~ICESPICEEventAction();
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+    void BeginOfEventAction(const G4Event*);
+    void   EndOfEventAction(const G4Event*);
+    
+    void SetDrawFlag   (G4String val)  {drawFlag    = val;};
+    void SetPrintModulo(G4int    val)  {printModulo = val;};
 
-void MiniOrangeTrackingAction::PostUserTrackingAction(const G4Track*)
-{   
+    void AddSil(G4double de);
+
+        
+  private:
+    G4String                 drawFlag;
+    G4int                    printModulo;
+    G4double                 fEnergySilicon = 0.;
+};
+
+
+inline void ICESPICEEventAction::AddSil(G4double de) {
+  fEnergySilicon += de;
 }
 
+#endif
 
-
-
-
-
-
-
-
-
+    

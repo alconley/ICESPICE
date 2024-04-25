@@ -23,32 +23,34 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+// Code developed by:
+//  S.Larsson
 //
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//    **********************************
+//    *                                *
+//    *    ICESPICETrackingAction.hh    *
+//    *                                *
+//    **********************************
+//
+//
 
-#ifndef MiniOrangeActionInitializer_h
-#define MiniOrangeActionInitializer_h 1
+#ifndef ICESPICETrackingAction_h
+#define ICESPICETrackingAction_h 1
 
-#include "G4VUserActionInitialization.hh"
-#include "G4VSteppingVerbose.hh"
-#include "globals.hh"
+#include "G4UserTrackingAction.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class MiniOrangeActionInitializer : public G4VUserActionInitialization
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+
+class ICESPICETrackingAction : public G4UserTrackingAction 
 {
-public:
 
-  MiniOrangeActionInitializer();
-  ~MiniOrangeActionInitializer(){;};
-  
-  void Build() const;
-  void BuildForMaster() const;
-  G4VSteppingVerbose* InitializeSteppingVerbose() const;
+  public:  
+    ICESPICETrackingAction();
+   ~ICESPICETrackingAction() {};
+   
+    void PostUserTrackingAction(const G4Track*);
+
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 #endif
-

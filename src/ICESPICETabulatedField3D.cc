@@ -28,23 +28,23 @@
 //
 //    *************************************
 //    *                                   *
-//    *    MiniOrangeTabulatedField3D.cc     *
+//    *    ICESPICETabulatedField3D.cc     *
 //    *                                   *
 //    *************************************
 //
 //
 
-#include "MiniOrangeTabulatedField3D.hh"
+#include "ICESPICETabulatedField3D.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4AutoLock.hh"
 
 namespace{
-  G4Mutex myMiniOrangeTabulatedField3DLock = G4MUTEX_INITIALIZER;
+  G4Mutex myICESPICETabulatedField3DLock = G4MUTEX_INITIALIZER;
 }
 
 using namespace std;
 
-MiniOrangeTabulatedField3D::MiniOrangeTabulatedField3D(const char* filename, 
+ICESPICETabulatedField3D::ICESPICETabulatedField3D(const char* filename, 
 						 double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
 {    
@@ -60,7 +60,7 @@ MiniOrangeTabulatedField3D::MiniOrangeTabulatedField3D(const char* filename,
   //
   //This is a thread-local class and we have to avoid that all workers open the 
   //file at the same time
-  G4AutoLock lock(&myMiniOrangeTabulatedField3DLock);
+  G4AutoLock lock(&myICESPICETabulatedField3DLock);
 
   ifstream file( filename ); // Open the file for reading.
   
@@ -68,7 +68,7 @@ MiniOrangeTabulatedField3D::MiniOrangeTabulatedField3D(const char* filename,
     {
       G4ExceptionDescription ed;
       ed << "Could not open input file " << filename << std::endl;
-      G4Exception("MiniOrangeTabulatedField3D::MiniOrangeTabulatedField3D",
+      G4Exception("ICESPICETabulatedField3D::ICESPICETabulatedField3D",
 		  "pugmag001",FatalException,ed);
     }
 
@@ -182,7 +182,7 @@ MiniOrangeTabulatedField3D::MiniOrangeTabulatedField3D(const char* filename,
 	 << "\n-----------------------------------------------------------" << G4endl;
 }
 
-void MiniOrangeTabulatedField3D::GetFieldValue(const double point[4],
+void ICESPICETabulatedField3D::GetFieldValue(const double point[4],
 				      double *Bfield ) const
 {
 
