@@ -1,5 +1,5 @@
 # Define the file path for the macro
-macro_path = './ICESPICE.mac'
+macro_path = './build/ICESPICE.mac'
 
 n_particles = 10000
 
@@ -17,12 +17,14 @@ with open(macro_path, 'w') as file:
         file.write(f'/ICESPICE/Detector/Thickness {thickness}\n')
         
         # Loop through the positions from -20 to -60 in steps of 5
-        for position in range(-20, -25, -5):
+        # for position in range(-20, -25, -5):
+        for position in [-50]:
+            
             # Write the command to set the position
             file.write(f'/ICESPICE/Detector/Position {position}\n')
             
             # Loop through energies from 50 keV to 2000 keV in steps of 50 keV
-            for energy in range(100, 2000, 100):
+            for energy in range(100, 2100, 100):
                 # Write the command to set the energy
                 file.write(f'/gun/energy {energy} keV\n')
                 
