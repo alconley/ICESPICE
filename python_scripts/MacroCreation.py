@@ -29,7 +29,7 @@ with open(macro_path, 'w') as file:
                 file.write(f'/gun/energy {energy} keV\n')
                 
                 # Write the command to set the filename of the output root file
-                file.write(f'/analysis/setFileName ICESPICE_PIPS{thickness}_f50mm_g{abs(position)}mm_{energy}keV.root\n')
+                file.write(f'/analysis/setFileName ICESPICE_PIPS{thickness}_f50mm_g{abs(position)}mm_{energy}.root\n')
                 
                 file.write('/run/initialize\n')
                 
