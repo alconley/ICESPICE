@@ -107,13 +107,3 @@ Replace `zvalue` with the position in millimeters from the origin along the z-ax
 ```
 
 Replace `particle` with the type of particle you wish to simulate (e.g., `e+`, `e-`, `proton`, `neutron`, `gamma`). 
-
-### Data Analysis
-
-Energy deposition data for each detected event is stored in a ROOT file, which can be analyzed post-simulation to assess performance characteristics. To visualize the data, use the command:
-
-```bash
-root -x plotHisto.C
-```
-
-This command initiates a ROOT session that executes the `plotHisto.C` script, providing a graphical representation of the energy spectrum captured by the detectors.

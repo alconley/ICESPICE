@@ -23,7 +23,7 @@ void processDirectory(const char* inputDir) {
     gROOT->Reset();
     gROOT->SetStyle("Plain");
 
-    TString outputFileName = "./AllModifiedOutputs.root";
+    TString outputFileName = "./ICESPICE_Analysis.root";
     TFile* outputFile = new TFile(outputFileName, "RECREATE");
 
     // Open directory
