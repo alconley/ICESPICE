@@ -52,7 +52,6 @@ target_link_libraries(ICESPICE ${Geant4_LIBRARIES})
 # relies on these scripts being in the current working directory.
 #
 set(ICESPICE_SCRIPT
-    ICESPICE.mac 
     vis.mac 
     gui.mac
     ICESPICE3D.TABLE

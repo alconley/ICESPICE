@@ -18,7 +18,6 @@ void processFile(TString inputFileName, TFile* outputFile);
 // Forward declaration
 void plotData(const std::map<double, double>& data, const char* dirName, const char* plotTitleSuffix);
 
-
 void processDirectory(const char* inputDir) {
     gROOT->Reset();
     gROOT->SetStyle("Plain");
@@ -185,33 +184,3 @@ void plotData(const std::map<double, double>& data, const char* dirName, const c
     // c->SaveAs((title + ".png").c_str());
     c->Draw();
 }
-
-
-
-
-
-
-
-
-
-
-
-    // get counts in the histogram
-    // Int_t total_counts = hist->GetEntries();
-
-    // Int_t total_counts_4pi = total_counts*2; //only sending particle in 2pi in the simulation
-
-    // // get the counts between the first and the last bin
-    // Int_t non_zero_events = hist->Integral(2, hist->GetNbinsX());
-
-    // // divde the counts by the total counts
-    // Double_t max_transmission_prob = (Double_t)non_zero_events / (Double_t)total_counts_4pi * 100.0; //in percent 
-
-    // // Extract energy from the file name
-    // std::string histName = inputFileName(inputFileName.Last('/') + 1, inputFileName.Length());
-    // Double_t energy = std::stod(histName.substr(0, histName.find("_")));
-
-    // // Store energy and transmission probability in the map
-    // transmissionData[energy] = max_transmission_prob;
-
-    // std::cout "Energy: " << energy << "keV -> " << "Transmission Prob: " << max_transmission_prob << "%" << std::endl;

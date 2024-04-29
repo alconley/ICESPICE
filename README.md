@@ -76,7 +76,7 @@ The position of the detector can also be modified to better understand its detec
 /ICESPICE/Detector/Position value
 ```
 
-Where `value` can range from -60 to 0 millimeters and represents the value from the origin to the surface of the detector.
+Where `value` can range from -60 to 0 millimeters and represents the value from the origin to the surface of the detector. (g)
 
 #### Changing Source Properties
 
@@ -90,7 +90,7 @@ Adjust the properties of the simulation source to match specific experimental co
 
 Replace `value` with the desired energy level in kilo-electron volts (keV).
 
-- **Position**: Specify the starting position of the particles along the z-axis.
+- **Position**: Specify the starting position of the particles along the z-axis. (f)
 
 ```bash
 /gun/position 0 0 zvalue mm
@@ -107,3 +107,13 @@ Replace `zvalue` with the position in millimeters from the origin along the z-ax
 ```
 
 Replace `particle` with the type of particle you wish to simulate (e.g., `e+`, `e-`, `proton`, `neutron`, `gamma`). 
+
+## Data Analysis
+
+As I prefer not to use ROOT, I have opted to perform my data analysis using Python. The Python scripts that I utilize are stored in the 'python_scripts' directory. These scripts are primarily involved in generating macro files tailored to various simulations.
+
+One of the key functions, transmission_histogram in the analysis.py file, allows for parsing output files using pandas. This function enables me to plot the energy deposited in the detector across different simulation energies using matplotlib. It also facilitates the calculation of the transmission probability, the probability that the full energy is deposited in the detector, and the detector's efficiency. Future enhancements will include unfolding the spectrum to correct for the detector's resolution.
+
+Another function, transmission_probability, processes different file paths for various simulation energies under identical detector and f-position settings. This function plots the results against the transmission probability, illustrating the likelihood of full energy deposition in the detector.
+
+Lastly, the plot_transmission_summary function mirrors the operations of transmission_probability but aggregates and plots all variations of the g-values together.

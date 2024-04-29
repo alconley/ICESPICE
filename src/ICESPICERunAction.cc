@@ -55,9 +55,11 @@ ICESPICERunAction::ICESPICERunAction()
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
     G4cout << "Using " << analysisManager->GetType() << G4endl;
 
+    analysisManager->SetDefaultFileType("root");
+
     // Default settings
     analysisManager->SetVerboseLevel(1);
-    analysisManager->SetFileName("ICESPICE.root");
+    analysisManager->SetFileName("ICESPICE");
 
     // analysisManager->SetNtupleMerging(true);
 
@@ -79,60 +81,23 @@ ICESPICERunAction::~ICESPICERunAction()
 
 void ICESPICERunAction::BeginOfRunAction(const G4Run* aRun)
 {  
-
-  //inform the runManager to save random number seed
-  // G4RunManager::GetRunManager()->SetRandomNumberStore(false);
-  
-  if (IsMaster())    
-    G4cout << "---> Run " << aRun->GetRunID() << " (master) start." 
-	   << G4endl;
-  else
-    G4cout << "---> Run " << aRun->GetRunID() << " (worker) start." 
-	   << G4endl;      
-
     // Get analysis manager
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+
+    analysisManager->Reset();
 
   // Open an output file 
   // it can be overwritten in a macro
     analysisManager->OpenFile();
 }
 
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void ICESPICERunAction::EndOfRunAction(const G4Run* aRun)
 {      
-  if (IsMaster())    
-    G4cout << "Total number of event = " << aRun->GetNumberOfEvent() << G4endl;
-  else
-    G4cout << "Partial number of event in this worker = " 
-	   << aRun->GetNumberOfEvent() << G4endl;
- 
-       
-  if (IsMaster())
-    {
-      
-    }
-
-  // print histogram statistics
-  //
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  if ( analysisManager->GetH1(0) ) {      
-    G4cout << " ESil : mean = " 
-      << G4BestUnit(analysisManager->GetH1(0)->mean(), "Energy") 
-      // get the counts greator than the first bin
-      << " counts = " << analysisManager->GetH1(0)->entries()
-
-      << " rms = " 
-      << G4BestUnit(analysisManager->GetH1(0)->rms(),  "Energy") << G4endl;
-
-  }
-
-  // save histograms & ntuple
-  //
   analysisManager->Write();
-  analysisManager->CloseFile();      
+  analysisManager->CloseFile(false);      
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

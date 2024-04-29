@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load the CSV file and skip the initial lines containing metadata
-file_path = '~/Downloads/comsol_output_1_2mm_grid.csv'
+file_path = '~/Desktop/comsol_output_1_2mm_grid.csv'
 column_names = ['X', 'Y', 'Z', 'BX', 'BY', 'BZ', 'BMOD/HMOD']
 data = pd.read_csv(file_path, comment='%', skiprows=9, names=column_names)
 

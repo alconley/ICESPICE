@@ -35,7 +35,6 @@
 #include "ICESPICETrackingAction.hh"
 #include "ICESPICESteppingAction.hh"
 #include "ICESPICESteppingVerbose.hh"
-
 #include "G4RunManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -58,7 +57,6 @@ void ICESPICEActionInitializer::Build() const
   SetUserAction(new ICESPICERunAction());
   SetUserAction(new ICESPICEEventAction());
   SetUserAction(new ICESPICETrackingAction()); 
-  // SetUserAction(new ICESPICESteppingAction(detector));
 
   auto eventAction = new ICESPICEEventAction;
   SetUserAction(eventAction);
