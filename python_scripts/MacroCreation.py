@@ -14,10 +14,10 @@ def macro_creation(n_particles: int, macro_path: str, thickness:int, f_position:
         # Write the commmand to change the gun position
         file.write(f'/gun/position 0 0 {f_position} mm\n')
 
-        # Write the command to set the thickness
+        # # Write the command to set the thickness
         file.write(f'/ICESPICE/Detector/Thickness {thickness}\n')
     
-        # Write the command to set the position
+        # # Write the command to set the position
         file.write(f'/ICESPICE/Detector/Position {g_position}\n')
 
         # Loop through energies from 100 keV to 2000 keV in steps of 100 keV
@@ -34,11 +34,13 @@ def macro_creation(n_particles: int, macro_path: str, thickness:int, f_position:
 
 def all_macros():
     # Loop through the positions from -20 to -55 in steps of -5
-    for detector in [100]:
+    for detector in [100, 300, 500, 1000]:
         for f_position in [50]:
             for g_position in range(-20,-55, -5): # -20 mm to -50 mm in steps of -5 mm
                 n_particles = 50000
+                # path = f'./build/MACRO_ICESPICE_PIPS{detector}_f{f_position}mm_g{abs(g_position)}mm.mac'
                 path = f'./build/MACRO_ICESPICE_PIPS{detector}_f{f_position}mm_g{abs(g_position)}mm.mac'
+
                 macro_creation(n_particles, macro_path=path, thickness=detector, f_position=f_position, g_position=g_position)
 
 all_macros()
