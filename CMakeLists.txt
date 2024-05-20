@@ -48,7 +48,7 @@ target_link_libraries(ICESPICE ${Geant4_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
-# build purging_magnet. This is so that we can run the executable directly because it
+# build ICESPICE. This is so that we can run the executable directly because it
 # relies on these scripts being in the current working directory.
 #
 set(ICESPICE_SCRIPT
@@ -64,6 +64,9 @@ foreach(_script ${ICESPICE_SCRIPT})
     COPYONLY
     )
 endforeach()
+
+# Copy the entire cad_files directory to the build directory
+file(COPY ${PROJECT_SOURCE_DIR}/cad_files DESTINATION ${PROJECT_BINARY_DIR})
 
 #----------------------------------------------------------------------------
 # Add program to the project targets

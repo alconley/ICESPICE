@@ -80,13 +80,6 @@ public:
   G4double GetWorldSizeXY()  const       {return WorldSizeXY;};
   G4double GetWorldSizeZ() const          {return WorldSizeZ;}; 
 
-  G4double GetAttenuatorVolumeRadius() const {return AttenuatorVolumeRadius;}; 
-  G4double GetAttenuatorVolumeHeight() const {return AttenuatorVolumeHeight;}; 
-
-  G4double GetMagnetWidth()         {return MagnetWidth;}; 
-  G4double GetMagnetHeight()         {return MagnetHeight;}; 
-  G4double GetMagnetLength()         {return MagnetLength;}; 
-
   G4Material* GetWorldMaterial()         {return WorldMaterial;};
   G4Material* GetAttenuatorMaterial()           {return AttenuatorMaterial;}; 
   G4Material* GetMagnetMaterial()           {return MagnetMaterial;}; 
@@ -100,8 +93,6 @@ public:
   G4double GetDetectorWindowThickness() const {return DetectorWindowThickness;}; 
 
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
-  const G4VPhysicalVolume* GetAttenuator() const      {return physiAttenuator;}; 
-  const G4VPhysicalVolume* GetMagnet() const      {return physiMagnet;}; 
   const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } 
   const G4VPhysicalVolume* GetSiliconPV() const { return physiDetector; } 
 
@@ -117,20 +108,7 @@ private:
   G4Box*             solidWorld;
   G4Material*        WorldMaterial;
 
-  G4double           AttenuatorVolumeRadius; 
-  G4double           AttenuatorVolumeHeight; 
-  G4double           AttenuatorVolumePosition; 
-  G4VPhysicalVolume* physiAttenuator; 
-  G4LogicalVolume*   logicAttenuator; 
-  G4Tubs*            solidAttenuator; 
   G4Material*        AttenuatorMaterial; 
-
-  G4double           MagnetWidth; 
-  G4double           MagnetHeight; 
-  G4double           MagnetLength; 
-  G4VPhysicalVolume* physiMagnet;
-  G4LogicalVolume*   logicMagnet;
-  G4Box*             solidMagnet;
   G4Material*        MagnetMaterial; 
 
   G4double           DetectorPosition;   

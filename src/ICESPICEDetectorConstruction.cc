@@ -71,7 +71,6 @@
 #include "G4UnitsTable.hh"
 #include "G4ios.hh"
 
-
 #include "G4Tubs.hh"
 
 #include "G4GenericMessenger.hh"
@@ -81,7 +80,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 0          // Magnetic field grid
+#define MAG 1          // Magnetic field grid
 #define MAGNETS 1      // N42 1"X1"x1/8"
 #define ATTENUATOR 1   // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
@@ -90,8 +89,7 @@
 
 ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
   :physiWorld(NULL), logicWorld(NULL), solidWorld(NULL),
-    physiAttenuator(NULL), logicAttenuator(NULL), solidAttenuator(NULL), // AC
-    physiMagnet(NULL), logicMagnet(NULL), solidMagnet(NULL), // AC
+    // physiAttenuator(NULL), logicAttenuator(NULL), solidAttenuator(NULL), // AC
     physiDetector(NULL), logicDetector(NULL), solidDetector(NULL), // AC
     WorldMaterial(NULL), 
     AttenuatorMaterial(NULL), // AC
@@ -102,8 +100,6 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
 {
   fField.Put(0);
   WorldSizeXY=WorldSizeZ=0;
-  MagnetWidth=MagnetHeight=MagnetLength=0;  
-  AttenuatorVolumeRadius=AttenuatorVolumeHeight=0; // AC
   DetectorActiveArea=DetectorWindowThickness=DetectorHousingOuterDiameter=DetectorHousingThickness=DetectorRadius=0; // AC
   DetectorPosition=-30.*mm; // AC
   DetectorThickness=1000.*micrometer; // AC
@@ -169,7 +165,6 @@ void ICESPICEDetectorConstruction::DefineMaterials()
 
   G4NistManager* nist = G4NistManager::Instance();
   G4Material* silicon = nist->FindOrBuildMaterial("G4_Si");
-
   G4Material* aluminum = nist->FindOrBuildMaterial("G4_Al");
 
   // Define materials from elements.
@@ -245,18 +240,6 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
   WorldSizeXY  = 100.*mm;  // Cube
   WorldSizeZ   = 300.*mm;
 
-  // AC: Define the cylindrical properties for the attentuator
-  AttenuatorVolumeRadius = 4.765*mm;  // radius (half of a 3/8" diameter)
-  AttenuatorVolumeHeight = 29.3*mm; // height
-  AttenuatorVolumePosition = 0.; // 
-
-  // AC: Define the geometric size of the magnet in the array
-  // inch to cm conversion
-  G4double inch2cm = 2.54*cm;
-  MagnetWidth = 0.125*inch2cm; // 1/8"
-  MagnetHeight = 1.*inch2cm; // 1"
-  MagnetLength = 1.*inch2cm; // 1"
-
   DetectorActiveArea = 50.*mm2; // Active area of the detector
   DetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
   DetectorHousingThickness = 12.3*mm; // Thickness of the detector housing
@@ -267,48 +250,6 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
   zOffset = 0.0*mm;  // Offset of the magnetic field grid
 
 // 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-// Some out prints of the setup. 
-  
-  G4cout << "\n-----------------------------------------------------------"
-	 << "\n      Geometry and materials"
-	 << "\n-----------------------------------------------------------"
-	 << "\n ---> World:" 
-	 << "\n ---> " << WorldMaterial->GetName() << " in World"
-	 << "\n ---> " << "WorldSizeXY: " << G4BestUnit(WorldSizeXY,"Length")
-	 << "\n ---> " << "WorldSizeZ: " << G4BestUnit(WorldSizeZ,"Length");
-  
-#if MAGNETS
-  G4cout << "\n-----------------------------------------------------------"
-   << "\n ---> Magnet:" 
-   << "\n ---> " << "Magnet made of "<< MagnetMaterial->GetName() 
-   << "\n ---> " << "MagnetWidth: " << G4BestUnit(MagnetWidth,"Length") 
-   << "\n ---> " << "MagnetHeight: " << G4BestUnit(MagnetHeight,"Length") 
-   << "\n ---> " << "MagnetLength: " << G4BestUnit(MagnetLength,"Length");
-#endif
-
-#if ATTENUATOR
-  G4cout << "\n-----------------------------------------------------------"
-   << "\n ---> Attenuator:" 
-   << "\n ---> " << "Attenuator made of "<< AttenuatorMaterial->GetName() 
-   << "\n ---> " << "AttenuatorVolumeRadius: " << G4BestUnit(AttenuatorVolumeRadius,"Length") 
-   << "\n ---> " << "AttenuatorVolumeHeight: " << G4BestUnit(AttenuatorVolumeHeight,"Length")
-   << "\n ---> " << "AttenuatorVolumePosition =  " << G4BestUnit(AttenuatorVolumePosition,"Length");
-#endif
-  
-#if DETECTOR // AC
-  G4cout << "\n-----------------------------------------------------------"
-    << "\n ---> Detector:"
-    << "\n ---> " << DetectorMaterial->GetName() << " in Detector"
-    << "\n ---> " << "DetectorRadius: " << G4BestUnit(DetectorRadius,"Length")
-    << "\n ---> " << "DetectorThickness: " << G4BestUnit(DetectorThickness,"Length")
-    << "\n ---> " << "DetectorWindowThickness: " << G4BestUnit(DetectorWindowThickness,"Length")
-    << "\n ---> " << "DetectorPosition =  " << G4BestUnit(DetectorPosition,"Length");
-#endif // AC
-  
-  G4cout << "\n-----------------------------------------------------------\n";
-  
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
   solidWorld = new G4Box("World",				       //its name
@@ -361,27 +302,16 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 #if ATTENUATOR
 
-  //Attenuator 
-
-  solidAttenuator = new G4Tubs("Attenuator",
-                                      0,          // Inner radius
-                                      AttenuatorVolumeRadius,     // Outer radius
-                                      AttenuatorVolumeHeight/2., // height
-                                      0.*deg,     // Start angle
-                                      360.*deg);  // Spanning angle
-  
-  logicAttenuator = new G4LogicalVolume(solidAttenuator,   	        //its solid
-				  AttenuatorMaterial,          //its material
-				  "Attenuator");              //its name
-  
-  physiAttenuator = new G4PVPlacement(0,			             //no rotation
-  				 G4ThreeVector(0.,0.,AttenuatorVolumePosition+2.0*mm), //at (0,0,0)
-                                 "Attenuator",		             //its name
-                                 logicAttenuator,		             //its logical volume
-                                 physiWorld,			             //its mother  volume
-                                 false,			                     //no boolean operation
-                                 0);			                     //copy number
-  
+  auto attenuator = CADMesh::TessellatedMesh::FromPLY("./cad_files/tantalum_5_slot_attenuator.PLY");
+  auto solidAttenuator = attenuator->GetSolid();
+  auto logicAttenuator = new G4LogicalVolume(solidAttenuator, AttenuatorMaterial, "Attenuator");
+  auto physiAttenuator = new G4PVPlacement(0,			             //no rotation
+          G4ThreeVector(0.,0.,0.), //at (0,0,0)
+                                "Attenuator",		             //its name
+                                logicAttenuator,		             //its logical volume
+                                physiWorld,			             //its mother  volume
+                                false,			                     //no boolean operation
+                                0);			                     //copy number
 
   // Visualization attributes
   G4VisAttributes* simpleAttenuatorVisAtt= new G4VisAttributes(G4Colour(0.25, 0.25, 0.25)); //grey
@@ -394,18 +324,12 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 #if MAGNETS
 
-  auto magnetHolder = CADMesh::TessellatedMesh::FromSTL("./stl_files/magnet_holder.STL");  
-  auto solidMagnetHolder = magnetHolder->GetSolid();
-  auto logicMagnetHolder = new G4LogicalVolume(solidMagnetHolder, WorldMaterial, "MagnetHolder");
-
-  solidMagnet = new G4Box("Magnet", MagnetWidth/2, MagnetHeight/2, MagnetLength/2);
-  logicMagnet = new G4LogicalVolume(solidMagnet, MagnetMaterial, "Magnet");
+  auto magnet = CADMesh::TessellatedMesh::FromPLY("./cad_files/1x1x1_8in_square_magnet.PLY");
+  auto solidMagnet = magnet->GetSolid();
+  auto logicMagnet = new G4LogicalVolume(solidMagnet, MagnetMaterial, "Magnet");
 
   // Calculate the placement and rotation for each magnet
-  
-  // Calculate the half-diagonal of the square face for correct placement
-  G4double halfDiagonal = std::sqrt(2.0*MagnetHeight*MagnetHeight) / 2;
-  G4double placementRadius = 3.5*mm + halfDiagonal;  // Adjusting for the corner to be at 3.5mm
+  G4double placementRadius = 3.5*mm;  // Adjusting for the corner to be at 3.5mm
   G4int numMagnets = 5;
   G4double angleStep = 360.0*deg / numMagnets;
 
@@ -414,7 +338,6 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
       G4ThreeVector pos(placementRadius * std::sin(angle), placementRadius * std::cos(angle), 0);
       G4RotationMatrix* rot = new G4RotationMatrix();
       rot->rotateZ(angle); // Rotation to spread magnets around the origin
-      rot->rotateX(45*deg);  // Tilt to align a corner radially
 
       new G4PVPlacement(rot,          // rotation
                         pos,          // position
