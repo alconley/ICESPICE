@@ -84,13 +84,14 @@ public:
   G4Material* GetAttenuatorMaterial()           {return AttenuatorMaterial;}; 
   G4Material* GetMagnetMaterial()           {return MagnetMaterial;}; 
 
-  void UpdateDetectorComponents(); 
+  void PIPS100Detector();
+  void PIPS300Detector(); 
+  void PIPS500Detector(); 
+  void PIPS1000Detector(); 
+
   void SetDetectorPosition(G4double val); 
   void SetDetectorThickness(G4double val); 
   G4double GetDetectorPosition() const {return DetectorPosition;}; 
-  G4double GetDetectorActiveArea() const {return DetectorActiveArea;}; 
-  G4double GetDetectorThickness() const {return DetectorThickness;}; 
-  G4double GetDetectorWindowThickness() const {return DetectorWindowThickness;}; 
 
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
   const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } 
@@ -112,16 +113,7 @@ private:
   G4Material*        MagnetMaterial; 
 
   G4double           DetectorPosition;   
-  G4double           DetectorActiveArea; 
-  G4double           DetectorThickness; 
-  G4double           DetectorRadius;  
-  G4double           DetectorWindowThickness; 
-  G4double           DetectorHousingThickness; 
-  G4double           DetectorHousingOuterDiameter; 
   G4VPhysicalVolume* physiDetector; 
-  G4LogicalVolume*   logicDetector; 
-  G4Tubs*            solidDetector; 
-
   G4Material*        DetectorMaterial; 
   G4Material*        DetectorHousingMaterial; 
 
