@@ -72,18 +72,19 @@
 #include "G4ios.hh"
 
 
-#include "G4Tubs.hh"  // AC: Ensure this header is included for cylindrical volumes
+#include "G4Tubs.hh"
 
 #include "G4GenericMessenger.hh"
 #include "G4RunManager.hh"
 
+#include "CADMesh.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 1          // Magnetic field grid
+#define MAG 0          // Magnetic field grid
 #define MAGNETS 1      // N42 1"X1"x1/8"
 #define ATTENUATOR 1   // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
-#define TRANSMISSIONDETECTOR 0 // AC: Volume for transmission detector
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -92,7 +93,6 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
     physiAttenuator(NULL), logicAttenuator(NULL), solidAttenuator(NULL), // AC
     physiMagnet(NULL), logicMagnet(NULL), solidMagnet(NULL), // AC
     physiDetector(NULL), logicDetector(NULL), solidDetector(NULL), // AC
-    physiTransmissionDetector(NULL), logicTransmissionDetector(NULL), solidTransmissionDetector(NULL), // AC
     WorldMaterial(NULL), 
     AttenuatorMaterial(NULL), // AC
     MagnetMaterial(NULL), // AC
@@ -105,7 +105,6 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
   MagnetWidth=MagnetHeight=MagnetLength=0;  
   AttenuatorVolumeRadius=AttenuatorVolumeHeight=0; // AC
   DetectorActiveArea=DetectorWindowThickness=DetectorHousingOuterDiameter=DetectorHousingThickness=DetectorRadius=0; // AC
-  TransmissionDetectorActiveArea=TransmissionDetectorWindowThickness=TransmissionDetectorHousingOuterDiameter=TransmissionDetectorHousingThickness=TransmissionDetectorRadius=0; // AC
   DetectorPosition=-30.*mm; // AC
   DetectorThickness=1000.*micrometer; // AC
   DefineCommands();
@@ -265,14 +264,6 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
   DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
   G4double DetectorSurfaceToHousing = 1.*mm; // Distance from detector surface to housing
 
-  TransmissionDetectorActiveArea = 50.*mm2; // Active area of the detector
-  TransmissionDetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
-  TransmissionDetectorHousingThickness = 2.*mm; // Thickness of the detector housing
-  TransmissionDetectorHousingOuterDiameter = 16.7*mm; // Outer diameter of the detector housing
-  TransmissionDetectorRadius = std::sqrt(TransmissionDetectorActiveArea / 3.14);
-  G4double TransmissionDetectorSurfaceToHousing = 1.*mm; // Distance from detector surface to housing
-  TransmissionDetectorThickness = 500.*micrometer; // Thickness of the detector
-
   zOffset = 0.0*mm;  // Offset of the magnetic field grid
 
 // 
@@ -316,16 +307,6 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
     << "\n ---> " << "DetectorPosition =  " << G4BestUnit(DetectorPosition,"Length");
 #endif // AC
   
-// #if TRANSMISSIONDETECTOR // AC
-//   G4cout << "\n-----------------------------------------------------------"
-//     << "\n ---> Detector:"
-//     << "\n ---> " << DetectorMaterial->GetName() << " in Detector"
-//     << "\n ---> " << "TransmissionDetectorRadius: " << G4BestUnit(TransmissionDetectorRadius,"Length")
-//     << "\n ---> " << "TransmissionDetectorThickness: " << G4BestUnit(TransmissionDetectorThickness,"Length")
-//     << "\n ---> " << "TransmissionDetectorWindowThickness: " << G4BestUnit(TransmissionDetectorWindowThickness,"Length")
-//     << "\n ---> " << "TransmissionDetectorPosition =  " << G4BestUnit(TransmissionDetectorPosition,"Length");
-// #endif // AC
-
   G4cout << "\n-----------------------------------------------------------\n";
   
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -412,6 +393,11 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 #if MAGNETS
+
+  auto magnetHolder = CADMesh::TessellatedMesh::FromSTL("./stl_files/magnet_holder.STL");  
+  auto solidMagnetHolder = magnetHolder->GetSolid();
+  auto logicMagnetHolder = new G4LogicalVolume(solidMagnetHolder, WorldMaterial, "MagnetHolder");
+
   solidMagnet = new G4Box("Magnet", MagnetWidth/2, MagnetHeight/2, MagnetLength/2);
   logicMagnet = new G4LogicalVolume(solidMagnet, MagnetMaterial, "Magnet");
 
@@ -632,96 +618,5 @@ void ICESPICEDetectorConstruction::UpdateDetectorComponents() {
       visAttributesExtraHousing->SetVisibility(true);
       visAttributesExtraHousing->SetForceSolid(true);
       logicExtraHousing->SetVisAttributes(visAttributesExtraHousing);
-
-      #if TRANSMISSIONDETECTOR
-
-        // Create the main detector volume as a cylindrical solid
-        solidTransmissionDetector = new G4Tubs("TransmissionDetector",
-                                  0,  // Inner radius
-                                  TransmissionDetectorRadius,  // Outer radius
-                                  TransmissionDetectorThickness/2.,  // Half-height
-                                  0.*deg,  // Start angle
-                                  360.*deg);  // Full angular span
-
-        logicTransmissionDetector = new G4LogicalVolume(solidTransmissionDetector,  // Geometry solid
-                                            DetectorMaterial,  // Material of the detector
-                                            "TransmissionDetector");  // Logical volume name
-
-        G4Tubs* solidTransmissionDetectorWindow = new G4Tubs("TransmissionDetectorWindow",
-                                          0,  // Inner radius
-                                          std::sqrt(TransmissionDetectorActiveArea / 3.14),  // Outer radius
-                                          TransmissionDetectorWindowThickness / 2.,  // Half-height
-                                          0.*deg,  // Start angle
-                                          360.*deg);  // Spanning angle
-
-        G4LogicalVolume* logicTransmissionDetectorWindow = new G4LogicalVolume(solidDetectorWindow,
-                                            DetectorMaterial,
-                                            "TransmissionDetectorWindow");
-
-        G4double transmissionWindowZPosition = (TransmissionDetectorThickness / 2. - TransmissionDetectorWindowThickness / 2.);
-
-        new G4PVPlacement(nullptr,  // No rotation
-                    G4ThreeVector(0, 0, transmissionWindowZPosition),  // Position in the detector
-                    logicTransmissionDetectorWindow,
-                    "TransmissionDetectorWindowFront",
-                    logicTransmissionDetector,  // Parent volume
-                    false,  // No boolean operation
-                    0);  // Copy number
-
-
-        new G4PVPlacement(nullptr,  // No rotation
-                    G4ThreeVector(0, 0, -transmissionWindowZPosition),  // Position in the detector
-                    logicTransmissionDetectorWindow,
-                    "TransmissionDetectorWindowBack",
-                    logicTransmissionDetector,  // Parent volume
-                    false,  // No boolean operation
-                    1);  // Copy number
-
-          // Create the outer housing for the detector
-          G4Tubs* solidTransmissionDetectorHousing = new G4Tubs("DetectorHousing",
-                                            TransmissionDetectorRadius,  // Matches the outer radius of the detector
-                                            TransmissionDetectorHousingOuterDiameter / 2.,  // Outer radius of the housing
-                                            TransmissionDetectorHousingThickness / 2.,  // Half-height
-                                            0.*deg,  // Start angle
-                                            360.*deg);  // Full angular span
-
-          G4LogicalVolume* logicTransmissionDetectorHousing = new G4LogicalVolume(solidTransmissionDetectorHousing,
-                                                    DetectorHousingMaterial,
-                                                    "DetectorHousing");
-
-        // Place the detector within the housing
-        new G4PVPlacement(nullptr,  // No rotation
-                          G4ThreeVector(0, 0, 0),  // Position relative to housing center
-                          logicTransmissionDetectorHousing,
-                          "Detector",
-                          logicTransmissionDetector,  // Parent volume
-                          false,  // No boolean operation
-                          0);  // Copy number
-
-        physiTransmissionDetector = new G4PVPlacement(nullptr,  // no rotation
-                          G4ThreeVector(0, 0, DetectorPosition + TransmissionDetectorHousingThickness/2 + TransmissionDetectorThickness/2 + 1.),  // position in world
-                          logicTransmissionDetector,  // logical volume to place
-                          "TransmissionDetector",  // name
-                          logicWorld,  // parent volume (world)
-                          false,  // no boolean operation
-                          0);  // copy number
-
-        G4VisAttributes* visAttributesTransmissionDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
-        visAttributesTransmissionDetector->SetVisibility(true);
-        visAttributesTransmissionDetector->SetForceSolid(true);
-        logicTransmissionDetector->SetVisAttributes(visAttributesTransmissionDetector);
-
-        G4VisAttributes* visAttributesTransmissionWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // Red for the window
-        visAttributesTransmissionWindow->SetVisibility(true);
-        visAttributesTransmissionWindow->SetForceSolid(true);
-        logicTransmissionDetectorWindow->SetVisAttributes(visAttributesTransmissionWindow);
-
-        G4VisAttributes* visAttributesTransmissionHousing = new G4VisAttributes(G4Colour(1.0, 0.5, 0.5));  // Gray for the housing
-        visAttributesTransmissionHousing->SetVisibility(true);
-        visAttributesTransmissionHousing->SetForceSolid(false);
-        logicTransmissionDetectorHousing->SetVisAttributes(visAttributesTransmissionHousing);
-
-      #endif
-
 
     }

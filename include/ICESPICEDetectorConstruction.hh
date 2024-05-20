@@ -99,11 +99,6 @@ public:
   G4double GetDetectorThickness() const {return DetectorThickness;}; 
   G4double GetDetectorWindowThickness() const {return DetectorWindowThickness;}; 
 
-  G4double GetTransmissionDetectorPosition() const {return TransmissionDetectorPosition;}; 
-  G4double GetTransmissionDetectorActiveArea() const {return TransmissionDetectorActiveArea;}; 
-  G4double GetTransmissionDetectorThickness() const {return TransmissionDetectorThickness;}; 
-  G4double GetTransmissionDetectorWindowThickness() const {return TransmissionDetectorWindowThickness;}; 
-
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
   const G4VPhysicalVolume* GetAttenuator() const      {return physiAttenuator;}; 
   const G4VPhysicalVolume* GetMagnet() const      {return physiMagnet;}; 
@@ -148,17 +143,6 @@ private:
   G4VPhysicalVolume* physiDetector; 
   G4LogicalVolume*   logicDetector; 
   G4Tubs*            solidDetector; 
-
-  G4double           TransmissionDetectorPosition;   
-  G4double           TransmissionDetectorActiveArea; 
-  G4double           TransmissionDetectorThickness; 
-  G4double           TransmissionDetectorRadius;  
-  G4double           TransmissionDetectorWindowThickness; 
-  G4double           TransmissionDetectorHousingThickness; 
-  G4double           TransmissionDetectorHousingOuterDiameter; 
-  G4VPhysicalVolume* physiTransmissionDetector; 
-  G4LogicalVolume*   logicTransmissionDetector; 
-  G4Tubs*            solidTransmissionDetector; 
 
   G4Material*        DetectorMaterial; 
   G4Material*        DetectorHousingMaterial; 
