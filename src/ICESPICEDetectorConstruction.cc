@@ -89,7 +89,7 @@
 
 ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
   :physiWorld(NULL), logicWorld(NULL), solidWorld(NULL),
-    physiDetector(NULL), // AC
+    physiDetector(NULL), logicDetector(NULL), // AC
     WorldMaterial(NULL), 
     AttenuatorMaterial(NULL), // AC
     MagnetMaterial(NULL), // AC
@@ -216,9 +216,7 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   LaboratoryVacuum->AddMaterial( Oxygen,   fractionmass = 0.2315 ) ;
   LaboratoryVacuum->AddMaterial( Argon,    fractionmass = 0.0128 ) ;
   
-
   G4cout << G4endl << *(G4Material::GetMaterialTable()) << G4endl;
-
 
   // Default materials in setup.
   WorldMaterial = LaboratoryVacuum;
@@ -372,6 +370,12 @@ void ICESPICEDetectorConstruction::DefineCommands() {
     detectorPosition.SetRange("position>-100. && position<=0.");
     detectorPosition.SetDefaultValue("-30.");
 
+    G4GenericMessenger::Command& detectorType
+      = fMessenger->DeclareMethod("SetDetector",
+                                  &ICESPICEDetectorConstruction::SetDetector, 
+                                  "Set the detector type");
+    detectorType.SetParameterName("type", true);
+    detectorType.SetDefaultValue("PIPS1000");
 }
 
 void ICESPICEDetectorConstruction::SetDetectorPosition(G4double val) {
@@ -381,13 +385,31 @@ void ICESPICEDetectorConstruction::SetDetectorPosition(G4double val) {
     G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
+void ICESPICEDetectorConstruction::SetDetector(G4String name) {
+
+  if (name == "PIPS100") {
+    PIPS100Detector();
+  } else if (name == "PIPS300") {
+    PIPS300Detector();
+  } else if (name == "PIPS500") {
+    PIPS500Detector();
+  } else if (name == "PIPS1000") {
+    PIPS1000Detector();
+  } else {
+    G4cerr << "Unknown detector type: " << name << G4endl;
+  }
+
+  G4RunManager::GetRunManager()->GeometryHasBeenModified();
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
 void ICESPICEDetectorConstruction::PIPS100Detector() {
     // Assuming that the detector window and housing are positioned relative to the detector's dimensions.
 
     auto detector = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips100/active_area.PLY");
 
     auto solidDetector = detector->GetSolid();
-    auto logicDetector = new G4LogicalVolume(solidDetector,
+    logicDetector = new G4LogicalVolume(solidDetector,
                                           DetectorMaterial,
                                           "DetectorWindow");
 
@@ -433,13 +455,14 @@ void ICESPICEDetectorConstruction::PIPS100Detector() {
                       false,  // No boolean operation
                       0);  // Copy number
                 
-      physiDetector = new G4PVPlacement(nullptr,  // no rotation
-                  G4ThreeVector(0, 0, DetectorPosition),  // position in world
-                  logicDetector,  // logical volume to place
-                  "Detector",  // name
-                  logicWorld,  // parent volume (world)
-                  false,  // no boolean operation
-                  0);  // copy number
+    physiDetector = new G4PVPlacement(nullptr,  // no rotation
+            G4ThreeVector(0, 0, DetectorPosition),  // position in world
+            logicDetector,  // logical volume to place
+            "Detector",  // name
+            logicWorld,  // parent volume (world)
+            false,  // no boolean operation
+            0);  // copy number
+
 
     // Visualization attributes for various components
       G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
@@ -454,7 +477,7 @@ void ICESPICEDetectorConstruction::PIPS100Detector() {
 
       G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
       visAttributesHousing->SetVisibility(true);
-      visAttributesHousing->SetForceSolid(true);
+      visAttributesHousing->SetForceSolid(false);
       logicDetectorHousing->SetVisAttributes(visAttributesHousing);
 
     }
@@ -465,7 +488,7 @@ void ICESPICEDetectorConstruction::PIPS300Detector() {
     auto detector = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips300/active_area.PLY");
 
     auto solidDetector = detector->GetSolid();
-    auto logicDetector = new G4LogicalVolume(solidDetector,
+    logicDetector = new G4LogicalVolume(solidDetector,
                                           DetectorMaterial,
                                           "DetectorWindow");
 
@@ -532,7 +555,7 @@ void ICESPICEDetectorConstruction::PIPS300Detector() {
 
       G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
       visAttributesHousing->SetVisibility(true);
-      visAttributesHousing->SetForceSolid(true);
+      visAttributesHousing->SetForceSolid(false);
       logicDetectorHousing->SetVisAttributes(visAttributesHousing);
 
     }
@@ -543,7 +566,7 @@ void ICESPICEDetectorConstruction::PIPS500Detector() {
     auto detector = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips500/active_area.PLY");
 
     auto solidDetector = detector->GetSolid();
-    auto logicDetector = new G4LogicalVolume(solidDetector,
+    logicDetector = new G4LogicalVolume(solidDetector,
                                           DetectorMaterial,
                                           "DetectorWindow");
 
@@ -610,7 +633,7 @@ void ICESPICEDetectorConstruction::PIPS500Detector() {
 
       G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
       visAttributesHousing->SetVisibility(true);
-      visAttributesHousing->SetForceSolid(true);
+      visAttributesHousing->SetForceSolid(false);
       logicDetectorHousing->SetVisAttributes(visAttributesHousing);
 
     }
@@ -621,7 +644,7 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
     auto detector = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips1000/active_area.PLY");
 
     auto solidDetector = detector->GetSolid();
-    auto logicDetector = new G4LogicalVolume(solidDetector,
+    logicDetector = new G4LogicalVolume(solidDetector,
                                           DetectorMaterial,
                                           "DetectorWindow");
 
@@ -667,28 +690,28 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
                       false,  // No boolean operation
                       0);  // Copy number
                 
-      physiDetector = new G4PVPlacement(nullptr,  // no rotation
-                  G4ThreeVector(0, 0, DetectorPosition),  // position in world
-                  logicDetector,  // logical volume to place
-                  "Detector",  // name
-                  logicWorld,  // parent volume (world)
-                  false,  // no boolean operation
-                  0);  // copy number
+    physiDetector = new G4PVPlacement(nullptr,  // no rotation
+                G4ThreeVector(0, 0, DetectorPosition),  // position in world
+                logicDetector,  // logical volume to place
+                "Detector",  // name
+                logicWorld,  // parent volume (world)
+                false,  // no boolean operation
+                0);  // copy number
 
     // Visualization attributes for various components
-      G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
-      visAttributesDetector->SetVisibility(true);
-      visAttributesDetector->SetForceSolid(true);
-      logicDetector->SetVisAttributes(visAttributesDetector);
+    G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
+    visAttributesDetector->SetVisibility(true);
+    visAttributesDetector->SetForceSolid(true);
+    logicDetector->SetVisAttributes(visAttributesDetector);
 
-      G4VisAttributes* visAttributesWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // Red for the window
-      visAttributesWindow->SetVisibility(true);
-      visAttributesWindow->SetForceSolid(true);
-      logicDetectorWindow->SetVisAttributes(visAttributesWindow);
+    G4VisAttributes* visAttributesWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // Red for the window
+    visAttributesWindow->SetVisibility(true);
+    visAttributesWindow->SetForceSolid(true);
+    logicDetectorWindow->SetVisAttributes(visAttributesWindow);
 
-      G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
-      visAttributesHousing->SetVisibility(true);
-      visAttributesHousing->SetForceSolid(true);
-      logicDetectorHousing->SetVisAttributes(visAttributesHousing);
+    G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
+    visAttributesHousing->SetVisibility(true);
+    visAttributesHousing->SetForceSolid(false);
+    logicDetectorHousing->SetVisAttributes(visAttributesHousing);
 
     }

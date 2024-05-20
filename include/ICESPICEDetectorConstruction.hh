@@ -91,6 +91,7 @@ public:
 
   void SetDetectorPosition(G4double val); 
   void SetDetectorThickness(G4double val); 
+  void SetDetector(G4String name);
   G4double GetDetectorPosition() const {return DetectorPosition;}; 
 
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
@@ -114,6 +115,8 @@ private:
 
   G4double           DetectorPosition;   
   G4VPhysicalVolume* physiDetector; 
+  G4LogicalVolume*   logicDetector;  
+  
   G4Material*        DetectorMaterial; 
   G4Material*        DetectorHousingMaterial; 
 
