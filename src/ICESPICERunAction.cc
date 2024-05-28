@@ -97,7 +97,7 @@ void ICESPICERunAction::EndOfRunAction(const G4Run* aRun)
 {      
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   analysisManager->Write();
-  analysisManager->CloseFile(false);      
+  analysisManager->CloseFile(true);      
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

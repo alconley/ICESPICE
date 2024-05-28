@@ -57,16 +57,9 @@ All detectors share an active area of 50 mm², making them suitable for detailed
 
 ### Simulation Configuration
 
-#### Adjusting Detector Thickness
+#### Adjusting Detector 
 
-To simulate different detector behaviors based on their thickness, use the following command in the GEANT4 GUI:
-
-```bash
-/ICESPICE/Detector/Thickness value
-```
-
-Here, `value` can range from 0 to 3000 micrometers. 
-
+The detector geometry is build with SOLIDWORKS and exported as a .PLY ascii file. The detector can be easily modified in the ICESPICEDetectorConstruction.cc file.
 
 #### Changing Detector Position
 

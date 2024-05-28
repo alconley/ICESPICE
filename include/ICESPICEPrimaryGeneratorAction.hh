@@ -59,8 +59,8 @@ public:
   void SetRndmVertex(G4bool val) { rndmVertex = val;} 
   
 private:
-  G4ParticleGun*                  particleGun;
-  G4bool                       rndmVertex;      
+  G4ParticleGun*  particleGun;
+  G4bool  rndmVertex;      
 };
 
 #endif
