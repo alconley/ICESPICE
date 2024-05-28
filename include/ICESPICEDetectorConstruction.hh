@@ -80,33 +80,19 @@ public:
   G4double GetWorldSizeXY()  const       {return WorldSizeXY;};
   G4double GetWorldSizeZ() const          {return WorldSizeZ;}; 
 
-  G4double GetAttenuatorVolumeRadius() const {return AttenuatorVolumeRadius;}; 
-  G4double GetAttenuatorVolumeHeight() const {return AttenuatorVolumeHeight;}; 
-
-  G4double GetMagnetWidth()         {return MagnetWidth;}; 
-  G4double GetMagnetHeight()         {return MagnetHeight;}; 
-  G4double GetMagnetLength()         {return MagnetLength;}; 
-
   G4Material* GetWorldMaterial()         {return WorldMaterial;};
   G4Material* GetAttenuatorMaterial()           {return AttenuatorMaterial;}; 
   G4Material* GetMagnetMaterial()           {return MagnetMaterial;}; 
 
-  void UpdateDetectorComponents(); 
-  void SetDetectorPosition(G4double val); 
-  void SetDetectorThickness(G4double val); 
-  G4double GetDetectorPosition() const {return DetectorPosition;}; 
-  G4double GetDetectorActiveArea() const {return DetectorActiveArea;}; 
-  G4double GetDetectorThickness() const {return DetectorThickness;}; 
-  G4double GetDetectorWindowThickness() const {return DetectorWindowThickness;}; 
+  void PIPS100Detector();
+  void PIPS300Detector(); 
+  void PIPS500Detector(); 
+  void PIPS1000Detector(); 
 
-  G4double GetTransmissionDetectorPosition() const {return TransmissionDetectorPosition;}; 
-  G4double GetTransmissionDetectorActiveArea() const {return TransmissionDetectorActiveArea;}; 
-  G4double GetTransmissionDetectorThickness() const {return TransmissionDetectorThickness;}; 
-  G4double GetTransmissionDetectorWindowThickness() const {return TransmissionDetectorWindowThickness;}; 
+  void SetDetectorPosition(G4double val); 
+  G4double GetDetectorPosition() const {return DetectorPosition;}; 
 
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
-  const G4VPhysicalVolume* GetAttenuator() const      {return physiAttenuator;}; 
-  const G4VPhysicalVolume* GetMagnet() const      {return physiMagnet;}; 
   const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } 
   const G4VPhysicalVolume* GetSiliconPV() const { return physiDetector; } 
 
@@ -122,45 +108,21 @@ private:
   G4Box*             solidWorld;
   G4Material*        WorldMaterial;
 
-  G4double           AttenuatorVolumeRadius; 
-  G4double           AttenuatorVolumeHeight; 
-  G4double           AttenuatorVolumePosition; 
-  G4VPhysicalVolume* physiAttenuator; 
-  G4LogicalVolume*   logicAttenuator; 
-  G4Tubs*            solidAttenuator; 
   G4Material*        AttenuatorMaterial; 
-
-  G4double           MagnetWidth; 
-  G4double           MagnetHeight; 
-  G4double           MagnetLength; 
-  G4VPhysicalVolume* physiMagnet;
-  G4LogicalVolume*   logicMagnet;
-  G4Box*             solidMagnet;
   G4Material*        MagnetMaterial; 
 
   G4double           DetectorPosition;   
-  G4double           DetectorActiveArea; 
-  G4double           DetectorThickness; 
-  G4double           DetectorRadius;  
-  G4double           DetectorWindowThickness; 
-  G4double           DetectorHousingThickness; 
-  G4double           DetectorHousingOuterDiameter; 
+
   G4VPhysicalVolume* physiDetector; 
-  G4LogicalVolume*   logicDetector; 
-  G4Tubs*            solidDetector; 
+  G4LogicalVolume*   logicDetector;
+  G4VSolid*          solidDetector;
+  G4Material*        DetectorMaterial;
 
-  G4double           TransmissionDetectorPosition;   
-  G4double           TransmissionDetectorActiveArea; 
-  G4double           TransmissionDetectorThickness; 
-  G4double           TransmissionDetectorRadius;  
-  G4double           TransmissionDetectorWindowThickness; 
-  G4double           TransmissionDetectorHousingThickness; 
-  G4double           TransmissionDetectorHousingOuterDiameter; 
-  G4VPhysicalVolume* physiTransmissionDetector; 
-  G4LogicalVolume*   logicTransmissionDetector; 
-  G4Tubs*            solidTransmissionDetector; 
+  G4LogicalVolume*   logicDetectorWindow;
+  G4Tubs*          solidDetectorWindow; 
 
-  G4Material*        DetectorMaterial; 
+  G4LogicalVolume*   logicDetectorHousing;
+  G4VSolid*          solidDetectorHousing;   
   G4Material*        DetectorHousingMaterial; 
 
   G4Cache<G4MagneticField*> fField;  //pointer to the thread-local fields

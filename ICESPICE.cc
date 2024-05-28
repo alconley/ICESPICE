@@ -73,7 +73,6 @@ int main(int argc,char** argv) {
   // get the pointer to the User Interface manager
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
-
   if (argc==1)   // Define UI session for interactive mode.
     {
       G4UIExecutive* ui = new G4UIExecutive(argc, argv);
@@ -92,9 +91,9 @@ int main(int argc,char** argv) {
     }
 
   // // Save histograms
-  // G4AnalysisManager* man = G4AnalysisManager::Instance();
-  // man->Write();
-  // man->CloseFile();
+  G4AnalysisManager* man = G4AnalysisManager::Instance();
+  man->Write();
+  man->CloseFile();
 
   // job termination
   delete visManager;
