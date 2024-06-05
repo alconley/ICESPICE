@@ -87,7 +87,8 @@ public:
   void PIPS100Detector();
   void PIPS300Detector(); 
   void PIPS500Detector(); 
-  void PIPS1000Detector(); 
+  void PIPS1000Detector();
+  void PIPSTransmissionDetector(G4double activeArea, G4double thickness); 
 
   void SetDetectorPosition(G4double val); 
   G4double GetDetectorPosition() const {return DetectorPosition;}; 
@@ -124,6 +125,10 @@ private:
   G4LogicalVolume*   logicDetectorHousing;
   G4VSolid*          solidDetectorHousing;   
   G4Material*        DetectorHousingMaterial; 
+
+  G4VPhysicalVolume* physiTransmissionDetector; 
+  G4LogicalVolume*   logicTransmissionDetector;
+  G4Tubs*          solidTransmissionDetector;
 
   G4Cache<G4MagneticField*> fField;  //pointer to the thread-local fields
 

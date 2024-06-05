@@ -92,6 +92,7 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
     physiDetector(NULL), logicDetector(NULL), solidDetector(NULL),
     logicDetectorWindow(NULL), solidDetectorWindow(NULL),
     logicDetectorHousing(NULL), solidDetectorHousing(NULL),
+    physiTransmissionDetector(NULL), logicTransmissionDetector(NULL), solidTransmissionDetector(NULL),
     WorldMaterial(NULL), 
     AttenuatorMaterial(NULL), 
     MagnetMaterial(NULL), 
@@ -266,6 +267,12 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
 #if DETECTOR
 
   PIPS1000Detector();
+
+  // transmission detector thickness
+  G4double activeArea = 300.*mm2; // Active area of the detector
+  G4double thickness = 300.*micrometer; // Thickness of the detector
+
+  PIPSTransmissionDetector(activeArea, thickness);
 
 #endif
 
@@ -458,3 +465,35 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
     logicDetectorHousing->SetVisAttributes(visAttributesHousing);
 
     }
+
+
+void ICESPICEDetectorConstruction::PIPSTransmissionDetector(G4double activeArea, G4double thickness) {
+  // create a tube for the detector
+  solidTransmissionDetector = new G4Tubs("Detector",
+                                      0,  // Inner radius
+                                      std::sqrt(activeArea / 3.14),  // Outer radius
+                                      thickness / 2.,  // Half-height
+                                      0.*deg,  // Start angle
+                                      360.*deg);  // Spanning angle
+
+  logicTransmissionDetector = new G4LogicalVolume(solidTransmissionDetector,
+                                        DetectorMaterial,
+                                        "Detector");
+
+  // Place the detector at -25mm
+  physiTransmissionDetector = new G4PVPlacement(nullptr,  // No rotation
+                G4ThreeVector(0, 0, -25.*mm),  // Position in the detector
+                logicTransmissionDetector,
+                "Detector",
+                logicWorld,  // Parent volume
+                false,  // No boolean operation
+                0);  // Copy number
+
+            
+  // Visualization attributes for various components
+  G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
+  visAttributesDetector->SetVisibility(true);
+  visAttributesDetector->SetForceSolid(true);
+  logicTransmissionDetector->SetVisAttributes(visAttributesDetector);
+
+}
