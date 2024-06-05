@@ -268,11 +268,11 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
 
   PIPS1000Detector();
 
-  // transmission detector thickness
-  G4double activeArea = 300.*mm2; // Active area of the detector
-  G4double thickness = 300.*micrometer; // Thickness of the detector
+  // // transmission detector thickness
+  // G4double activeArea = 300.*mm2; // Active area of the detector
+  // G4double thickness = 300.*micrometer; // Thickness of the detector
 
-  PIPSTransmissionDetector(activeArea, thickness);
+  // PIPSTransmissionDetector(activeArea, thickness);
 
 #endif
 
