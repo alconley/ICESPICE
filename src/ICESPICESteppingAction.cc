@@ -51,7 +51,7 @@
 
 #include "G4SystemOfUnits.hh"
 
-#define STOPPARTICLES 1
+#define STOPPARTICLES 0
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 

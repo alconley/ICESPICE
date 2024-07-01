@@ -53,10 +53,10 @@
 
 //Print position of primaries.
 #define POSITION 0
-#define RANDOM_DIRECTION 0
+#define RANDOM_DIRECTION 1
 
 #define DIFFERENT_DIRECTION_SAME_ENERGY 0
-#define SAME_DIRECTION_DIFFERENT_ENERGY 1
+#define SAME_DIRECTION_DIFFERENT_ENERGY 0
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
