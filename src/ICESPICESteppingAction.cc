@@ -51,6 +51,8 @@
 
 #include "G4SystemOfUnits.hh"
 
+#define STOPPARTICLES 1
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 ICESPICESteppingAction::ICESPICESteppingAction(
@@ -81,5 +83,24 @@ void ICESPICESteppingAction::UserSteppingAction(const G4Step* aStep)
 	if ( volume == fDetConstruction->GetSiliconPV() ) {
 		fEventAction->AddSil(edep);
 	}
+
+    #if STOPPARTICLES
+
+        if (volume == fDetConstruction->GetAttenuatorPV() ) {
+            G4Track* track = aStep->GetTrack();
+            track->SetTrackStatus(fStopAndKill);
+        }
+
+        if ( volume == fDetConstruction->GetDetectorHousingPV() ) {
+            G4Track* track = aStep->GetTrack();
+            track->SetTrackStatus(fStopAndKill);
+        }
+
+        if ( volume == fDetConstruction->GetDetectorWindowPV() ) {
+            G4Track* track = aStep->GetTrack();
+            track->SetTrackStatus(fStopAndKill);
+        }
+
+    #endif
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

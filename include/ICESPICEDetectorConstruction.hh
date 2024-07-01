@@ -88,6 +88,7 @@ public:
   void PIPS300Detector(); 
   void PIPS500Detector(); 
   void PIPS1000Detector();
+  void ICESPICE();
   void PIPSTransmissionDetector(G4double activeArea, G4double thickness); 
 
   void SetDetectorPosition(G4double val); 
@@ -96,6 +97,10 @@ public:
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
   const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } 
   const G4VPhysicalVolume* GetSiliconPV() const { return physiDetector; } 
+  const G4VPhysicalVolume* GetAttenuatorPV() const { return physiAttenuator; }
+  const G4VPhysicalVolume* GetDetectorWindowPV() const { return physiDetectorWindow; }
+  const G4VPhysicalVolume* GetDetectorHousingPV() const { return physiDetectorHousing; }
+
 
 private:
 
@@ -109,7 +114,6 @@ private:
   G4Box*             solidWorld;
   G4Material*        WorldMaterial;
 
-  G4Material*        AttenuatorMaterial; 
   G4Material*        MagnetMaterial; 
 
   G4double           DetectorPosition;   
@@ -119,9 +123,16 @@ private:
   G4VSolid*          solidDetector;
   G4Material*        DetectorMaterial;
 
+  G4VPhysicalVolume* physiAttenuator;
+  G4LogicalVolume*   logicAttenuator;
+  G4VSolid*          solidAttenuator;
+  G4Material*        AttenuatorMaterial; 
+  
+  G4VPhysicalVolume* physiDetectorWindow;
   G4LogicalVolume*   logicDetectorWindow;
   G4Tubs*          solidDetectorWindow; 
 
+  G4VPhysicalVolume* physiDetectorHousing;
   G4LogicalVolume*   logicDetectorHousing;
   G4VSolid*          solidDetectorHousing;   
   G4Material*        DetectorHousingMaterial; 
