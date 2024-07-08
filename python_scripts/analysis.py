@@ -5,7 +5,7 @@ import numpy as np
 def transmission_histogram(file_path, plot=True):
 
     parts = file_path.split('_')
-    
+    print(parts)
     # Extract relevant details based on position
     # Example filename: 'ICESPICE_PIPS1000_f50mm_g20mm_1000_h1_Esil.csv'
     detector = parts[1]  # e.g., 'PIPS1000'
@@ -119,10 +119,10 @@ def transmission_probability(files, title=None, plot=True):
 def get_file_paths(detector, f, g):
     import os
     files = []
-    for file in os.listdir('./analysis/data'):
+    for file in os.listdir('./analysis/data/ICESPICEwithf70mm/'):
         if file.endswith('.csv'):
             if file.startswith(f'ICESPICE_{detector}_f{f}mm_g{g}mm'):
-                files.append(f'./analysis/data/{file}')
+                files.append(f'./analysis/data/ICESPICEwithf70mm/{file}')
     return files
 
 def plot_transmission_summary(detector, f, g_values):
@@ -176,16 +176,20 @@ def plot_transmission_summary(detector, f, g_values):
 # Usage examples:
 
 # plot the histogram for a single file
-# transmission_histogram('./analysis/data/ICESPICE_PIPS1000_f50mm_g20mm_1000_h1_Esil.csv')
+# transmission_histogram('./analysis/data/ICESPICEwithf70mm/ICESPICE_PIPS1000_f70mm_g30mm_1000_h1_Esil.csv')
 
 # # plot the transmission probability for a detector, f value, and g value
 # pips1000_f50_g30_files = get_file_paths(detector='PIPS1000', f='50', g='30')
 # transmission_probability(pips1000_f50_g30_files, title='PIPS1000 | f=50mm | g=30mm')
 
+pips1000_f70_g35_files = get_file_paths(detector='PIPS1000', f='70', g='35')
+transmission_probability(pips1000_f70_g35_files, title='PIPS1000 | f=70mm | g=35mm')
 
-plot_transmission_summary(detector='PIPS1000', f='50', g_values=[20, 25, 30, 35, 40, 45, 50])
-plot_transmission_summary(detector='PIPS500', f='50', g_values=[20, 25, 30, 35, 40, 45, 50])
-plot_transmission_summary(detector='PIPS300', f='50', g_values=[20, 25, 30, 35, 40, 45, 50])
-plot_transmission_summary(detector='PIPS100', f='50', g_values=[20, 25, 30, 35, 40, 45, 50])
+# plot_transmission_summary(detector='PIPS1000', f='70', g_values=[20, 25, 30, 35, 40, 45])
+
+# plot_transmission_summary(detector='PIPS1000', f='50', g_values=[20, 25, 30, 35, 40, 45, 50])
+# plot_transmission_summary(detector='PIPS500', f='50', g_values=[20, 25, 30, 35, 40, 45, 50])
+# plot_transmission_summary(detector='PIPS300', f='50', g_values=[20, 25, 30, 35, 40, 45, 50])
+# plot_transmission_summary(detector='PIPS100', f='50', g_values=[20, 25, 30, 35, 40, 45, 50])
 
 plt.show()

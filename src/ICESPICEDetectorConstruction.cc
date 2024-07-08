@@ -84,7 +84,7 @@
 #define MAGNETS 1      // N42 1"X1"x1/8"
 #define ATTENUATOR 1   // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
-#define MAGNETHOLDER 1 // AC: Volume for magnet holder/mounting rings
+#define MAGNETHOLDER 0 // AC: Volume for magnet holder/mounting rings
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
