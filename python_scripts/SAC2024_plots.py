@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
+from math import pi, sqrt
 
 tex_fonts = {
     # Use LaTeX to write all text
@@ -10,7 +11,7 @@ tex_fonts = {
     "font.serif" : ["CMR10"],
     # Use 10pt font in plots, to match 10pt font in document
     "axes.labelsize": 10,
-    "font.size": 9,
+    "font.size": 10,
     # Make the legend/label fonts a little smaller
     "legend.fontsize": 8,
     "xtick.labelsize": 8,
@@ -20,11 +21,113 @@ tex_fonts = {
 plt.rcParams.update(tex_fonts)
 matplotlib.rcParams['axes.unicode_minus'] = False
 
+def gaussian(x, mu, sig, area):
+    normalization = area / (sig * sqrt(2 * pi))
+    return normalization * np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
+
+# Implement the folding function
+def fold(counts, bin_edges, fwhm_keV):
+    fwhm_mev = fwhm_keV / 1000  # Convert keV to MeV
+    sigma = fwhm_mev / 2.355
+
+    folded_counts = np.zeros_like(bin_edges[:-1])
+    
+    for i, count in enumerate(counts):
+        bin_center = (bin_edges[i] + bin_edges[i + 1]) / 2
+        folded_counts += gaussian(bin_edges[:-1], bin_center, sigma, count * (bin_edges[1] - bin_edges[0]))
+
+    return folded_counts
+
+def transmission_histogram_plot(file_path: str, ax: plt.Axes):
+
+    parts = file_path.split('_')
+    # Extract relevant details based on position
+    # Example filename: 'ICESPICE_PIPS1000_f50mm_g20mm_1000_h1_Esil.csv'
+    detector = parts[1]  # e.g., 'PIPS1000'
+    f = parts[2]   # e.g., 'f50mm'
+    g = parts[3]            # e.g., 'g20mm'
+    simulation_energy = int(parts[4])   # e.g., 1000
+
+        # Open the file to read the bin information
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        bin_info = lines[3]  # This is the line with bin axis information
+
+    # Extracting the number of bins and the range from the bin_info line
+    _, _, bins, start, end = bin_info.split()
+    bins = int(bins) + 3  # Adjusted bins for plt.step
+    start = float(start)
+    end = float(end)
+
+    # Load the histogram data
+    df = pd.read_csv(file_path, skiprows=7, names=['counts', 'Sw', 'Sw2', 'Sxw0', 'Sx2w0'])
+
+    # Extract counts
+    counts = df['counts']
+
+    total_counts = counts.sum()
+    counts_4pi = total_counts * 2
+
+    transmission_counts = counts[2:].sum()
+    transmission_probability = transmission_counts / counts_4pi * 100
+
+    full_energy_depoisted_counts = counts[simulation_energy]
+    full_energy_transmission_probability = full_energy_depoisted_counts / counts_4pi * 100
+    full_energy_efficiency = full_energy_depoisted_counts / transmission_counts * 100
+
+    textstr = fr'''
+    Geant4 Simulation of ICESPICE
+
+    Particle: Electron
+        Energy: {simulation_energy} keV
+        Number (4$\pi$):  {total_counts*2}
+        Distance to ICESPICE [f]: 70 mm
+
+    Detector: Passivated Implanted Planar Silicon (PIPS)
+        Thickness: 1000 $\mu$m
+        Active area: 50 mm$^2$
+        Distance from ICESPICE [g]: 25 mm
+        Transmission Counts: {transmission_counts}
+        Transmission Probability: {transmission_probability:.2f}\%
+        Full Energy Deposited Counts: {full_energy_depoisted_counts}
+        Transmission Probability (Full Energy Deposited): {full_energy_transmission_probability:.2f}\%
+        Full Energy Deposited Counts/Transmission Counts = {full_energy_efficiency:.2f}\%
+        '''
+
+    # Generate the x-axis for the bins
+    # bin_edges = np.linspace(start, end, bins)  # Corrected to 'bins' for edges calculation
+
+    # Create the step plot
+    # ax.step(bin_edges[:-1], counts, where='post', linewidth=0.5, color='#782F40')  # 'post' ensures the value at each step is constant until the next edge
+    
+    # Generate the x-axis for the bins
+    bin_edges = np.linspace(start, end, bins + 1)  # Corrected to 'bins + 1' for edges calculation
+
+    # Fold the counts with the Gaussian
+    folded_counts = fold(counts, bin_edges, 2.2)
+
+    # sum the folded counts
+    total_folded_counts = folded_counts.sum()
+
+    # print
+    print(f'Total folded counts: {total_folded_counts}\n\n\n')
+
+
+    # Create the step plot
+    ax.step(bin_edges[:-1], folded_counts, where='mid', linewidth=0.5, color='#782F40')  # 'mid' ensures the value at each step is centered
+
+    ax.set_xlabel(r'e$^{-}$ Energy [MeV]')
+    ax.set_ylabel(r'Counts/keV')
+    ax.set_yscale('log')  # Logarithmic scale for the y-axis
+    ax.set_ylim(0.1, 1e3)
+    ax.set_xlim(0, 1.1)
+    ax.text(0.02, 0.99, textstr, transform=ax.transAxes, verticalalignment='top', horizontalalignment='left')
+
+    return
 
 def transmission_histogram(file_path, plot=True):
 
     parts = file_path.split('_')
-    print(parts)
     # Extract relevant details based on position
     # Example filename: 'ICESPICE_PIPS1000_f50mm_g20mm_1000_h1_Esil.csv'
     detector = parts[1]  # e.g., 'PIPS1000'
@@ -70,7 +173,7 @@ def transmission_histogram(file_path, plot=True):
         4π Probability for full energy deposition: {full_energy_transmission_probability:.2f}%
         Full energy efficiency: {full_energy_efficiency:.2f}%'''
     
-    print(textstr)
+    # print(textstr)
 
     if plot:
         # Generate the x-axis for the bins
@@ -143,80 +246,6 @@ def transmission_probability(files, title=None, plot=True):
         plt.show()
 
     return energy, transmission_prob, full_energy_transmission_prob, efficiency
-
-def transmission_histogram_plot(file_path: str, ax: plt.Axes):
-
-    parts = file_path.split('_')
-    print(parts)
-    # Extract relevant details based on position
-    # Example filename: 'ICESPICE_PIPS1000_f50mm_g20mm_1000_h1_Esil.csv'
-    detector = parts[1]  # e.g., 'PIPS1000'
-    f = parts[2]   # e.g., 'f50mm'
-    g = parts[3]            # e.g., 'g20mm'
-    simulation_energy = int(parts[4])   # e.g., 1000
-
-        # Open the file to read the bin information
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        bin_info = lines[3]  # This is the line with bin axis information
-
-    # Extracting the number of bins and the range from the bin_info line
-    _, _, bins, start, end = bin_info.split()
-    bins = int(bins) + 3  # Adjusted bins for plt.step
-    start = float(start)
-    end = float(end)
-
-    # Load the histogram data
-    df = pd.read_csv(file_path, skiprows=7, names=['counts', 'Sw', 'Sw2', 'Sxw0', 'Sx2w0'])
-
-    # Extract counts
-    counts = df['counts']
-
-    total_counts = counts.sum()
-    counts_4pi = total_counts * 2
-
-    transmission_counts = counts[2:].sum()
-    transmission_probability = transmission_counts / counts_4pi * 100
-
-    full_energy_depoisted_counts = counts[simulation_energy]
-    full_energy_transmission_probability = full_energy_depoisted_counts / counts_4pi * 100
-
-    full_energy_efficiency = full_energy_depoisted_counts / transmission_counts * 100
-
-    textstr = fr'''
-    Geant4 Simulation of ICESPICE
-
-    Particle: Electron
-        Energy: {simulation_energy} keV
-        Number (4$\pi$):  {total_counts*2}
-        Distance to ICESPICE [f]: 70 mm
-
-    Detector: Passivated Implanted Planar Silicon (PIPS)
-        Thickness: 1000 $\mu$m
-        Active area: 50 mm$^2$
-        Distance from ICESPICE [g]: 25 mm
-        Transmission Counts: {transmission_counts}
-        Transmission Probability: {transmission_probability:.2f}\%
-        Full Energy Deposited Counts: {full_energy_depoisted_counts}
-        Transmission Probability (Full Energy): {full_energy_transmission_probability:.2f}\%
-        Full Energy Efficiency: {full_energy_efficiency:.2f}\%
-        '''
-
-    # Generate the x-axis for the bins
-    bin_edges = np.linspace(start, end, bins)  # Corrected to 'bins' for edges calculation
-
-    
-    # Create the step plot
-    ax.step(bin_edges[:-1], counts, where='post', linewidth=0.5, color='#782F40')  # 'post' ensures the value at each step is constant until the next edge
-    ax.set_xlabel(r'e$^{-}$ Energy [MeV]')
-    ax.set_ylabel(r'Counts/keV')
-    ax.set_yscale('log')  # Logarithmic scale for the y-axis
-
-    ax.set_xlim(0, 1.1)
-    ax.text(0.02, 0.99, textstr, transform=ax.transAxes, verticalalignment='top', horizontalalignment='left')
-
-
-    return simulation_energy, transmission_probability, full_energy_transmission_probability, full_energy_efficiency
 
 def plot_transmission_summary(detector, f, g_values, ax: plt.Axes):
 
