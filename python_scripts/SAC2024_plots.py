@@ -294,6 +294,6 @@ for i in range(len(axs)):
     axs[i].tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=2)
     axs[i].tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=4)
 
-plt.savefig('./analysis/plots/ICESPICE_transmission_SAC2024.png', dpi=900, bbox_inches='tight')
+plt.savefig('./analysis/plots/ICESPICE_transmission_SAC2024.pdf')
 
 plt.show()
