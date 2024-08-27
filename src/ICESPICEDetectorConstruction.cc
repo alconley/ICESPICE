@@ -80,9 +80,9 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 0          // Magnetic field grid
-#define MAGNETS 0      // N42 1"X1"x1/8"
-#define ATTENUATOR 0   // AC: Volume for attenuator 
+#define MAG 1          // Magnetic field grid
+#define MAGNETS 1      // N42 1"X1"x1/8"
+#define ATTENUATOR 1   // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -234,8 +234,15 @@ void ICESPICEDetectorConstruction::DefineMaterials()
 G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
 {  
   //The World
-  WorldSizeXY  = 100.*mm;  // Cube
-  WorldSizeZ   = 300.*mm;
+  // WorldSizeXY  = 100.*mm;  // Cube
+  // WorldSizeZ   = 300.*mm;
+
+  WorldSizeXY  = 300.*mm;  // Cube
+  WorldSizeZ   = 500.*mm;
+
+
+
+
 
   zOffset = 0.0*mm;  // Offset of the magnetic field grid
 
