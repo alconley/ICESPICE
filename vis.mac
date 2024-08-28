@@ -25,7 +25,7 @@
 /vis/viewer/set/viewpointThetaPhi 90. 0.
 #
 # Specify zoom value:
-/vis/viewer/zoom 3.0
+/vis/viewer/zoom 1.5
 #
 # Specify style (surface or wireframe):
 #/vis/viewer/set/style wireframe
@@ -40,22 +40,15 @@
 /vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
 /vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
 # (if too many tracks cause core dump => /tracking/storeTrajectory 0)
-# /vis/multithreading/maxEventQueueSize 99
-# /vis/multithreading/actionOnEventQueueFull wait
-# /tracking/storeTrajectory 0
 #
 # Draw hits at end of event:
 #/vis/scene/add/hits
 #
-# To draw only e-:
-# /vis/filtering/trajectories/create/particleFilter
-# /vis/filtering/trajectories/particleFilter-0/add e-
-# don't show the secondaries
-# /vis/filtering/trajectories/create/attributeFilter secondaries
-# /vis/filtering/trajectories/secondaries/setAttribute PID
-# /vis/filtering/trajectories/secondaries/addValue 0
+# To draw only gammas:
+#/vis/filtering/trajectories/create/particleFilter
+#/vis/filtering/trajectories/particleFilter-0/add gamma
 #
-# To invert the above, drawing all particles except e-,
+# To invert the above, drawing all particles except gammas,
 # keep the above two lines but also add:
 #/vis/filtering/trajectories/particleFilter-0/invert true
 #

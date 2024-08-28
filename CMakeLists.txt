@@ -55,6 +55,7 @@ set(ICESPICE_SCRIPT
     vis.mac 
     gui.mac
     ICESPICE3D.TABLE
+    Plots.C
   )
 
 foreach(_script ${ICESPICE_SCRIPT})
@@ -78,4 +79,3 @@ add_custom_target(ice_spice DEPENDS ICESPICE)
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
 install(TARGETS ICESPICE DESTINATION bin)
-
