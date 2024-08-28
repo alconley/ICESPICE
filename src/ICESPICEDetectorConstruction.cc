@@ -234,15 +234,11 @@ void ICESPICEDetectorConstruction::DefineMaterials()
 G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
 {  
   //The World
-  // WorldSizeXY  = 100.*mm;  // Cube
-  // WorldSizeZ   = 300.*mm;
+  WorldSizeXY  = 100.*mm;  // Cube
+  WorldSizeZ   = 300.*mm;
 
-  WorldSizeXY  = 300.*mm;  // Cube
-  WorldSizeZ   = 500.*mm;
-
-
-
-
+  // WorldSizeXY  = 300.*mm;  // Cube
+  // WorldSizeZ   = 500.*mm;
 
   zOffset = 0.0*mm;  // Offset of the magnetic field grid
 
