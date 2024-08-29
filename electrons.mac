@@ -1,0 +1,14 @@
+/control/verbose 2
+/run/verbose 1
+/gps/pos/type Point
+/gps/pos/centre 0 0 7 cm
+/gps/ang/type iso
+/gps/particle e-
+/gps/energy 1000. keV
+/analysis/setFileName Electron1MeV
+/run/printProgress 100000 
+/run/beamOn 10000000
+/gps/energy 900. keV
+/analysis/setFileName Electron900keV
+/run/printProgress 100000 
+/run/beamOn 10000000

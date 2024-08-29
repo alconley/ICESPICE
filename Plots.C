@@ -10,10 +10,11 @@
 
 /*
 This script can be read using 
-root -x 'Plots.C(1000.0, 2.0, 70.0, 30.0, 1000)'
+root -x 'Plots.C("input_file.root", 1000.0, 2.0, 70.0, 30.0, 1000)'
 ... or load the script in ROOT and run the function with the parameters
 
 For this example...
+"input_file.root" = input ROOT file
 1000.0 = electron energy in keV
 2.0 = FWHM of the folding gaussian in keV
 70.0 = f in mm
@@ -25,20 +26,16 @@ only the FWHM is significant in this script for caluclation, the other variables
 A canvas will appear but the top plots will not be there. You must comment out "Clean Up" lines and the "Exit ROOT" line to see the plots
 */
 
-void Plots(double energy, double fwhm, double f, double g, int thickness);
+void Plots(const char* inputFileName, double energy, double fwhm, double f, double g, int thickness);
 
-void Plots(double energy, double fwhm, double f, double g, int thickness) {
+void Plots(const char* inputFileName, double energy, double fwhm, double f, double g, int thickness) {
 
-    // std::string custom_identifier = "";
-
-    // Create a unique name for the convoluted histogram
-    // std::string name = custom_identifier + Form("PIPS%i_f%.0fmm_g%.0fmm_e%.0fkeV", thickness, f, g, energy);
     std::string name = Form("PIPS%i_f%.0fmm_g%.0fmm_e%.0fkeV", thickness, f, g, energy);
 
-    // Open the original ROOT file to read the histogram
-    TFile* inputFile = TFile::Open("./ICESPICE.root", "READ");
+    // Open the input ROOT file
+    TFile* inputFile = TFile::Open(inputFileName, "READ");
     if (!inputFile || inputFile->IsZombie()) {
-        std::cerr << "Error: Could not open file build/ICESPICE.root" << std::endl;
+        std::cerr << "Error: Could not open file " << inputFileName << std::endl;
         return;
     }
 
@@ -124,12 +121,12 @@ void Plots(double energy, double fwhm, double f, double g, int thickness) {
         }
     }
     double fullEnergyCounts = srcHist->GetBinContent(energy);
-    double transmissionProbability = totalInteractionCounts / totalCounts * 100.0 / 2.0;
-    double transmissionProbabilityFullEnergy = fullEnergyCounts / totalCounts * 100.0 / 2.0;
+    double transmissionProbability = totalInteractionCounts / totalCounts * 100.0;
+    double transmissionProbabilityFullEnergy = fullEnergyCounts / totalCounts * 100.0;
     double detectorEfficiency = fullEnergyCounts / totalInteractionCounts * 100.0;
 
     // Print out the statistics
-    std::cout << "\tTotal Counts (2π): " << totalCounts << std::endl;
+    std::cout << "\tTotal Counts (4π): " << totalCounts << std::endl;
     std::cout << "\tCounts in Detector: " << totalInteractionCounts << std::endl;
     std::cout << "\tCounts at Full Energy: " << fullEnergyCounts << std::endl;
     std::cout << "\tTransmission Probability in 4π [%]: " << transmissionProbability << "%" << std::endl;

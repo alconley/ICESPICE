@@ -41,40 +41,9 @@
 
 class ICESPICEPhysicsList: public G4VModularPhysicsList
 {
-public:
-  ICESPICEPhysicsList();
-  ~ICESPICEPhysicsList();
-  
-protected:
-  // Construct particle and physics
-  void ConstructParticle();
-  void ConstructProcess();
-  
-  void SetCuts();
-  
-public: 
-  // Set Cuts
-  void SetGammaCut(G4double);
-  void SetElectronCut(G4double);
-  void SetPositronCut(G4double);
-  void SetProtonCut(G4double);
-  
-  void SetGammaLowLimit(G4double);
-  void SetElectronLowLimit(G4double);
-  void SetPositronLowLimit(G4double);
-  void SetProtonLowLimit(G4double);
-  void SetGEPLowLimit(G4double);
-
-  void SetGELowLimit(G4double);
-  
-private:
-  
-  G4double cutForGamma;
-  G4double cutForElectron;
-  G4double cutForPositron;
-  G4double cutForProton;
-  G4VPhysicsConstructor* fEmPhysicsList;
-  G4VPhysicsConstructor* fDecPhysicsList;
+  public:
+    ICESPICEPhysicsList();
+    ~ICESPICEPhysicsList() override;
 };
 #endif
 
