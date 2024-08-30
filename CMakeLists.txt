@@ -56,6 +56,7 @@ set(ICESPICE_SCRIPT
     gui.mac
     ICESPICE3D.TABLE
     Plots.C
+    bi207.mac
   )
 
 foreach(_script ${ICESPICE_SCRIPT})

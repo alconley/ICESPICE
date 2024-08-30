@@ -4,5 +4,8 @@
 /gps/ang/type iso
 /gps/particle ion
 /gps/ion 83 207
+# Set energy distribution
+/gps/ene/type Mono
+/gps/ene/mono 0 eV      # Monoenergetic with 0 eV (since the decay will be handled by physics processes)
 /analysis/setFileName Bi207
-/run/beamOn 1000000
+/run/beamOn 100000000

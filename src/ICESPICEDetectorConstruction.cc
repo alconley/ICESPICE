@@ -80,9 +80,9 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 1         // Magnetic field grid
-#define MAGNETS 1      // N42 1"X1"x1/8"
-#define ATTENUATOR 1   // AC: Volume for attenuator 
+#define MAG 0         // Magnetic field grid
+#define MAGNETS 0      // N42 1"X1"x1/8"
+#define ATTENUATOR 0   // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
 #define MAGNETHOLDER 0 // AC: Volume for magnet holder/mounting rings
 
@@ -463,10 +463,10 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
 
                           // Place the detector within the housing
     physiDetectorHousing = new G4PVPlacement(nullptr,  // No rotation
-                      G4ThreeVector(0, 0, DetectorPosition),  // Position relative to housing center
+                      G4ThreeVector(0, 0, 0),  // Position relative to housing center
                       logicDetectorHousing,
                       "DetectorHousing",
-                      logicWorld,  // Parent volume
+                      logicDetector,  // Parent volume
                       false,  // No boolean operation
                       0);  // Copy number
                 

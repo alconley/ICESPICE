@@ -19,19 +19,20 @@ def macro_creation(macro_path: str, thickness:int, folded_fwhm: float = 2.0):
         for f_position in [70]:
             file.write(f'/gps/pos/centre 0 0 {f_position} mm\n')
             
-            for g_position in range(-20,-50, -5):
+            for g_position in range(-40,-45, -5):
             
                 file.write(f'/ICESPICE/Detector/Position {g_position}\n')
 
-                for energy in range(100, 2100, 100):
+                for energy in range(1700, 2100, 100):
                     file.write(f'/gps/energy {energy} keV\n')
-                    file_name = f'ICESPICE_PIPS{thickness}_f{f_position}mm_g{abs(g_position)}mm_{energy}keV.root'
-                    file.write(f'/analysis/setFileName {file_name}\n')
+                    # file_name = f'ICESPICE_PIPS{thickness}_f{f_position}mm_g{abs(g_position)}mm_{energy}keV.root'
+                    # file.write(f'/analysis/setFileName {file_name}\n')
                     
-                    file.write(f'/run/printProgress 10000\n')
+                    file.write(f'/run/printProgress 100000\n')
                     file.write(f'/run/beamOn {n_particles}\n')
                     
-                    file.write(f"/control/shell root -x 'Plots.C('{file_name}', {energy}, {folded_fwhm}, {f_position}, {abs(g_position)}, {thickness})'\n")
+                    # file.write(f"/control/shell root -x 'Plots.C('{file_name}', {energy}, {folded_fwhm}, {f_position}, {abs(g_position)}, {thickness})'\n")
+                    file.write(f"/control/shell root -x 'Plots.C(\"ICESPICE.root\", {energy}, {folded_fwhm}, {f_position}, {abs(g_position)}, {thickness})'\n")
                     
                     
 
@@ -49,7 +50,7 @@ with open('./build/run_all.sh', 'w') as file:
         file.write(f'./ICESPICE {macro_file}\n')
     
     # write a command to remove a file called 'ICESPICE.root' if it exists
-    file.write('rm *t*.root\n')
+    file.write('rm ICESPICE.root\n')
     
     # hadd all the files together
     file.write('hadd ICESPICE.root *.root\n')
