@@ -10,8 +10,8 @@ def macro_creation(macro_path: str, thickness:int, folded_fwhm: float = 2.0):
         file.write('/run/initialize\n')
         file.write('/control/verbose 1\n')
         file.write('/event/verbose 0\n')
+
         file.write('/tracking/storeTrajectory 0\n')
-        file.write('/geometry/test/run\n')
         
         for f_position in [70]:
         
@@ -69,9 +69,9 @@ with open('./build/run_all.sh', 'w') as file:
         file.write(f'./ICESPICE {macro_file}\n')
     
     # write a command to remove a file called 'ICESPICE.root' if it exists
-    # file.write('rm ICESPICE.root\n')
+    file.write('rm ICESPICE.root\n')
     
-    # # hadd all the files together
-    # file.write('hadd ICESPICE.root *.root\n')
+    # hadd all the files together
+    file.write('hadd ICESPICE.root *.root\n')
     
         
