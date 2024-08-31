@@ -1,6 +1,6 @@
 /process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
 /gps/pos/type Point
-/gps/pos/centre 0 0 70 cm
+/gps/pos/centre 0 0 70 mm
 /ICESPICE/Detector/Position -30
 /gps/ang/type iso
 /gps/particle ion
