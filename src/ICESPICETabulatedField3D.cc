@@ -155,15 +155,31 @@ void ICESPICETabulatedField3D::GetFieldValue(const double point[4],
   double z = point[2] + fZoffset;
 
   // Check that the point is within the defined region 
-  if ( x>=minx && x<=maxx &&
-       y>=miny && y<=maxy && 
-       z>=minz && z<=maxz ) {
+  // if ( x>=minx && x<=maxx &&
+  //      y>=miny && y<=maxy && 
+  //      z>=minz && z<=maxz ) {
+
+  // seems like it would crash sometimes if the point is exactly on the edge
+    if ( x>minx && x<maxx &&
+       y>miny && y<maxy && 
+       z>minz && z<maxz ) {
     
     // Position of given point within region, normalized to the range
     // [0,1]
     double xfraction = (x - minx) / dx;
     double yfraction = (y - miny) / dy; 
     double zfraction = (z - minz) / dz;
+
+    // Check if any fraction is at min or max, return Bfield of 0 if true
+    // This is to avoid out-of-range interpolation
+    if (xfraction == 0 || xfraction == 1 || 
+        yfraction == 0 || yfraction == 1 || 
+        zfraction == 0 || zfraction == 1) {
+        Bfield[0] = 0.0;
+        Bfield[1] = 0.0;
+        Bfield[2] = 0.0;
+        return;
+    }
 
     if (invertX) { xfraction = 1 - xfraction;}
     if (invertY) { yfraction = 1 - yfraction;}
@@ -184,18 +200,18 @@ void ICESPICETabulatedField3D::GetFieldValue(const double point[4],
     int xindex = static_cast<int>(xdindex);
     int yindex = static_cast<int>(ydindex);
     int zindex = static_cast<int>(zdindex);
-    
 
-#ifdef DEBUG_INTERPOLATING_FIELD
-    G4cout << "Local x,y,z: " << xlocal << " " << ylocal << " " << zlocal << G4endl;
-    G4cout << "Index x,y,z: " << xindex << " " << yindex << " " << zindex << G4endl;
-    double valx0z0, mulx0z0, valx1z0, mulx1z0;
-    double valx0z1, mulx0z1, valx1z1, mulx1z1;
-    valx0z0= table[xindex  ][0][zindex];  mulx0z0=  (1-xlocal) * (1-zlocal);
-    valx1z0= table[xindex+1][0][zindex];  mulx1z0=   xlocal    * (1-zlocal);
-    valx0z1= table[xindex  ][0][zindex+1]; mulx0z1= (1-xlocal) * zlocal;
-    valx1z1= table[xindex+1][0][zindex+1]; mulx1z1=  xlocal    * zlocal;
-#endif
+// #ifdef DEBUG_INTERPOLATING_FIELD
+    // G4cout << "Local x,y,z: " << xlocal << " " << ylocal << " " << zlocal << G4endl;
+    // G4cout << "Index x,y,z: " << xindex << " " << yindex << " " << zindex << G4endl;
+
+    // double valx0z0, mulx0z0, valx1z0, mulx1z0;
+    // double valx0z1, mulx0z1, valx1z1, mulx1z1;
+    // valx0z0= table[xindex  ][0][zindex];  mulx0z0=  (1-xlocal) * (1-zlocal);
+    // valx1z0= table[xindex+1][0][zindex];  mulx1z0=   xlocal    * (1-zlocal);
+    // valx0z1= table[xindex  ][0][zindex+1]; mulx0z1= (1-xlocal) * zlocal;
+    // valx1z1= table[xindex+1][0][zindex+1]; mulx1z1=  xlocal    * zlocal;
+// #endif
 
         // Full 3-dimensional version
     Bfield[0] =

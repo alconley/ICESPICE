@@ -1,3 +1,8 @@
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/run/initialize
 /process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
 /gps/pos/type Point
 /gps/pos/centre 0 0 70 mm
@@ -8,6 +13,6 @@
 # Set energy distribution
 /gps/ene/type Mono
 /gps/ene/mono 0 eV      # Monoenergetic with 0 eV (since the decay will be handled by physics processes)
-/analysis/setFileName Bi207_f70mm_g30mm_NoICESPICE
-/run/printProgress 10000000
+/analysis/setFileName Bi207_f70mm_g30mm
+/run/printProgress 1000000
 /run/beamOn 1000000000

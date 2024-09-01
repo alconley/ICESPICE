@@ -45,9 +45,9 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 0         // Magnetic field grid
-#define MAGNETS 0      // N42 1"X1"x1/8"
-#define ATTENUATOR 0   // AC: Volume for attenuator 
+#define MAG 1         // Magnetic field grid
+#define MAGNETS 1      // N42 1"X1"x1/8"
+#define ATTENUATOR 1   // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
 #define MAGNETHOLDER 0 // AC: Volume for magnet holder/mounting rings
 
@@ -349,7 +349,7 @@ void ICESPICEDetectorConstruction::ConstructSDandField()
 	G4TransportationManager::GetTransportationManager()->GetFieldManager();
            
       G4cout<< "DeltaStep "<<pFieldMgr->GetDeltaOneStep()/mm <<"mm" <<G4endl;
-      //G4ChordFinder *pChordFinder = new G4ChordFinder(ICESPICEField);
+      // G4ChordFinder *pChordFinder = new G4ChordFinder(ICESPICEField);
 
       pFieldMgr->SetDetectorField(fField.Get());
       pFieldMgr->CreateChordFinder(fField.Get());
