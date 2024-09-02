@@ -15,4 +15,4 @@
 /gps/ene/mono 0 eV      # Monoenergetic with 0 eV (since the decay will be handled by physics processes)
 /analysis/setFileName Bi207_f70mm_g30mm
 /run/printProgress 1000000
-/run/beamOn 1000000000
+/run/beamOn 100000

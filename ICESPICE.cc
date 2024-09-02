@@ -17,7 +17,7 @@ int main(int argc,char** argv) {
  // Construct the default run manager
  //
   auto* runManager = G4RunManagerFactory::CreateRunManager();
-  G4int nThreads = 6;
+  G4int nThreads = 12;
   runManager->SetNumberOfThreads(nThreads);
 
   // set mandatory initialization classes
