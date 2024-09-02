@@ -3,11 +3,11 @@ def macro_creation(macro_path: str):
     # Open the file in write mode to add the initial commands and the loops
     with open(macro_path, 'w') as file:
         # Write the initial verbose and initialization commands
-        
         file.write('/run/initialize\n')
         file.write('/control/verbose 0\n')
         file.write('/run/verbose 0\n')
         file.write('/event/verbose 0\n')
+        file.write('/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year\n')
         file.write('/gps/pos/type Point\n')
         file.write('/gps/ang/type iso\n')
         file.write('/gps/pos/centre 0 0 70 mm\n')
