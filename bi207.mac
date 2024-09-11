@@ -10,7 +10,10 @@
 # Set a very high time threshold for decays to allow all radioactive decays to happen without prematurely stopping
 /process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
 
+# /process/em/printParameters
+
 # Add a user defined radioactive decay file
+/process/had/rdm/setRadioactiveDecayFile 82 207 ../UserData/UserRadData_z82.a207
 /process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207
 
 # Set up the General Particle Source (GPS) parameters
@@ -34,11 +37,11 @@
 /analysis/setFileName Bi207_f9mm_g0mm
 
 # Print progress every # events during the simulation run
-/run/printProgress 1000
+/run/printProgress 100000
 
 # Begin the simulation with # particles
 #/run/beamOn 100000000
-/run/beamOn 100000
+/run/beamOn 10000000
 
 # Execute a shell command to run the Fold.C script using ROOT, applying a 10 keV FWHM Gaussian fold to the results
 /control/shell root -x 'Fold.C("Bi207_f9mm_g0mm.root", 2.0, false)'

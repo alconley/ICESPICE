@@ -39,49 +39,67 @@ void ICESPICESteppingAction::UserSteppingAction(const G4Step* aStep)
 { 
     // get volume of the current step
 	auto volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
-	
+
 	// // energy deposit
 	auto edep = aStep->GetTotalEnergyDeposit();
 			
     if (volume == fDetConstruction->GetSiliconPV()) {
         G4Track* track = aStep->GetTrack();
+
+        // Print track information
+        G4int trackID = track->GetTrackID();
+        G4int parentID = track->GetParentID();
+        G4String particleName = track->GetDefinition()->GetParticleName();
+        G4double kineticEnergy = track->GetKineticEnergy();
+        G4double globalTime = track->GetGlobalTime();
+        G4double localTime = track->GetLocalTime();
+        G4double trackLength = track->GetTrackLength();
+        G4ThreeVector position = track->GetPosition();
+        G4ThreeVector momentumDirection = track->GetMomentumDirection();
+        G4double velocity = track->GetVelocity();
+        G4VPhysicalVolume* currentVolume = track->GetVolume();
+        G4int stepNumber = track->GetCurrentStepNumber();
+        const G4ParticleDefinition* particleDefinition = track->GetDefinition();
+
         const G4VProcess* creatorProcess = track->GetCreatorProcess();
         
         // For radioactive decay sources
         if (creatorProcess && creatorProcess->GetProcessName() == "Radioactivation") {
             fEventAction->AddSil(edep);
+
+            // if ( kineticEnergy > 489 * keV && kineticEnergy < 490 * keV 
+            // || kineticEnergy > 984 * keV && kineticEnergy < 985 * keV           
+            //    ) {
+            //     // Print details
+            //     G4cout << "Track ID: " << trackID << G4endl;
+            //     G4cout << "Parent ID: " << parentID << G4endl;
+            //     G4cout << "Particle: " << particleName << G4endl;
+            //     G4cout << "Kinetic Energy: " << kineticEnergy / keV << " MeV" << G4endl;
+            //     // G4cout << "Global Time: " << globalTime / ns << " ns" << G4endl;
+            //     // G4cout << "Local Time: " << localTime / ns << " ns" << G4endl;
+            //     // G4cout << "Track Length: " << trackLength / mm << " mm" << G4endl;
+            //     // G4cout << "Position: " << position << G4endl;
+            //     // G4cout << "Momentum Direction: " << momentumDirection << G4endl;
+            //     // G4cout << "Velocity: " << velocity / (m/s) << " m/s" << G4endl;
+            //     // if (currentVolume) {
+            //     //     G4String volumeName = currentVolume->GetName();
+            //     //     G4cout << "Current Volume: " << volumeName << G4endl;
+            //     // }
+            //     // G4cout << "Step Number: " << stepNumber << G4endl;
+            //     // G4cout << "Particle Charge: " << particleDefinition->GetPDGCharge() << G4endl;
+            //     // G4cout << "Particle Mass: " << particleDefinition->GetPDGMass() / MeV << " MeV" << G4endl;
+
+            // }
+
+
         }
+
+
 
         // Comment out if not using radioactive decay sources
         // fEventAction->AddSil(edep);
 
     }
-
-
-    // // Check if the volume is the silicon detector
-    // if (volume == fDetConstruction->GetSiliconPV()) {
-    //     G4double edep = aStep->GetTotalEnergyDeposit();
-        
-    //     // Get the current track (i.e., the particle)
-    //     G4Track* track = aStep->GetTrack();
-
-    //     // Get the parent ID
-    //     G4int parentID = track->GetParentID();
-
-    //     // Check if the particle was created by radioactive decay
-    //     const G4VProcess* creatorProcess = track->GetCreatorProcess();
-    //     // G4cout << "Creator process: " << creatorProcess->GetProcessName() << G4endl;
-
-    //     // make sure the particle is an electron
-    //     // if (track->GetDefinition() == G4Electron::ElectronDefinition()) {
-    //         if (edep > 0 ){
-    //             if (creatorProcess->GetProcessName() == "Radioactivation") {
-    //                 fEventAction->AddSil(edep);  // Fill histogram (or handle energy deposit) as per your action
-    //             }
-    //         }
-    //     // }
-
-    // }
 
     #if STOPPARTICLES
 
