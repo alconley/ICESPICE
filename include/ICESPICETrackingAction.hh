@@ -38,19 +38,18 @@
 #define ICESPICETrackingAction_h 1
 
 #include "G4UserTrackingAction.hh"
+#include "G4Track.hh"
 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-class ICESPICETrackingAction : public G4UserTrackingAction 
+class ICESPICETrackingAction : public G4UserTrackingAction
 {
-
-  public:  
+public:
     ICESPICETrackingAction();
-   ~ICESPICETrackingAction() {};
-   
-    void PostUserTrackingAction(const G4Track*);
-
+    virtual ~ICESPICETrackingAction();
+    
+    // virtual void PreUserTrackingAction(const G4Track*);
+    virtual void PreUserTrackingAction(const G4Track* track) override;
+    virtual void PostUserTrackingAction(const G4Track*);
+    
 };
 
 #endif

@@ -1,18 +1,44 @@
-/control/verbose 0
-/run/verbose 0
-/event/verbose 0
-/tracking/verbose 0
+# Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
+/control/verbose 0         # output for general control commands
+/run/verbose 0             # output for the run manager (initialization, execution)
+/event/verbose 0           # output for event-level processes (tracking within events)
+/tracking/verbose 0        # output for particle tracking processes
+
+# Initialize the run manager (prepare the simulation geometry and physics)
 /run/initialize
+
+# Set a very high time threshold for decays to allow all radioactive decays to happen without prematurely stopping
 /process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
-/gps/pos/type Point
-/gps/pos/centre 0 0 70 mm
-/ICESPICE/Detector/Position -30
-/gps/ang/type iso
-/gps/particle ion
-/gps/ion 83 207
-# Set energy distribution
-/gps/ene/type Mono
-/gps/ene/mono 0 eV      # Monoenergetic with 0 eV (since the decay will be handled by physics processes)
-/analysis/setFileName Bi207_f70mm_g30mm
-/run/printProgress 1000000
+
+# Add a user defined radioactive decay file
+/process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207
+
+# Set up the General Particle Source (GPS) parameters
+/gps/pos/type Point                   # Set the GPS source position type to a point source
+/gps/pos/centre 0 0 9 mm              # Set the center of the point source to coordinates (x, y, z units)
+/ICESPICE/Detector/Position 0          # Position the detector
+#/gps/ang/type iso                      # Set the particle angular distribution to isotropic (equal probability in all directions)
+/gps/ang/type cos                    # Set the particle angular distribution to a cone (2pi)
+
+/gps/particle ion                      # Set the particle type to an ion
+/gps/ion 83 207 0 0                    # Define the ion as Bismuth-207 (Z = 83, A = 207, excitation state = 0, charge state = 0)
+
+# Set up the energy distribution for the particles
+/gps/ene/type Mono                     # Set a monoenergetic energy distribution (all particles have the same energy)
+/gps/ene/mono 0 eV                     # Set the energy of the particles to 0 eV (since radioactive decay will handle energy)
+
+#/gps/particle e-
+#/gps/energy 975.651 keV
+
+# Set the output file name for analysis results
+/analysis/setFileName Bi207_f9mm_g0mm
+
+# Print progress every # events during the simulation run
+/run/printProgress 1000
+
+# Begin the simulation with # particles
+#/run/beamOn 100000000
 /run/beamOn 100000
+
+# Execute a shell command to run the Fold.C script using ROOT, applying a 10 keV FWHM Gaussian fold to the results
+/control/shell root -x 'Fold.C("Bi207_f9mm_g0mm.root", 2.0, false)'

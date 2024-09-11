@@ -8,26 +8,12 @@
 #include "TApplication.h"
 #include <iostream>
 
-/*
-This script can be read using 
-root -x 'Fold.C("input_file.root", 2.0)'
-... or load the script in ROOT and run the function with the parameters
+void Fold(const char* inputFileName, double fwhm, bool saveToFile = false);
 
-For this example...
-"input_file.root" = input ROOT file
-2.0 = FWHM of the folding gaussian in keV
-
-only the FWHM is significant in this script for caluclation, the other variables are for naming purposes
-
-A canvas will appear but the top plots will not be there. You must comment out "Clean Up" lines and the "Exit ROOT" line to see the plots
-*/
-
-void Fold(const char* inputFileName, double fwhm);
-
-void Fold(const char* inputFileName, double fwhm) {
+void Fold(const char* inputFileName, double fwhm, bool saveToFile) {
 
     // Open the input ROOT file
-    TFile* inputFile = TFile::Open(inputFileName, "READ");
+    TFile* inputFile = TFile::Open(inputFileName, "UPDATE");  // Open in UPDATE mode to allow writing
     if (!inputFile || inputFile->IsZombie()) {
         std::cerr << "Error: Could not open file " << inputFileName << std::endl;
         return;
@@ -42,25 +28,18 @@ void Fold(const char* inputFileName, double fwhm) {
 
     // Function for FWHM in MeV to σ conversion
     auto fwhmToSigma = [](double fwhm) {
-        return (fwhm / 1000.0) / 2.3548;
+        return (fwhm / 1000.0) / 2.3548;  // FWHM in keV, convert to sigma
     };
-
-    // Define Gaussian smearing parameters
-    // double fwhm = 2.0; // FWHM in keV
-    TRandom3 rand;
-
 
     // Create a new histogram for the convoluted data
     TH1F* outHist = static_cast<TH1F*>(srcHist->Clone("folded"));
     outHist->SetTitle(Form("Folded with Gaussian (FWHM=%.2f keV)", fwhm));
     outHist->GetXaxis()->SetTitle("Energy [MeV]");
     outHist->GetYaxis()->SetTitle("Counts/keV");
-    outHist->Reset(); // Clear the histogram
-    outHist->SetOption("HIST"); // Set options to draw as bar charts
+    outHist->Reset();  // Clear the histogram content
 
-    srcHist->SetTitle("Energy Deposition in PIPS");
-    srcHist->GetXaxis()->SetTitle("Energy [MeV]");
-    srcHist->GetYaxis()->SetTitle("Counts/keV");
+    // Random number generator for smearing
+    TRandom3 rand;
 
     // Loop over all bins in the original histogram
     int maxFilledBin = srcHist->FindLastBinAbove();
@@ -78,34 +57,37 @@ void Fold(const char* inputFileName, double fwhm) {
         }
     }
 
-    // Calculate the transmission probability: sum counts above the first bin
-    double totalCounts = 0.0;
-    double totalInteractionCounts = 0.0;
-    for (int i = 1; i <= srcHist->GetNbinsX(); i++) {
-        double binContent = srcHist->GetBinContent(i);
-        totalCounts += binContent;
-        if (i > 1) { // Exclude the first bin
-            totalInteractionCounts += binContent;
-        }
-    }
-
-    // Create a canvas with six pads (3x2 layout)
+    // Create a canvas for plotting
     TCanvas* c1 = new TCanvas("c1", "Plots", 1200, 900);
-    c1->Divide(2, 1);  // Divide the canvas into 2 columns and 3 rows
+    c1->Divide(2, 1);  // Divide canvas into 2 columns
 
     // Draw the original histogram in the first pad
     c1->cd(1);  // Select the first pad
-    gPad->SetLogy();  // Set the y-axis to a logarithmic scale
+    gPad->SetLogy();  // Set the y-axis to logarithmic scale
     srcHist->SetLineColor(kBlue);
     srcHist->Draw();
 
-    // Draw the convoluted histogram in the second pad
+    // Draw the folded histogram in the second pad
     c1->cd(2);  // Select the second pad
-    gPad->SetLogy();  // Set the y-axis to a logarithmic scale
+    gPad->SetLogy();  // Set the y-axis to logarithmic scale
     outHist->SetLineColor(kRed);
     outHist->Draw("HIST");
 
     // Update and save the canvas
     c1->Update();
     c1->Modified();
+
+    // Save the folded histogram to the same file if saveToFile is true
+    if (saveToFile) {
+        inputFile->cd();  // Ensure we're in the correct file
+        outHist->Write();  // Save the folded histogram to the file
+        std::cout << "Folded histogram saved to " << inputFileName << std::endl;
+
+        // Clean up
+        delete c1;
+        inputFile->Close();
+        delete inputFile;
+    }
+
+
 }
