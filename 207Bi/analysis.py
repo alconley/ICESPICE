@@ -9,7 +9,12 @@ import argparse  # Import argparse for handling command-line arguments
 def parse_args():
     parser = argparse.ArgumentParser(description="Run analysis on a specified ROOT file")
     parser.add_argument("root_file_path", nargs='?', default="Bi207_f9mm_g0mm.root", help="Path to the ROOT file (default: Bi207_f9mm_g0mm.root)")
+    parser.add_argument("--fwhm", type=float, default=10.0, help="FWHM value for Gaussian smearing (default: 10.0)")
+    parser.add_argument("--save-pic", action="store_true", default=False, help="Save the plot as an image if this flag is set (default: False)")
+    parser.add_argument("--save-path", type=str, default="picture.png", help="Path to save the plot image (default: picture.png)")
+
     return parser.parse_args()
+
 
 # Function to compute residuals
 def residuals(scale, real_hist, sim_hist):
@@ -72,7 +77,7 @@ def gaussian_smear(bin_centers, bin_contents, fwhm):
     return smeared_contents
 
 # Function to extract bin centers and contents from a ROOT histogram and apply Gaussian smearing
-def get_root_hist_and_gauss_smear(root_file_path, histogram_name, sigma):
+def get_root_hist_and_gauss_smear(root_file_path, histogram_name, fwhm):
     """
     Extracts bin centers and bin contents from a ROOT histogram and applies Gaussian smearing.
 
@@ -122,7 +127,7 @@ def get_root_hist_and_gauss_smear(root_file_path, histogram_name, sigma):
     bin_contents = np.array(bin_contents)
     
     # Apply Gaussian smearing
-    smeared_bin_contents = gaussian_smear(np.array(bin_centers), np.array(bin_contents), sigma)
+    smeared_bin_contents = gaussian_smear(np.array(bin_centers), np.array(bin_contents), fwhm)
     
     return bin_centers, smeared_bin_contents, n_sim_particles, n_interactions
 
@@ -165,7 +170,9 @@ if __name__ == "__main__":
     ###############################################################################################################
     real_hist, real_bins = np.histogram(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200])
 
-    geant_bin_centers, geant_bin_counts, n_sim_particles, n_interactions = get_root_hist_and_gauss_smear(root_file_path, "Esil", sigma=10)
+    fwhm = args.fwhm  # Get the FWHM value from the argument
+
+    geant_bin_centers, geant_bin_counts, n_sim_particles, n_interactions = get_root_hist_and_gauss_smear(root_file_path, "Esil", fwhm=fwhm)
 
     # Make sure the binning of the real and sim data matches
     sim_hist, _ = np.histogram(geant_bin_centers, bins=real_bins, weights=geant_bin_counts)
@@ -205,6 +212,14 @@ if __name__ == "__main__":
     fig.tight_layout()
     
     # save the figure
-    # plt.savefig("../207Bi/pic.png", dpi=300)
+    # plt.savefig("../207Bi/207Bi/207Pb_1663keV_decay_f9mm_g0mm_n10mil.png", dpi=300)
+    save_pic = args.save_pic
+    save_path = args.save_path
 
+    # If save-pic is False, ignore save-path
+    if save_pic:
+        print(f"Saving the plot to {save_path}")
+        # Save the plot to the provided path
+        plt.savefig(save_path, dpi=300)
+        
     plt.show()

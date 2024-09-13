@@ -17,12 +17,18 @@
 #/process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207
 
 # Set up the General Particle Source (GPS) parameters
-/gps/pos/type Point                   # Set the GPS source position type to a point source
-/gps/pos/centre 0 0 9 mm              # Set the center of the point source to coordinates (x, y, z units)
-/ICESPICE/Detector/Position 0          # Position the detector
-#/gps/ang/type iso                      # Set the particle angular distribution to isotropic (equal probability in all directions)
-/gps/ang/type cos                    # Set the particle angular distribution to a cone (2pi)
+#/gps/pos/type Point                   # Set the GPS source position type to a point source
+/gps/pos/type Beam                       # Use a beam-like source to set a circular shape
+/gps/pos/shape Circle                    # Define the shape as a circle
+/gps/pos/centre 0 0 9 mm                 # Set the center of the source
+/gps/pos/radius 2.5 mm                   # Set the radius for the initial circle (5 mm diameter)
+/gps/pos/sigma_r 0.75 mm                 # Set the radial Gaussian spread to achieve 6.5 mm diameter
+/gps/ang/type cos                        # Set the particle angular distribution to a cone (2pi)
+#/gps/ang/type iso                       # Set the particle angular distribution to isotropic (equal probability in all directions)
 #/gps/ang/maxtheta 5 deg
+/gps/pos/centre 0 0 9 mm              # Set the center of the point source to coordinates (x, y, z units)
+
+/ICESPICE/Detector/Position 0          # Position the detector
 
 /gps/particle ion                      # Set the particle type to an ion
 /gps/ion 82 207 0 1633.356                    # Define the ion as Bismuth-207 (Z = 83, A = 207, charge state = 0, excitation state = 0)
@@ -33,16 +39,16 @@
 /gps/ene/mono 0 eV                     # Set the energy of the particles to 0 eV (since radioactive decay will handle energy)
 
 # Set the output file name for analysis results
-/analysis/setFileName Pb207_1633keV_f9mm_g0mm_10m
+/analysis/setFileName Pb207_1633keV_f9mm_g0mm_n100m
 
 # Print progress every # events during the simulation run
 /run/printProgress 100000
 
 # Begin the simulation with # particles
-#/run/beamOn 100000000
-/run/beamOn 10000000
+/run/beamOn 100000000
+#/run/beamOn 100000
 
 # Execute a shell command to run the Fold.C script using ROOT, applying a 10 keV FWHM Gaussian fold to the results
 #/control/shell root -x 'Fold.C("Bi207_f9mm_g0mm.root", 2.0, false)'
-/control/shell python3 ../207Bi/analysis.py Pb207_1633keV_f9mm_g0mm_10m.root
+/control/shell python3 ../207Bi/analysis.py Pb207_1633keV_f9mm_g0mm_n100m.root --fwhm 10 --save-pic --save-path ../207Bi/Pb207_1633keV_f9mm_g0mm_n100m.png
 

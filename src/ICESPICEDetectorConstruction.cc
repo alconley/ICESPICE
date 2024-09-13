@@ -6,42 +6,21 @@
 #include "G4ThreeVector.hh"
 #include "G4Material.hh"
 #include "G4Box.hh"
-#include "G4Trd.hh"
 #include "G4Tubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
-#include "G4PVReplica.hh"
-#include "G4PVParameterised.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4FieldManager.hh"
 #include "G4TransportationManager.hh"
 #include "G4EqMagElectricField.hh"
-
 #include "G4ChordFinder.hh"
 #include "G4UniformMagField.hh"
-#include "G4ExplicitEuler.hh"
-#include "G4ImplicitEuler.hh"
-#include "G4SimpleRunge.hh"
-#include "G4SimpleHeum.hh"
-#include "G4ClassicalRK4.hh"
-#include "G4HelixExplicitEuler.hh"
-#include "G4HelixImplicitEuler.hh"
-#include "G4HelixSimpleRunge.hh"
-#include "G4CashKarpRKF45.hh"
-#include "G4RKG3_Stepper.hh"
 #include "G4NistManager.hh"
-
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
-#include "G4UnitsTable.hh"
-#include "G4ios.hh"
-
-#include "G4Tubs.hh"
-
 #include "G4GenericMessenger.hh"
 #include "G4RunManager.hh"
-
 #include "CADMesh.hh"
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
@@ -104,25 +83,25 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   G4int ncomponents, natoms;
   G4double fractionmass;
   G4double temperature, pressure;
-  
-  // Define Elements  
-  // Example: G4Element* Notation  = new G4Element ("Element", "Notation", z, a);
-  G4Element*   H  = new G4Element ("Hydrogen", "H", 1. ,  1.01*g/mole);
-  G4Element*   N  = new G4Element ("Nitrogen", "N", 7., 14.01*g/mole);
-  G4Element*   O  = new G4Element ("Oxygen"  , "O", 8. , 16.00*g/mole);
-  G4Element*   Ar = new G4Element ("Argon" , "Ar", 18., 39.948*g/mole );
 
-  // AC 
-  G4Element*   Ta = new G4Element ("Tantalum" , "Ta", 73., 180.9479*g/mole ); // mini-orange attenuator
+  G4NistManager* nist = G4NistManager::Instance();
+
+  // Define Elements  
+  G4Element* H = nist->FindOrBuildElement("H");
+  G4Element* N = nist->FindOrBuildElement("N");
+  G4Element* O = nist->FindOrBuildElement("O");
+  G4Element* Ar = nist->FindOrBuildElement("Ar");
+  G4Element* Ta = nist->FindOrBuildElement("Ta");
+  G4Element* Fe = nist->FindOrBuildElement("Fe");
+  G4Element* Cr = nist->FindOrBuildElement("Cr");
+  G4Element* Ni = nist->FindOrBuildElement("Ni");
+  G4Element* B = nist->FindOrBuildElement("B");
+  G4Element* Nd = nist->FindOrBuildElement("Nd");
+
   density = 16.65*g/cm3 ;
   G4Material* Tantalum = new G4Material(name="Tantalum", density, ncomponents=1);
   Tantalum->AddElement(Ta, 1);
   
-  // Define Elements
-  G4Element* Nd = new G4Element("Neodymium", "Nd", 60., 144.24*g/mole);
-  G4Element* Fe = new G4Element("Iron", "Fe", 26., 55.85*g/mole);
-  G4Element* B = new G4Element("Boron", "B", 5., 10.81*g/mole);
-
   // Define N42 Magnet material (Neodymium Iron Boron)
   density = 7.5*g/cm3;
   G4Material* NdFeB = new G4Material(name="N42_Magnet", density, ncomponents=3);
@@ -130,7 +109,6 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   NdFeB->AddElement(Fe, natoms=14);
   NdFeB->AddElement(B, natoms=1);
 
-  G4NistManager* nist = G4NistManager::Instance();
   G4Material* silicon = nist->FindOrBuildMaterial("G4_Si");
   G4Material* aluminum = nist->FindOrBuildMaterial("G4_Al");
 
@@ -172,19 +150,37 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   G4Material* Oxygen = new G4Material(name="O2", density, ncomponents=1);
   Oxygen->AddElement(O, 2);
   
-  
-  density  = 1.2928*mg/cm3 ;       // STP
-  density *= 1.0e-8 ;              // pumped vacuum
-  
-  temperature = STP_Temperature;
-  pressure = 1.0e-8*STP_Pressure;
+  G4double VacuumPressureTorr = 1.0e-2; // 1.0e-2 torr
 
-  G4Material* LaboratoryVacuum = new G4Material(name="LaboratoryVacuum",
-						density,ncomponents=3,
-						kStateGas,temperature,pressure);
-  LaboratoryVacuum->AddMaterial( Nitrogen, fractionmass = 0.7557 ) ;
-  LaboratoryVacuum->AddMaterial( Oxygen,   fractionmass = 0.2315 ) ;
-  LaboratoryVacuum->AddMaterial( Argon,    fractionmass = 0.0128 ) ;
+  // Convert torr to pascal
+  G4double VacuumPressurePascal = VacuumPressureTorr * 133.322 * pascal;
+
+  // Scaling factor relative to STP pressure
+  G4double PressureScalingFactor = VacuumPressurePascal / STP_Pressure;
+
+  // New density based on scaling factor
+  G4double VacuumDensity = 1.2928 * mg/cm3 * PressureScalingFactor;
+
+  // Temperature remains at STP
+  G4double VacuumTemperature = STP_Temperature;
+
+  // Define laboratory vacuum
+  G4Material* LaboratoryVacuum = new G4Material("LaboratoryVacuum",
+                                                VacuumDensity, ncomponents=3,
+                                                kStateGas, VacuumTemperature, VacuumPressurePascal);
+  LaboratoryVacuum->AddMaterial(Nitrogen, fractionmass = 0.7557);
+  LaboratoryVacuum->AddMaterial(Oxygen,   fractionmass = 0.2315);
+  LaboratoryVacuum->AddMaterial(Argon,    fractionmass = 0.0128);
+
+  // Define stainless steel
+  G4double steel_density = 8.00 * g/cm3; // Typical density for stainless steel
+  G4Material* StainlessSteel = new G4Material("StainlessSteel", density, 3);
+  StainlessSteel->AddElement(Fe, 70 * perCent);  // 70% Iron
+  StainlessSteel->AddElement(Cr, 18 * perCent);  // 18% Chromium
+  StainlessSteel->AddElement(Ni, 12 * perCent);  // 12% Nickel
+
+  // Set world material
+  WorldMaterial = LaboratoryVacuum;
   
   G4cout << G4endl << *(G4Material::GetMaterialTable()) << G4endl;
 
@@ -193,7 +189,7 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   AttenuatorMaterial = Tantalum; // AC
   MagnetMaterial = NdFeB; // AC
   DetectorMaterial = silicon; // AC
-  DetectorHousingMaterial = aluminum; // AC
+  DetectorHousingMaterial = StainlessSteel; // AC
 
   G4cout << "end material"<< G4endl;  
 }
@@ -202,7 +198,7 @@ void ICESPICEDetectorConstruction::DefineMaterials()
 G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
 {  
   //The World
-  WorldSizeXY  = 100.*mm;  // Cube
+  WorldSizeXY  = 300.*mm;  // Cube
   WorldSizeZ   = 300.*mm;
 
   zOffset = 0.0*mm;  // Offset of the magnetic field grid
