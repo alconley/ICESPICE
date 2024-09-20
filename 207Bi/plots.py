@@ -22,8 +22,8 @@ plt.rcParams.update(tex_fonts)
 matplotlib.rcParams['axes.unicode_minus'] = False
 
 
-df_withICESPICE = pl.read_parquet("./207Bi/207Bi_ICESPICE_f70mm_g30mm_run_*.parquet")
-df_withoutICESPICE = pl.read_parquet("./207Bi/207Bi_noICESPICE_f9mm_g0mm_run_13.parquet")
+df_withICESPICE = pl.read_parquet("./207Bi/exp_data/207Bi_ICESPICE_f70mm_g30mm_run_*.parquet")
+df_withoutICESPICE = pl.read_parquet("./207Bi/exp_data/207Bi_noICESPICE_f9mm_g0mm_run_13.parquet")
 # create a energy calibrated column of PIPS1000Energy with m=0.5395 and b=2.5229
 
 df_withICESPICE = df_withICESPICE.with_columns([
@@ -70,7 +70,7 @@ axs.tick_params(axis='both',which='minor',direction='in',top=True,right=True,lef
 axs.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=20)
 
 # save the plot
-# plt.savefig("./207Bi/207Bi_ICESPICE_spectrum.png", dpi=300)
+# plt.savefig("./207Bi/exp_data/207Bi_ICESPICE_spectrum.png", dpi=300)
 
 # show the plot
 plt.show()

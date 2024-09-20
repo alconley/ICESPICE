@@ -1,8 +1,21 @@
+# variables
+/control/alias f 9
+/control/alias g 0
+/control/alias n 1000000
+/control/alias z 82
+/control/alias a 207
+/control/alias e 1633.356
+/control/alias e_str 1633keV
+#/control/alias e 0
+#/control/alias e_str 0keV
+/control/alias File RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}
+
 # Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
-/control/verbose 0         # output for general control commands
-/run/verbose 0             # output for the run manager (initialization, execution)
-/event/verbose 0           # output for event-level processes (tracking within events)
-/tracking/verbose 0        # output for particle tracking processes
+/control/verbose 2         # output for general control commands
+/run/verbose 1             # output for the run manager (initialization, execution)
+#/event/verbose 0           # output for event-level processes (tracking within events)
+#/tracking/verbose 0        # output for particle tracking processes
+#/process/had/rdm/verbose 0
 
 # Initialize the run manager (prepare the simulation geometry and physics)
 /run/initialize
@@ -14,41 +27,42 @@
 
 # Add a user defined radioactive decay file
 #/process/had/rdm/setRadioactiveDecayFile 82 207 ../UserData/UserRadData_z82.a207
-#/process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207
+/process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207
 
 # Set up the General Particle Source (GPS) parameters
-#/gps/pos/type Point                   # Set the GPS source position type to a point source
-/gps/pos/type Beam                       # Use a beam-like source to set a circular shape
-/gps/pos/shape Circle                    # Define the shape as a circle
-/gps/pos/centre 0 0 9 mm                 # Set the center of the source
-/gps/pos/radius 2.5 mm                   # Set the radius for the initial circle (5 mm diameter)
-/gps/pos/sigma_r 0.75 mm                 # Set the radial Gaussian spread to achieve 6.5 mm diameter
+/gps/pos/type Point                   # Set the GPS source position type to a point source
+    #/gps/pos/type Beam                       # Use a beam-like source to set a circular shape
+    #/gps/pos/shape Circle                    # Define the shape as a circle
+    #/gps/pos/radius 2.5 mm                   # Set the radius for the initial circle (5 mm diameter)
+    #/gps/pos/sigma_r 0.75 mm                 # Set the radial Gaussian spread to achieve 6.5 mm diameter
 /gps/ang/type cos                        # Set the particle angular distribution to a cone (2pi)
 #/gps/ang/type iso                       # Set the particle angular distribution to isotropic (equal probability in all directions)
 #/gps/ang/maxtheta 5 deg
-/gps/pos/centre 0 0 9 mm              # Set the center of the point source to coordinates (x, y, z units)
-
-/ICESPICE/Detector/Position 0          # Position the detector
+/gps/pos/centre 0 0 {f} mm                 # Set the center of the source
+/ICESPICE/Detector/Position -{g}          # Position the detector
 
 /gps/particle ion                      # Set the particle type to an ion
-/gps/ion 82 207 0 1633.356                    # Define the ion as Bismuth-207 (Z = 83, A = 207, charge state = 0, excitation state = 0)
-#/gps/ion 83 207                    # Define the ion as Bismuth-207 (Z = 83, A = 207, charge state = 0, excitation state = 0)
+/gps/ion {z} {a} 0 {e}                    # Define the ion 
 
 # Set up the energy distribution for the particles
 /gps/ene/type Mono                     # Set a monoenergetic energy distribution (all particles have the same energy)
 /gps/ene/mono 0 eV                     # Set the energy of the particles to 0 eV (since radioactive decay will handle energy)
 
 # Set the output file name for analysis results
-/analysis/setFileName Pb207_1633keV_f9mm_g0mm_n100m
+/analysis/setFileName {File}
 
 # Print progress every # events during the simulation run
 /run/printProgress 100000
 
 # Begin the simulation with # particles
-/run/beamOn 100000000
-#/run/beamOn 100000
+/run/beamOn {n}
 
 # Execute a shell command to run the Fold.C script using ROOT, applying a 10 keV FWHM Gaussian fold to the results
 #/control/shell root -x 'Fold.C("Bi207_f9mm_g0mm.root", 2.0, false)'
-/control/shell python3 ../207Bi/analysis.py Pb207_1633keV_f9mm_g0mm_n100m.root --fwhm 10 --save-pic --save-path ../207Bi/Pb207_1633keV_f9mm_g0mm_n100m.png
+
+# python analysis
+#/control/shell python3 ../207Bi/analysis.py {File}.root --fwhm 10 --save-pic --save-path ../207Bi/{File}.png
+/control/shell cp {File}.root ../207Bi/geant_sim/
+/control/shell python3 ../207Bi/analysis.py {File}.root --fwhm 10 --save-pic --save-path ../207Bi/geant_sim/{File}.png
+
 

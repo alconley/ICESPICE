@@ -3,18 +3,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ROOT
 from scipy.optimize import minimize
-import argparse  # Import argparse for handling command-line arguments
+import argparse  
+
+# for virtual environment
+# source $(brew --prefix root)/bin/thisroot.sh  # for ROOT
 
 # Function to parse command-line arguments
 def parse_args():
     parser = argparse.ArgumentParser(description="Run analysis on a specified ROOT file")
-    parser.add_argument("root_file_path", nargs='?', default="Bi207_f9mm_g0mm.root", help="Path to the ROOT file (default: Bi207_f9mm_g0mm.root)")
+    parser.add_argument("root_file_path", nargs='?', default="../207Bi/geant_sim/RadDecay_z82_a207_e1633keV_f9mm_g0mm_n1000000.root", help="Path to the ROOT file")
     parser.add_argument("--fwhm", type=float, default=10.0, help="FWHM value for Gaussian smearing (default: 10.0)")
     parser.add_argument("--save-pic", action="store_true", default=False, help="Save the plot as an image if this flag is set (default: False)")
     parser.add_argument("--save-path", type=str, default="picture.png", help="Path to save the plot image (default: picture.png)")
 
     return parser.parse_args()
-
 
 # Function to compute residuals
 def residuals(scale, real_hist, sim_hist):
@@ -118,7 +120,7 @@ def get_root_hist_and_gauss_smear(root_file_path, histogram_name, fwhm):
         
         bin_centers.append(bin_center)
         bin_contents.append(bin_content)
-            
+
     # Close the ROOT file
     root_file.Close()
     
@@ -140,8 +142,8 @@ if __name__ == "__main__":
     # Use the parsed root_file_path from the arguments
     root_file_path = args.root_file_path
 
-    df_withICESPICE = pl.read_parquet("../207Bi/207Bi_ICESPICE_f70mm_g30mm_run_*.parquet")
-    df_withoutICESPICE = pl.read_parquet("../207Bi/207Bi_noICESPICE_f9mm_g0mm_run_13.parquet")
+    df_withICESPICE = pl.read_parquet("../207Bi/exp_data/207Bi_ICESPICE_f70mm_g30mm_run_*.parquet")
+    df_withoutICESPICE = pl.read_parquet("../207Bi/exp_data/207Bi_noICESPICE_f9mm_g0mm_run_13.parquet")
 
     # Energy calibration of m=0.5395 and b=2.5229
     df_withICESPICE = df_withICESPICE.with_columns([
@@ -168,33 +170,40 @@ if __name__ == "__main__":
     axs[0].set_ylabel(r"Counts/keV")
 
     ###############################################################################################################
-    real_hist, real_bins = np.histogram(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200])
+    real_hist, real_bins = np.histogram(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=999, range=[200, 1199])
 
     fwhm = args.fwhm  # Get the FWHM value from the argument
 
     geant_bin_centers, geant_bin_counts, n_sim_particles, n_interactions = get_root_hist_and_gauss_smear(root_file_path, "Esil", fwhm=fwhm)
+    
+    # convert bin_centers to left edges
+    geant_bin_edges = geant_bin_centers - 0.5 * (geant_bin_centers[1] - geant_bin_centers[0])
+
+    # Filter simulation data to only include energies between 200-1200 keV
+    filtered_geant_bin_centers = geant_bin_centers[(geant_bin_centers >= 200) & (geant_bin_centers <= 1200)]
+    filtered_geant_bin_counts = geant_bin_counts[(geant_bin_centers >= 200) & (geant_bin_centers <= 1200)]
 
     # Make sure the binning of the real and sim data matches
-    sim_hist, _ = np.histogram(geant_bin_centers, bins=real_bins, weights=geant_bin_counts)
+    sim_hist, sim_bins = np.histogram(filtered_geant_bin_centers, bins=real_bins, weights=filtered_geant_bin_counts)
 
     # Minimize the residuals
-    initial_scale = 1.0
+    initial_scale = 10.0
     result = minimize(residuals, initial_scale, args=(real_hist, sim_hist))
     best_scale = result.x[0]
 
-    # Apply the best scale to the simulation
+    # # Apply the best scale to the simulation
     scaled_sim_hist = sim_hist * best_scale
 
     # plot the histogram of the Geant4 simulation without ICESPICE
     axs[1].hist(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
-    axs[1].step(real_bins[:-1], scaled_sim_hist, where="mid", color="#425563", label="Scaled Geant4 simulation", linewidth=1)
+    axs[1].step(filtered_geant_bin_centers[:-1], scaled_sim_hist, color="#425563", label="Scaled Geant4 simulation", linewidth=1, where="mid")
     axs[1].text(0.50, 0.95, f"Scale factor: {best_scale:.3f}\nSimulation particles: {n_sim_particles:.1e}\nSimulation Counts in Detector: {n_interactions}", transform=axs[1].transAxes, ha='center', va='top')
     axs[1].set_xlabel(r"Energy [keV]")
     axs[1].set_ylabel(r"Counts/keV")
 
     ###############################################################################################################
 
-    # Residual plot
+    # # Residual plot
     axs[2].step(real_bins[:-1], real_hist - scaled_sim_hist, where="mid", color="black", label="Residuals", linewidth=1)
     axs[2].set_xlabel(r"Energy [keV]")
     axs[2].set_ylabel(r"Residuals")
