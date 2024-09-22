@@ -97,7 +97,7 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   G4Element* Ni = nist->FindOrBuildElement("Ni");
   G4Element* B = nist->FindOrBuildElement("B");
   G4Element* Nd = nist->FindOrBuildElement("Nd");
-
+  
   density = 16.65*g/cm3 ;
   G4Material* Tantalum = new G4Material(name="Tantalum", density, ncomponents=1);
   Tantalum->AddElement(Ta, 1);
@@ -179,8 +179,12 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   StainlessSteel->AddElement(Cr, 18 * perCent);  // 18% Chromium
   StainlessSteel->AddElement(Ni, 12 * perCent);  // 12% Nickel
 
+  G4Material* gal_vac = nist->FindOrBuildMaterial("G4_Galactic");
+
   // Set world material
-  WorldMaterial = LaboratoryVacuum;
+  // WorldMaterial = LaboratoryVacuum;
+  WorldMaterial = gal_vac;
+
   
   G4cout << G4endl << *(G4Material::GetMaterialTable()) << G4endl;
 

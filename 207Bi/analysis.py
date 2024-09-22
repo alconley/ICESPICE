@@ -156,21 +156,21 @@ if __name__ == "__main__":
 
     ###############################################################################################################
 
-    fig, axs = plt.subplots(3, 1, figsize=(10, 9), sharex=True)
+    fig, axs = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
     axs = axs.flatten()
 
     linewidth = 1
 
     # scale of the hist of the data with out ICESPICE so the counts match the 975 peak using a gaussian fit (from gNat program)
-    data_scale = 51700/65625
+    # data_scale = 51700/65625
 
-    axs[0].hist(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color='#5CB8B2', weights=[data_scale]*len(df_withoutICESPICE), label="without ICESPICE (scaled)", linewidth=linewidth)
-    axs[0].hist(df_withICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color="#A6192E", label="with ICESPICE", linewidth=linewidth)
-    axs[0].set_xlabel(r"Energy [keV]")
-    axs[0].set_ylabel(r"Counts/keV")
+    # axs[0].hist(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color='#5CB8B2', weights=[data_scale]*len(df_withoutICESPICE), label="without ICESPICE (scaled)", linewidth=linewidth)
+    # axs[0].hist(df_withICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color="#A6192E", label="with ICESPICE", linewidth=linewidth)
+    # axs[0].set_xlabel(r"Energy [keV]")
+    # axs[0].set_ylabel(r"Counts/keV")
 
     ###############################################################################################################
-    real_hist, real_bins = np.histogram(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=999, range=[200, 1199])
+    real_hist, real_bins = np.histogram(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=799, range=[400, 1199])
 
     fwhm = args.fwhm  # Get the FWHM value from the argument
 
@@ -180,8 +180,8 @@ if __name__ == "__main__":
     geant_bin_edges = geant_bin_centers - 0.5 * (geant_bin_centers[1] - geant_bin_centers[0])
 
     # Filter simulation data to only include energies between 200-1200 keV
-    filtered_geant_bin_centers = geant_bin_centers[(geant_bin_centers >= 200) & (geant_bin_centers <= 1200)]
-    filtered_geant_bin_counts = geant_bin_counts[(geant_bin_centers >= 200) & (geant_bin_centers <= 1200)]
+    filtered_geant_bin_centers = geant_bin_centers[(geant_bin_centers >= 400) & (geant_bin_centers <= 1200)]
+    filtered_geant_bin_counts = geant_bin_counts[(geant_bin_centers >= 400) & (geant_bin_centers <= 1200)]
 
     # Make sure the binning of the real and sim data matches
     sim_hist, sim_bins = np.histogram(filtered_geant_bin_centers, bins=real_bins, weights=filtered_geant_bin_counts)
@@ -195,18 +195,19 @@ if __name__ == "__main__":
     scaled_sim_hist = sim_hist * best_scale
 
     # plot the histogram of the Geant4 simulation without ICESPICE
-    axs[1].hist(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
-    axs[1].step(filtered_geant_bin_centers[:-1], scaled_sim_hist, color="#425563", label="Scaled Geant4 simulation", linewidth=1, where="mid")
-    axs[1].text(0.50, 0.95, f"Scale factor: {best_scale:.3f}\nSimulation particles: {n_sim_particles:.1e}\nSimulation Counts in Detector: {n_interactions}", transform=axs[1].transAxes, ha='center', va='top')
-    axs[1].set_xlabel(r"Energy [keV]")
-    axs[1].set_ylabel(r"Counts/keV")
+    axs[0].hist(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
+    axs[0].step(filtered_geant_bin_centers[:-1], scaled_sim_hist, color="#425563", label="Scaled Geant4 simulation", linewidth=1, where="mid")
+    axs[0].text(0.50, 0.95, f"Scale factor: {best_scale:.3f}\nSimulation Counts in Detector: {n_interactions}", transform=axs[0].transAxes, ha='center', va='top')
+    axs[0].set_xlabel(r"Energy [keV]")
+    axs[0].set_ylabel(r"Counts/keV")
 
+# \nSimulation particles: {n_sim_particles:.1e}
     ###############################################################################################################
 
     # # Residual plot
-    axs[2].step(real_bins[:-1], real_hist - scaled_sim_hist, where="mid", color="black", label="Residuals", linewidth=1)
-    axs[2].set_xlabel(r"Energy [keV]")
-    axs[2].set_ylabel(r"Residuals")
+    axs[1].step(real_bins[:-1], real_hist - scaled_sim_hist, where="mid", color="black", label="Residuals", linewidth=1)
+    axs[1].set_xlabel(r"Energy [keV]")
+    axs[1].set_ylabel(r"Residuals")
 
     ###############################################################################################################
 

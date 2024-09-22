@@ -32,7 +32,10 @@ void ICESPICEEventAction::BeginOfEventAction(const G4Event* evt)
 void ICESPICEEventAction::EndOfEventAction(const G4Event* evt)
 {  
   auto analysisManager = G4AnalysisManager::Instance();
-  analysisManager->FillH1(0, fEnergySilicon);
+
+  if (fEnergySilicon >= 400.*CLHEP::keV) {
+    analysisManager->FillH1(0, fEnergySilicon);
+  }
 
   // analysisManager->FillNtupleDColumn(0, fEnergySilicon);
   // analysisManager->AddNtupleRow(); 

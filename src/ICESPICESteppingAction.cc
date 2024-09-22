@@ -64,7 +64,7 @@ void ICESPICESteppingAction::UserSteppingAction(const G4Step* aStep)
         const G4VProcess* creatorProcess = track->GetCreatorProcess();
         
         // For radioactive decay sources
-        if (creatorProcess && creatorProcess->GetProcessName() == "Radioactivation") {
+        // if (creatorProcess && creatorProcess->GetProcessName() == "Radioactivation") {
             fEventAction->AddSil(edep);
 
             // if ( kineticEnergy > 489 * keV && kineticEnergy < 490 * keV 
@@ -91,8 +91,7 @@ void ICESPICESteppingAction::UserSteppingAction(const G4Step* aStep)
 
             // }
 
-
-        }
+        // }
 
 
 

@@ -1,21 +1,20 @@
 # variables
 /control/alias f 9
 /control/alias g 0
-/control/alias n 1000000
-/control/alias z 82
+/control/alias n 10000000
+/control/alias z 83
 /control/alias a 207
-/control/alias e 1633.356
-/control/alias e_str 1633keV
-#/control/alias e 0
-#/control/alias e_str 0keV
-/control/alias File RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}
+#/control/alias e 1633.356
+#/control/alias e_str 1633keV
+/control/alias e 0
+/control/alias e_str 0keV
+/control/alias File RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_AllProcesses
 
 # Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
-/control/verbose 2         # output for general control commands
-/run/verbose 1             # output for the run manager (initialization, execution)
-#/event/verbose 0           # output for event-level processes (tracking within events)
-#/tracking/verbose 0        # output for particle tracking processes
-#/process/had/rdm/verbose 0
+/control/verbose 0         # output for general control commands
+/run/verbose 0             # output for the run manager (initialization, execution)
+/event/verbose 0           # output for event-level processes (tracking within events)
+/tracking/verbose 0        # output for particle tracking processes
 
 # Initialize the run manager (prepare the simulation geometry and physics)
 /run/initialize
@@ -23,11 +22,9 @@
 # Set a very high time threshold for decays to allow all radioactive decays to happen without prematurely stopping
 /process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
 
-# /process/em/printParameters
-
 # Add a user defined radioactive decay file
 #/process/had/rdm/setRadioactiveDecayFile 82 207 ../UserData/UserRadData_z82.a207
-/process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207
+#/process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207
 
 # Set up the General Particle Source (GPS) parameters
 /gps/pos/type Point                   # Set the GPS source position type to a point source
@@ -35,8 +32,8 @@
     #/gps/pos/shape Circle                    # Define the shape as a circle
     #/gps/pos/radius 2.5 mm                   # Set the radius for the initial circle (5 mm diameter)
     #/gps/pos/sigma_r 0.75 mm                 # Set the radial Gaussian spread to achieve 6.5 mm diameter
-/gps/ang/type cos                        # Set the particle angular distribution to a cone (2pi)
-#/gps/ang/type iso                       # Set the particle angular distribution to isotropic (equal probability in all directions)
+#/gps/ang/type cos                        # Set the particle angular distribution to a cone (2pi)
+/gps/ang/type iso                       # Set the particle angular distribution to isotropic (equal probability in all directions)
 #/gps/ang/maxtheta 5 deg
 /gps/pos/centre 0 0 {f} mm                 # Set the center of the source
 /ICESPICE/Detector/Position -{g}          # Position the detector

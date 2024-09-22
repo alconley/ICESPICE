@@ -56,7 +56,20 @@
 /gui/addButton pos "g=45 mm"  "/ICESPICE/Detector/Position -45"
 /gui/addButton pos "g=50 mm"  "/ICESPICE/Detector/Position -50"
 #
+
+/gui/addMenu raddecay RadDecay
+/gui/addButton raddecay "f=9 mm"  "/gps/pos/centre 0 0 9 mm"
+/gui/addButton raddecay "g=0 mm"  "/ICESPICE/Detector/Position 0"
+/gui/addButton raddecay "Point Source"  "/gps/pos/type Point"
+/gui/addButton raddecay "Emit Isotropically"  "/gps/ang/type iso"
+/gui/addButton raddecay "Emit Half Sphere"  "/gps/ang/type cos"
+/gui/addButton raddecay "Long Decay Threshold (1e60 year)" "/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year"
+/gui/addButton raddecay "Add ion"  "/gps/particle ion"
+/gui/addButton raddecay "207Bi (G.S.)" "/gps/ion 83 207 0 0"
+/gui/addButton raddecay "207Pb (1633.356 keV)" "/gps/ion 83 207 0 1633.356"
+/gui/addButton raddecay "0 Energy" "/gps/ene/mono 0 eV"
+
 #
 # To limit the output flow in the "dump" widget :
-/run/printProgress 100
+/run/printProgress 1000
 #
