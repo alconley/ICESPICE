@@ -62,7 +62,6 @@
 /gui/addButton raddecay "g=0 mm"  "/ICESPICE/Detector/Position 0"
 /gui/addButton raddecay "Point Source"  "/gps/pos/type Point"
 /gui/addButton raddecay "Emit Isotropically"  "/gps/ang/type iso"
-/gui/addButton raddecay "Emit Half Sphere"  "/gps/ang/type cos"
 /gui/addButton raddecay "Long Decay Threshold (1e60 year)" "/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year"
 /gui/addButton raddecay "Add ion"  "/gps/particle ion"
 /gui/addButton raddecay "207Bi (G.S.)" "/gps/ion 83 207 0 0"

@@ -44,6 +44,7 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
     MagnetMaterial(NULL), 
     DetectorMaterial(NULL), 
     DetectorHousingMaterial(NULL), 
+    DetectorWindowMaterial(NULL),
     fMessenger(0)  
 {
   fField.Put(0);
@@ -97,6 +98,7 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   G4Element* Ni = nist->FindOrBuildElement("Ni");
   G4Element* B = nist->FindOrBuildElement("B");
   G4Element* Nd = nist->FindOrBuildElement("Nd");
+  G4Element* Si = nist->FindOrBuildElement("Si");
   
   density = 16.65*g/cm3 ;
   G4Material* Tantalum = new G4Material(name="Tantalum", density, ncomponents=1);
@@ -111,6 +113,11 @@ void ICESPICEDetectorConstruction::DefineMaterials()
 
   G4Material* silicon = nist->FindOrBuildMaterial("G4_Si");
   G4Material* aluminum = nist->FindOrBuildMaterial("G4_Al");
+
+  // create SiO2 material
+  G4Material* SiO2 = new G4Material("SiO2", 2.65*g/cm3, 2);
+  SiO2->AddElement(Si, 1);
+  SiO2->AddElement(O, 2);
 
   // Define materials from elements.
   
@@ -194,6 +201,7 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   MagnetMaterial = NdFeB; // AC
   DetectorMaterial = silicon; // AC
   DetectorHousingMaterial = StainlessSteel; // AC
+  DetectorWindowMaterial = SiO2; // AC
 
   G4cout << "end material"<< G4endl;  
 }
@@ -379,167 +387,104 @@ void ICESPICEDetectorConstruction::DefineCommands() {
 
 void ICESPICEDetectorConstruction::SetDetectorPosition(G4double val) {
     DetectorPosition = val;
-    physiDetector->SetTranslation(G4ThreeVector(0, 0, DetectorPosition));
+    physiDetector->SetTranslation(G4ThreeVector(0, 0, DetectorPosition-DetectorThickness/2.));
     G4RunManager::GetRunManager()->GeometryHasBeenModified();
     G4RunManager::GetRunManager() -> PhysicsHasBeenModified();
     G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
-void ICESPICEDetectorConstruction::PIPS500Detector() {
-    // Assuming that the detector window and housing are positioned relative to the detector's dimensions.
-    auto detector = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips500/active_area.PLY");
+void ICESPICEDetectorConstruction::PIPS1000Detector() {
+  // Assuming that the detector window and housing are positioned relative to the detector's dimensions.
+  // auto detector = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips1000/active_area.PLY");
 
-    solidDetector = detector->GetSolid();
-    logicDetector = new G4LogicalVolume(solidDetector,
-                                          DetectorMaterial,
-                                          "Detector");
-
-    G4double DetectorActiveArea = 50.*mm2; // Active area of the detector
-    G4double DetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
-    G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
-
-    solidDetectorWindow = new G4Tubs("DetectorWindow",
-                                      0,  // Inner radius
-                                      std::sqrt(DetectorActiveArea / 3.14),  // Outer radius
-                                      DetectorWindowThickness / 2.,  // Half-height
-                                      0.*deg,  // Start angle
-                                      360.*deg);  // Spanning angle
-
-    logicDetectorWindow = new G4LogicalVolume(solidDetectorWindow,
-                                        DetectorMaterial,
-                                        "DetectorWindow");
+  // solidDetector = detector->GetSolid();
+  // logicDetector = new G4LogicalVolume(solidDetector,
+  //                                       DetectorMaterial,
+  //                                       "Detector");
 
 
-    // Recalculate the position if it's dependent on the detector's thickness
-    G4double windowZPosition = - DetectorWindowThickness / 2.;
+  DetectorActiveArea = 50.*mm2; // Active area of the detector
+  DetectorThickness = 1000.*micrometer; // Thickness of the detector
+  DetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
+  G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
 
-    physiDetectorWindow = new G4PVPlacement(nullptr,  // No rotation
-                G4ThreeVector(0, 0, windowZPosition),  // Position in the detector
-                logicDetectorWindow,
-                "DetectorWindow",
-                logicDetector,  // Parent volume
-                false,  // No boolean operation
-                0);  // Copy number
+    // Create the cylindrical detector (G4Tubs)
+  solidDetector = new G4Tubs("Detector",
+                             0.,                   // Inner radius
+                             DetectorRadius,        // Outer radius
+                             DetectorThickness/2.,  // Half thickness
+                             0.*deg,               // Starting angle
+                             360.*deg);            // Spanning angle
+  
+  // Create the logical volume for the detector
+  logicDetector = new G4LogicalVolume(solidDetector,
+                                      DetectorMaterial,
+                                      "Detector");
 
-    // Create the outer housing for the detector
-    auto detectorHousing = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips1000/detector_housing.PLY");
-    solidDetectorHousing = detectorHousing->GetSolid();
-    logicDetectorHousing = new G4LogicalVolume(solidDetectorHousing,
-                                              AttenuatorMaterial,
-                                              "DetectorHousing");
+  solidDetectorWindow = new G4Tubs("DetectorWindow",
+                                    0,  // Inner radius
+                                    std::sqrt(DetectorActiveArea / 3.14),  // Outer radius
+                                    DetectorWindowThickness / 2.,  // Half-height
+                                    0.*deg,  // Start angle
+                                    360.*deg);  // Spanning angle
 
-                          // Place the detector within the housing
-    physiDetectorHousing = new G4PVPlacement(nullptr,  // No rotation
-                      G4ThreeVector(0, 0, 0),  // Position relative to housing center
-                      logicDetectorHousing,
-                      "DetectorHousing",
-                      logicDetector,  // Parent volume
-                      false,  // No boolean operation
-                      0);  // Copy number
-                
-    physiDetector = new G4PVPlacement(nullptr,  // no rotation
-                G4ThreeVector(0, 0, DetectorPosition),  // position in world
-                logicDetector,  // logical volume to place
-                "Detector",  // name
-                logicWorld,  // parent volume (world)
-                false,  // no boolean operation
-                0);  // copy number
-
-    // Visualization attributes for various components
-    G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
-    visAttributesDetector->SetVisibility(true);
-    visAttributesDetector->SetForceSolid(true);
-    logicDetector->SetVisAttributes(visAttributesDetector);
-
-    G4VisAttributes* visAttributesWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // Red for the window
-    visAttributesWindow->SetVisibility(true);
-    visAttributesWindow->SetForceSolid(true);
-    logicDetectorWindow->SetVisAttributes(visAttributesWindow);
-
-    G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
-    visAttributesHousing->SetVisibility(true);
-    visAttributesHousing->SetForceSolid(true);
-    logicDetectorHousing->SetVisAttributes(visAttributesHousing);
-
-    }
-
-  void ICESPICEDetectorConstruction::PIPS1000Detector() {
-    // Assuming that the detector window and housing are positioned relative to the detector's dimensions.
-    auto detector = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips1000/active_area.PLY");
-
-    solidDetector = detector->GetSolid();
-    logicDetector = new G4LogicalVolume(solidDetector,
-                                          DetectorMaterial,
-                                          "Detector");
-
-    G4double DetectorActiveArea = 50.*mm2; // Active area of the detector
-    G4double DetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
-    G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
-
-    solidDetectorWindow = new G4Tubs("DetectorWindow",
-                                      0,  // Inner radius
-                                      std::sqrt(DetectorActiveArea / 3.14),  // Outer radius
-                                      DetectorWindowThickness / 2.,  // Half-height
-                                      0.*deg,  // Start angle
-                                      360.*deg);  // Spanning angle
-
-    logicDetectorWindow = new G4LogicalVolume(solidDetectorWindow,
-                                        DetectorMaterial,
-                                        "DetectorWindow");
+  logicDetectorWindow = new G4LogicalVolume(solidDetectorWindow,
+                                      DetectorWindowMaterial,
+                                      "DetectorWindow");
 
 
-    // Recalculate the position if it's dependent on the detector's thickness
-    G4double windowZPosition = - DetectorWindowThickness / 2.;
+  // Recalculate the position if it's dependent on the detector's thickness
+  G4double windowZPosition = - DetectorWindowThickness / 2. + DetectorThickness / 2.;
 
-    physiDetectorWindow = new G4PVPlacement(nullptr,  // No rotation
-                G4ThreeVector(0, 0, windowZPosition),  // Position in the detector
-                logicDetectorWindow,
-                "DetectorWindow",
-                logicDetector,  // Parent volume
-                false,  // No boolean operation
-                0);  // Copy number
+  physiDetectorWindow = new G4PVPlacement(nullptr,  // No rotation
+              G4ThreeVector(0, 0, windowZPosition),  // Position in the detector
+              logicDetectorWindow,
+              "DetectorWindow",
+              logicDetector,  // Parent volume
+              false,  // No boolean operation
+              0);  // Copy number
 
-    // Create the outer housing for the detector
-    auto detectorHousing = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips1000/detector_housing.PLY");
-    solidDetectorHousing = detectorHousing->GetSolid();
-    logicDetectorHousing = new G4LogicalVolume(solidDetectorHousing,
-                                              AttenuatorMaterial,
-                                              "DetectorHousing");
+  // Create the outer housing for the detector
+  auto detectorHousing = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips1000/detector_housing.PLY");
+  solidDetectorHousing = detectorHousing->GetSolid();
+  logicDetectorHousing = new G4LogicalVolume(solidDetectorHousing,
+                                            AttenuatorMaterial,
+                                            "DetectorHousing");
 
-                          // Place the detector within the housing
-    physiDetectorHousing = new G4PVPlacement(nullptr,  // No rotation
-                      G4ThreeVector(0, 0, 0),  // Position relative to housing center
-                      logicDetectorHousing,
-                      "DetectorHousing",
-                      logicDetector,  // Parent volume
-                      false,  // No boolean operation
-                      0);  // Copy number
-                
-    physiDetector = new G4PVPlacement(nullptr,  // no rotation
-                G4ThreeVector(0, 0, DetectorPosition),  // position in world
-                logicDetector,  // logical volume to place
-                "Detector",  // name
-                logicWorld,  // parent volume (world)
-                false,  // no boolean operation
-                0);  // copy number
+                        // Place the detector within the housing
+  physiDetectorHousing = new G4PVPlacement(nullptr,  // No rotation
+                    G4ThreeVector(0, 0, DetectorThickness/2.),  // Position relative to housing center
+                    logicDetectorHousing,
+                    "DetectorHousing",
+                    logicDetector,  // Parent volume
+                    false,  // No boolean operation
+                    0);  // Copy number
+              
+  physiDetector = new G4PVPlacement(nullptr,  // no rotation
+              G4ThreeVector(0, 0, DetectorPosition-DetectorThickness/2.),  // position in world
+              logicDetector,  // logical volume to place
+              "Detector",  // name
+              logicWorld,  // parent volume (world)
+              false,  // no boolean operation
+              0);  // copy number
 
-    // Visualization attributes for various components
-    G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
-    visAttributesDetector->SetVisibility(true);
-    visAttributesDetector->SetForceSolid(true);
-    logicDetector->SetVisAttributes(visAttributesDetector);
+  // Visualization attributes for various components
+  G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
+  visAttributesDetector->SetVisibility(true);
+  visAttributesDetector->SetForceSolid(true);
+  logicDetector->SetVisAttributes(visAttributesDetector);
 
-    G4VisAttributes* visAttributesWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // Red for the window
-    visAttributesWindow->SetVisibility(true);
-    visAttributesWindow->SetForceSolid(true);
-    logicDetectorWindow->SetVisAttributes(visAttributesWindow);
+  G4VisAttributes* visAttributesWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // Red for the window
+  visAttributesWindow->SetVisibility(true);
+  visAttributesWindow->SetForceSolid(true);
+  logicDetectorWindow->SetVisAttributes(visAttributesWindow);
 
-    G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
-    visAttributesHousing->SetVisibility(true);
-    visAttributesHousing->SetForceSolid(true);
-    logicDetectorHousing->SetVisAttributes(visAttributesHousing);
+  G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
+  visAttributesHousing->SetVisibility(true);
+  visAttributesHousing->SetForceSolid(false);
+  logicDetectorHousing->SetVisAttributes(visAttributesHousing);
 
-    }
+  }
 
 void ICESPICEDetectorConstruction::PIPSTransmissionDetector(G4double activeArea, G4double thickness) {
   // create a tube for the detector

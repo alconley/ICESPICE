@@ -4,6 +4,8 @@ import numpy as np
 import ROOT
 from scipy.optimize import minimize
 import argparse  
+import os
+import glob
 
 # for virtual environment
 # source $(brew --prefix root)/bin/thisroot.sh  # for ROOT
@@ -11,12 +13,16 @@ import argparse
 # Function to parse command-line arguments
 def parse_args():
     parser = argparse.ArgumentParser(description="Run analysis on a specified ROOT file")
-    parser.add_argument("root_file_path", nargs='?', default="../207Bi/geant_sim/RadDecay_z82_a207_e1633keV_f9mm_g0mm_n1000000.root", help="Path to the ROOT file")
+    parser.add_argument("root_file_path", nargs='?', default=None, help="Path to the ROOT file")
     parser.add_argument("--fwhm", type=float, default=10.0, help="FWHM value for Gaussian smearing (default: 10.0)")
     parser.add_argument("--save-pic", action="store_true", default=False, help="Save the plot as an image if this flag is set (default: False)")
     parser.add_argument("--save-path", type=str, default="picture.png", help="Path to save the plot image (default: picture.png)")
 
     return parser.parse_args()
+
+# Function to get list of .root files
+def list_root_files(directory):
+    return glob.glob(os.path.join(directory, "*.root"))
 
 # Function to compute residuals
 def residuals(scale, real_hist, sim_hist):
@@ -139,8 +145,20 @@ if __name__ == "__main__":
     # Parse the command-line arguments
     args = parse_args()
 
-    # Use the parsed root_file_path from the arguments
-    root_file_path = args.root_file_path
+    # Use the parsed root_file_path from the arguments, or list files if not provided
+    if args.root_file_path is None:
+        root_file_dir = "../207Bi/geant_sim/"
+        root_files = list_root_files(root_file_dir)
+        if not root_files:
+            print(f"No .root files found in {root_file_dir}")
+            exit(1)
+        print("Available .root files:")
+        for i, file in enumerate(root_files):
+            print(f"{i + 1}: {file}")
+        file_index = int(input("Select a file by number: ")) - 1
+        root_file_path = root_files[file_index]
+    else:
+        root_file_path = args.root_file_path
 
     df_withICESPICE = pl.read_parquet("../207Bi/exp_data/207Bi_ICESPICE_f70mm_g30mm_run_*.parquet")
     df_withoutICESPICE = pl.read_parquet("../207Bi/exp_data/207Bi_noICESPICE_f9mm_g0mm_run_13.parquet")

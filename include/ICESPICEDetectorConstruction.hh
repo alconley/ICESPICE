@@ -120,8 +120,11 @@ private:
 
   G4VPhysicalVolume* physiDetector; 
   G4LogicalVolume*   logicDetector;
-  G4VSolid*          solidDetector;
+  // G4VSolid*          solidDetector; // uncomment if using CADMesh
+  G4Tubs*            solidDetector; 
   G4Material*        DetectorMaterial;
+  G4double           DetectorActiveArea;
+  G4double           DetectorThickness;
 
   G4VPhysicalVolume* physiAttenuator;
   G4LogicalVolume*   logicAttenuator;
@@ -130,7 +133,9 @@ private:
   
   G4VPhysicalVolume* physiDetectorWindow;
   G4LogicalVolume*   logicDetectorWindow;
-  G4Tubs*          solidDetectorWindow; 
+  G4Tubs*            solidDetectorWindow; 
+  G4Material*        DetectorWindowMaterial; 
+  G4double           DetectorWindowThickness;
 
   G4VPhysicalVolume* physiDetectorHousing;
   G4LogicalVolume*   logicDetectorHousing;

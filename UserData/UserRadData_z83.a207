@@ -1,14 +1,19 @@
 # 207BI ( 31.55 Y   )
 #  Excitation  flag   Halflife  Mode    Daughter Ex flag   Intensity          Q
 P            0  - 9.956423e+08
-                               MshellEC            0         0.04796
-                               BetaPlus            0         0.00033
-                               KshellEC            0         0.75009
-                               LshellEC            0         0.19864
-                               BetaPlus     569.6982  -       0.3308     1827.712
-                               KshellEC     569.6982  -        6.545     1827.712
-                               LshellEC     569.6982  -        1.882     1827.712
-                               MshellEC     569.6982  -        0.473     1827.712
-                               KshellEC     1633.356  -       63.838      764.054
-                               LshellEC     1633.356  -       16.513      764.054
-                               MshellEC     1633.356  -        3.949      764.054
+                               MshellEC            0        0.044214
+                               BetaPlus            0        0.000700
+                               KshellEC            0        0.762348
+                               LshellEC            0        0.192737
+                               MshellEC     569.6982  -     0.472679     1827.712
+                               MshellEC     1633.356  -     3.948718      764.054
+                               MshellEC     2339.921  -     1.00e-27       57.489
+                               BetaPlus     569.6982  -     0.070000     1827.712
+                               BetaPlus     1633.356  -   1.0003e-27      764.054    uniqueFirstForbidden
+                               BetaPlus     2339.921  -   1.0003e-27       57.489
+                               KshellEC     569.6982  -     6.545120     1827.712
+                               KshellEC     1633.356  -     63.53846      764.054
+                               KshellEC     2339.921  -     6.151250       57.489
+                               LshellEC     569.6982  -     1.882201     1827.712
+                               LshellEC     1633.356  -     16.51282      764.054
+                               LshellEC     2339.921  -     0.878750       57.489

@@ -8,7 +8,7 @@
 #/control/alias e_str 1633keV
 /control/alias e 0
 /control/alias e_str 0keV
-/control/alias File RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_AllProcesses
+/control/alias File RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_AllProcesses_NoFluo_Si02Window50nm_1000micrometerThick_CustomSourceDim
 
 # Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
 /control/verbose 0         # output for general control commands
@@ -26,12 +26,15 @@
 #/process/had/rdm/setRadioactiveDecayFile 82 207 ../UserData/UserRadData_z82.a207
 #/process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207
 
+# Disable fluorence x-rays
+/process/em/fluo false
+
 # Set up the General Particle Source (GPS) parameters
-/gps/pos/type Point                   # Set the GPS source position type to a point source
-    #/gps/pos/type Beam                       # Use a beam-like source to set a circular shape
-    #/gps/pos/shape Circle                    # Define the shape as a circle
-    #/gps/pos/radius 2.5 mm                   # Set the radius for the initial circle (5 mm diameter)
-    #/gps/pos/sigma_r 0.75 mm                 # Set the radial Gaussian spread to achieve 6.5 mm diameter
+#/gps/pos/type Point                   # Set the GPS source position type to a point source
+    /gps/pos/type Beam                       # Use a beam-like source to set a circular shape
+    /gps/pos/shape Circle                    # Define the shape as a circle
+    /gps/pos/radius 2.5 mm                   # Set the radius for the initial circle (5 mm diameter)
+    /gps/pos/sigma_r 0.75 mm                 # Set the radial Gaussian spread to achieve 6.5 mm diameter
 #/gps/ang/type cos                        # Set the particle angular distribution to a cone (2pi)
 /gps/ang/type iso                       # Set the particle angular distribution to isotropic (equal probability in all directions)
 #/gps/ang/maxtheta 5 deg
