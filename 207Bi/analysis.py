@@ -14,6 +14,7 @@ import glob
 def parse_args():
     parser = argparse.ArgumentParser(description="Run analysis on a specified ROOT file")
     parser.add_argument("root_file_path", nargs='?', default=None, help="Path to the ROOT file")
+    parser.add_argument("--icespice", action="store_true", default=True, help="If ICESPICE in the simultation")
     parser.add_argument("--fwhm", type=float, default=10.0, help="FWHM value for Gaussian smearing (default: 10.0)")
     parser.add_argument("--save-pic", action="store_true", default=False, help="Save the plot as an image if this flag is set (default: False)")
     parser.add_argument("--save-path", type=str, default="picture.png", help="Path to save the plot image (default: picture.png)")
@@ -188,7 +189,11 @@ if __name__ == "__main__":
     # axs[0].set_ylabel(r"Counts/keV")
 
     ###############################################################################################################
-    real_hist, real_bins = np.histogram(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=799, range=[400, 1199])
+    
+    if args.icespice:
+        real_hist, real_bins = np.histogram(df_withICESPICE["PIPS1000EnergyCalibrated"], bins=799, range=[400, 1199])
+    else:
+        real_hist, real_bins = np.histogram(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=799, range=[400, 1199])
 
     fwhm = args.fwhm  # Get the FWHM value from the argument
 
@@ -213,7 +218,11 @@ if __name__ == "__main__":
     scaled_sim_hist = sim_hist * best_scale
 
     # plot the histogram of the Geant4 simulation without ICESPICE
-    axs[0].hist(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
+    if args.icespice:
+        axs[0].hist(df_withICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
+    else:
+        axs[0].hist(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
+    
     axs[0].step(filtered_geant_bin_centers[:-1], scaled_sim_hist, color="#425563", label="Scaled Geant4 simulation", linewidth=1, where="mid")
     axs[0].text(0.50, 0.95, f"Scale factor: {best_scale:.3f}\nSimulation Counts in Detector: {n_interactions}", transform=axs[0].transAxes, ha='center', va='top')
     axs[0].set_xlabel(r"Energy [keV]")

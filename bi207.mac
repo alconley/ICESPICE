@@ -1,14 +1,14 @@
 # variables
 /control/alias f 9
 /control/alias g 0
-/control/alias n 10000000
+/control/alias n 100000000
 /control/alias z 83
 /control/alias a 207
 #/control/alias e 1633.356
 #/control/alias e_str 1633keV
 /control/alias e 0
 /control/alias e_str 0keV
-/control/alias File RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_AllProcesses_NoFluo_Si02Window50nm_1000micrometerThick_CustomSourceDim
+/control/alias File RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PIPS1000_AllProcesses_NoFluo_Si02Window50nm_CustomSourceDim
 
 # Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
 /control/verbose 0         # output for general control commands

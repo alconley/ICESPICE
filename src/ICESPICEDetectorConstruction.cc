@@ -10,6 +10,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4Mag_UsualEqRhs.hh"
+#include "G4FieldManager.hh"
 #include "G4TransportationManager.hh"
 #include "G4EqMagElectricField.hh"
 #include "G4ChordFinder.hh"
@@ -355,8 +356,7 @@ void ICESPICEDetectorConstruction::ConstructSDandField()
       fField.Put(ICESPICEField);
       
       //This is thread-local
-      G4FieldManager* pFieldMgr = 
-	G4TransportationManager::GetTransportationManager()->GetFieldManager();
+      G4FieldManager* pFieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
            
       G4cout<< "DeltaStep "<<pFieldMgr->GetDeltaOneStep()/mm <<"mm" <<G4endl;
       // G4ChordFinder *pChordFinder = new G4ChordFinder(ICESPICEField);
