@@ -2,3 +2,4 @@
 /build
 /.venv
 *.TABLE
+/.DS_Store

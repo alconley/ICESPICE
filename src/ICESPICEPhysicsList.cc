@@ -9,18 +9,23 @@
 #include "G4UnitsTable.hh"
 #include "G4ios.hh"              
 #include "G4EmStandardPhysics_option4.hh"
+#include "G4EmStandardPhysics_option3.hh"
+#include "G4EmStandardPhysics_option2.hh"
+#include "G4EmStandardPhysics_option1.hh"
 #include "G4VPhysicsConstructor.hh"
 #include "G4DecayPhysics.hh"
 #include "G4RadioactiveDecayPhysics.hh"
 #include "G4GenericIon.hh"
 
-ICESPICEPhysicsList::ICESPICEPhysicsList():  G4VUserPhysicsList()
-{
+ICESPICEPhysicsList::ICESPICEPhysicsList() 
+: G4VModularPhysicsList() {
+  SetVerboseLevel(1);
+
   RegisterPhysics(new G4DecayPhysics());
 	RegisterPhysics(new G4EmStandardPhysics_option4());
   RegisterPhysics(new G4RadioactiveDecayPhysics());
 }
 
-ICESPICEPhysicsList::~ICESPICEPhysicsList()
-{
+void ICESPICEPhysicsList::SetCuts() {
+  G4VUserPhysicsList::SetCuts();
 }

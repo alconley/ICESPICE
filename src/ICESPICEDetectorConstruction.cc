@@ -202,7 +202,7 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   MagnetMaterial = NdFeB; // AC
   DetectorMaterial = silicon; // AC
   DetectorHousingMaterial = StainlessSteel; // AC
-  DetectorWindowMaterial = SiO2; // AC
+  DetectorWindowMaterial = silicon; // AC
 
   G4cout << "end material"<< G4endl;  
 }

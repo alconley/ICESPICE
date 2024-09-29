@@ -14,7 +14,7 @@ import glob
 def parse_args():
     parser = argparse.ArgumentParser(description="Run analysis on a specified ROOT file")
     parser.add_argument("root_file_path", nargs='?', default=None, help="Path to the ROOT file")
-    parser.add_argument("--icespice", action="store_true", default=True, help="If ICESPICE in the simultation")
+    parser.add_argument("--icespice", action="store_true", default=False, help="If ICESPICE in the simultation")
     parser.add_argument("--fwhm", type=float, default=10.0, help="FWHM value for Gaussian smearing (default: 10.0)")
     parser.add_argument("--save-pic", action="store_true", default=False, help="Save the plot as an image if this flag is set (default: False)")
     parser.add_argument("--save-path", type=str, default="picture.png", help="Path to save the plot image (default: picture.png)")
@@ -215,33 +215,39 @@ if __name__ == "__main__":
     best_scale = result.x[0]
 
     # # Apply the best scale to the simulation
-    scaled_sim_hist = sim_hist * best_scale
+    scaled_sim_filtered_hist = sim_hist * best_scale
+
+    ## scale the original simulation data (geant_bin_counts) 
+    scaled_sim_og_hist = geant_bin_counts * best_scale
 
     # plot the histogram of the Geant4 simulation without ICESPICE
     if args.icespice:
-        axs[0].hist(df_withICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
+        axs[0].hist(df_withICESPICE["PIPS1000EnergyCalibrated"], bins=1200, range=[0, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
     else:
-        axs[0].hist(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1000, range=[200, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
+        axs[0].hist(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1200, range=[0, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
     
-    axs[0].step(filtered_geant_bin_centers[:-1], scaled_sim_hist, color="#425563", label="Scaled Geant4 simulation", linewidth=1, where="mid")
-    axs[0].text(0.50, 0.95, f"Scale factor: {best_scale:.3f}\nSimulation Counts in Detector: {n_interactions}", transform=axs[0].transAxes, ha='center', va='top')
+    # axs[0].step(filtered_geant_bin_centers[:-1], scaled_sim_hist, color="#425563", label="Scaled Geant4 simulation", linewidth=1, where="mid")
+    # plot scaled sim hist
+    axs[0].step(geant_bin_centers, scaled_sim_og_hist, color="#425563", label="Scaled Geant4 simulation", linewidth=1, where="mid")
+
+    axs[0].text(0.50, 0.95, f"Scale factor: {best_scale:.3f}\nTotal Counts: {n_sim_particles}\nSimulation Counts in Detector: {n_interactions}", transform=axs[0].transAxes, ha='center', va='top')
     axs[0].set_xlabel(r"Energy [keV]")
     axs[0].set_ylabel(r"Counts/keV")
+
+    axs[0].set_ylim(0, 7000)
 
 # \nSimulation particles: {n_sim_particles:.1e}
     ###############################################################################################################
 
-    # # Residual plot
-    axs[1].step(real_bins[:-1], real_hist - scaled_sim_hist, where="mid", color="black", label="Residuals", linewidth=1)
+    axs[1].step(real_bins[:-1], (real_hist - scaled_sim_filtered_hist)/real_hist * 100, where="mid", color="black", linewidth=1)
     axs[1].set_xlabel(r"Energy [keV]")
-    axs[1].set_ylabel(r"Residuals")
-
+    axs[1].set_ylabel(r"Exp-Sim/Exp * 100 [%]")
+    axs[1].set_ylim(-100, 100)
     ###############################################################################################################
 
     for ax in axs:
         ax.legend(loc='upper left', shadow=False, frameon=True, fancybox=False, edgecolor='none', facecolor='none')
-        ax.set_xlim(200, 1200)
-            
+        ax.set_xlim(0, 1200)   
         ax.minorticks_on()
         ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=3)
         ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=5)
