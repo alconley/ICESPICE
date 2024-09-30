@@ -7,8 +7,21 @@
 class ICESPICEPhysicsList: public G4VModularPhysicsList {
   public:
     ICESPICEPhysicsList();
-    ~ICESPICEPhysicsList() override = default;
-    void SetCuts() override;
+    ~ICESPICEPhysicsList();
+
+    virtual void ConstructParticle();
+    void AddPhysicsList(const G4String& name);
+    virtual void ConstructProcess();
+
+    void AddRadioactiveDecay();
+
+    // void SetCuts() override;
+
+  private:
+    G4String                             fEmName;
+    G4VPhysicsConstructor*               fEmPhysicsList;
+    G4VPhysicsConstructor*               fDecPhysicsList;
+
 };
 #endif
 

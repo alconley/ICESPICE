@@ -63,34 +63,34 @@ void ICESPICESteppingAction::UserSteppingAction(const G4Step* aStep)
 
         const G4VProcess* creatorProcess = track->GetCreatorProcess();
         
-        // // For radioactive decay sources
+        // For radioactive decay sources
         // if (creatorProcess->GetProcessName() == "Radioactivation") {
-        //     // make it only electrons
-        //     fEventAction->AddSil(edep);
+            // make it only electrons
+            // fEventAction->AddSil(edep);
             
-        //     // if ( kineticEnergy > 489 * keV && kineticEnergy < 490 * keV 
-        //     // || kineticEnergy > 984 * keV && kineticEnergy < 985 * keV           
-        //     //    ) {
-        //     //     // Print details
-        //     //     G4cout << "Track ID: " << trackID << G4endl;
-        //     //     G4cout << "Parent ID: " << parentID << G4endl;
-        //     //     G4cout << "Particle: " << particleName << G4endl;
-        //     //     G4cout << "Kinetic Energy: " << kineticEnergy / keV << " MeV" << G4endl;
-        //     //     // G4cout << "Global Time: " << globalTime / ns << " ns" << G4endl;
-        //     //     // G4cout << "Local Time: " << localTime / ns << " ns" << G4endl;
-        //     //     // G4cout << "Track Length: " << trackLength / mm << " mm" << G4endl;
-        //     //     // G4cout << "Position: " << position << G4endl;
-        //     //     // G4cout << "Momentum Direction: " << momentumDirection << G4endl;
-        //     //     // G4cout << "Velocity: " << velocity / (m/s) << " m/s" << G4endl;
-        //     //     if (currentVolume) {
-        //     //         G4String volumeName = currentVolume->GetName();
-        //     //         G4cout << "Current Volume: " << volumeName << G4endl;
-        //     //     }
-        //     //     // G4cout << "Step Number: " << stepNumber << G4endl;
-        //     //     // G4cout << "Particle Charge: " << particleDefinition->GetPDGCharge() << G4endl;
-        //     //     // G4cout << "Particle Mass: " << particleDefinition->GetPDGMass() / MeV << " MeV" << G4endl;
+            // if ( kineticEnergy > 489 * keV && kineticEnergy < 490 * keV 
+            // || kineticEnergy > 984 * keV && kineticEnergy < 985 * keV           
+            //    ) {
+            //     // Print details
+            //     G4cout << "Track ID: " << trackID << G4endl;
+            //     G4cout << "Parent ID: " << parentID << G4endl;
+            //     G4cout << "Particle: " << particleName << G4endl;
+            //     G4cout << "Kinetic Energy: " << kineticEnergy / keV << " MeV" << G4endl;
+            //     // G4cout << "Global Time: " << globalTime / ns << " ns" << G4endl;
+            //     // G4cout << "Local Time: " << localTime / ns << " ns" << G4endl;
+            //     // G4cout << "Track Length: " << trackLength / mm << " mm" << G4endl;
+            //     // G4cout << "Position: " << position << G4endl;
+            //     // G4cout << "Momentum Direction: " << momentumDirection << G4endl;
+            //     // G4cout << "Velocity: " << velocity / (m/s) << " m/s" << G4endl;
+            //     if (currentVolume) {
+            //         G4String volumeName = currentVolume->GetName();
+            //         G4cout << "Current Volume: " << volumeName << G4endl;
+            //     }
+            //     // G4cout << "Step Number: " << stepNumber << G4endl;
+            //     // G4cout << "Particle Charge: " << particleDefinition->GetPDGCharge() << G4endl;
+            //     // G4cout << "Particle Mass: " << particleDefinition->GetPDGMass() / MeV << " MeV" << G4endl;
 
-        //     // }
+            // }
 
 
         // }

@@ -15,7 +15,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Run analysis on a specified ROOT file")
     parser.add_argument("root_file_path", nargs='?', default=None, help="Path to the ROOT file")
     parser.add_argument("--icespice", action="store_true", default=False, help="If ICESPICE in the simultation")
-    parser.add_argument("--fwhm", type=float, default=10.0, help="FWHM value for Gaussian smearing (default: 10.0)")
+    parser.add_argument("--fwhm", type=float, default=1.0, help="FWHM value for Gaussian smearing (default: 10.0)")
     parser.add_argument("--save-pic", action="store_true", default=False, help="Save the plot as an image if this flag is set (default: False)")
     parser.add_argument("--save-path", type=str, default="picture.png", help="Path to save the plot image (default: picture.png)")
 
@@ -235,6 +235,9 @@ if __name__ == "__main__":
     axs[0].set_ylabel(r"Counts/keV")
 
     axs[0].set_ylim(0, 7000)
+
+    # axs[0].set_ylim(1, 100000)
+    # axs[0].set_yscale("log")
 
 # \nSimulation particles: {n_sim_particles:.1e}
     ###############################################################################################################
