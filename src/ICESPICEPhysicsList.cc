@@ -44,12 +44,10 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
   fDecPhysicsList = new G4DecayPhysics(verboseLevel);
 
   // mandatory for G4NuclideTable
-  //
   G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(1.0*picosecond);
   G4NuclideTable::GetInstance()->SetLevelTolerance(1.0*eV);
    
   //read new PhotonEvaporation data set 
-  //
   G4DeexPrecoParameters* deex = 
     G4NuclearLevelData::GetInstance()->GetParameters();
   deex->SetCorrelatedGamma(false);
@@ -61,7 +59,7 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
   G4LossTableManager::Instance();
   // fix lower limit for cut
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(10*eV, 1*GeV);
-  SetDefaultCutValue(1*mm);
+  SetDefaultCutValue(1*micrometer);
 
 }
 
@@ -104,7 +102,6 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
   radioactiveDecay->SetThresholdForVeryLongDecayTime(1.0e+60);
 
   // need to initialize atomic deexcitation
-  //
   G4LossTableManager* man = G4LossTableManager::Instance();
   G4VAtomDeexcitation* deex = man->AtomDeexcitation();
   if (!deex) {

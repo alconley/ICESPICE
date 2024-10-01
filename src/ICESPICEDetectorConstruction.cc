@@ -29,6 +29,7 @@
 #define MAGNETS 0      // N42 1"X1"x1/8"
 #define ATTENUATOR 0   // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
+#define DETECTORHOLDER 1 // AC: Volume for detector holder
 #define MAGNETHOLDER 0 // AC: Volume for magnet holder/mounting rings
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -38,8 +39,8 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
     physiDetector(NULL), logicDetector(NULL), solidDetector(NULL),
     physiDetectorWindow(NULL), logicDetectorWindow(NULL), solidDetectorWindow(NULL),
     physiDetectorHousing(NULL), logicDetectorHousing(NULL), solidDetectorHousing(NULL),
+    physiDetectorHolder(NULL), logicDetectorHolder(NULL), solidDetectorHolder(NULL),
     physiAttenuator(NULL), logicAttenuator(NULL), solidAttenuator(NULL),
-    physiTransmissionDetector(NULL), logicTransmissionDetector(NULL), solidTransmissionDetector(NULL),
     WorldMaterial(NULL), 
     AttenuatorMaterial(NULL), 
     MagnetMaterial(NULL), 
@@ -100,14 +101,14 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   G4Element* B = nist->FindOrBuildElement("B");
   G4Element* Nd = nist->FindOrBuildElement("Nd");
   G4Element* Si = nist->FindOrBuildElement("Si");
+  G4Element* C = nist->FindOrBuildElement("C");
   
-  density = 16.65*g/cm3 ;
-  G4Material* Tantalum = new G4Material(name="Tantalum", density, ncomponents=1);
+  // Define Tantalum for the attenuator
+  G4Material* Tantalum = new G4Material(name="Tantalum", 16.65*g/cm3, ncomponents=1);
   Tantalum->AddElement(Ta, 1);
   
-  // Define N42 Magnet material (Neodymium Iron Boron)
-  density = 7.5*g/cm3;
-  G4Material* NdFeB = new G4Material(name="N42_Magnet", density, ncomponents=3);
+  // Define N42 Magnet material (Neodymium Iron Boron) for magnets
+  G4Material* NdFeB = new G4Material(name="N42_Magnet", 7.5*g/cm3, ncomponents=3);
   NdFeB->AddElement(Nd, natoms=2);
   NdFeB->AddElement(Fe, natoms=14);
   NdFeB->AddElement(B, natoms=1);
@@ -115,96 +116,43 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   G4Material* silicon = nist->FindOrBuildMaterial("G4_Si");
   G4Material* aluminum = nist->FindOrBuildMaterial("G4_Al");
 
-  // create SiO2 material
+  // create SiO2 material for detector window (maybe) otherwise its silicon
   G4Material* SiO2 = new G4Material("SiO2", 2.65*g/cm3, 2);
   SiO2->AddElement(Si, 1);
   SiO2->AddElement(O, 2);
 
-  // Define materials from elements.
-  
-  // Case 1: chemical molecule  
-  // Water 
-  density = 1.000*g/cm3;
-  G4Material* H2O = new G4Material(name="H2O"  , density, ncomponents=2);
-  H2O->AddElement(H, natoms=2);
-  H2O->AddElement(O, natoms=1);
-  
-  // Case 2: mixture by fractional mass.
-  // Air
-  density = 1.290*mg/cm3;
-  G4Material* Air = new G4Material(name="Air"  , density, ncomponents=2);
-  Air->AddElement(N, fractionmass=0.7);
-  Air->AddElement(O, fractionmass=0.3);
-
-  // Vacuum
-  density     = 1.e-5*g/cm3;
-  pressure    = 2.e-2*bar;
-  temperature = STP_Temperature;         //from PhysicalConstants.h
-  G4Material* vacuum = new G4Material(name="vacuum", density, ncomponents=1,
-                                      kStateGas,temperature,pressure);
-  vacuum->AddMaterial(Air, fractionmass=1.);
-
-
-  // Laboratory vacuum: Dry air (average composition)
-  density = 1.7836*mg/cm3 ;       // STP
-  G4Material* Argon = new G4Material(name="Argon", density, ncomponents=1);
-  Argon->AddElement(Ar, 1);
-  
-  density = 1.25053*mg/cm3 ;       // STP
-  G4Material* Nitrogen = new G4Material(name="N2", density, ncomponents=1);
-  Nitrogen->AddElement(N, 2);
-  
-  density = 1.4289*mg/cm3 ;       // STP
-  G4Material* Oxygen = new G4Material(name="O2", density, ncomponents=1);
-  Oxygen->AddElement(O, 2);
-  
-  G4double VacuumPressureTorr = 1.0e-2; // 1.0e-2 torr
-
-  // Convert torr to pascal
-  G4double VacuumPressurePascal = VacuumPressureTorr * 133.322 * pascal;
-
-  // Scaling factor relative to STP pressure
-  G4double PressureScalingFactor = VacuumPressurePascal / STP_Pressure;
-
-  // New density based on scaling factor
-  G4double VacuumDensity = 1.2928 * mg/cm3 * PressureScalingFactor;
-
-  // Temperature remains at STP
-  G4double VacuumTemperature = STP_Temperature;
-
-  // Define laboratory vacuum
-  G4Material* LaboratoryVacuum = new G4Material("LaboratoryVacuum",
-                                                VacuumDensity, ncomponents=3,
-                                                kStateGas, VacuumTemperature, VacuumPressurePascal);
-  LaboratoryVacuum->AddMaterial(Nitrogen, fractionmass = 0.7557);
-  LaboratoryVacuum->AddMaterial(Oxygen,   fractionmass = 0.2315);
-  LaboratoryVacuum->AddMaterial(Argon,    fractionmass = 0.0128);
-
-  // Define stainless steel
-  G4double steel_density = 8.00 * g/cm3; // Typical density for stainless steel
-  G4Material* StainlessSteel = new G4Material("StainlessSteel", density, 3);
+  // Define stainless steel for detector housing
+  G4Material* StainlessSteel = new G4Material("StainlessSteel", 8.00*g/cm3, 3);
   StainlessSteel->AddElement(Fe, 70 * perCent);  // 70% Iron
   StainlessSteel->AddElement(Cr, 18 * perCent);  // 18% Chromium
   StainlessSteel->AddElement(Ni, 12 * perCent);  // 12% Nickel
 
+  // Define Acetal for the detector holder
+  G4Material* Acetal = new G4Material("Acetal", 1.41*g/cm3, ncomponents = 3);
+  Acetal->AddElement(C, 1); // 1 carbon atom
+  Acetal->AddElement(H, 2); // 2 hydrogen atoms
+  Acetal->AddElement(O, 1); // 1 oxygen atom
+
+  // Define Galactic Vacuum for the world volume
   G4Material* gal_vac = nist->FindOrBuildMaterial("G4_Galactic");
 
-  // Set world material
-  // WorldMaterial = LaboratoryVacuum;
-  WorldMaterial = gal_vac;
+  // Define nickel for the 207Bi source backing
+  G4Material* Nickel = new G4Material("Nickel", 8.908*g/cm3, 1);
+  Nickel->AddElement(Ni, 1);
 
-  
-  G4cout << G4endl << *(G4Material::GetMaterialTable()) << G4endl;
+  // G4cout << G4endl << *(G4Material::GetMaterialTable()) << G4endl;
 
   // Default materials in setup.
-  WorldMaterial = LaboratoryVacuum;
+  WorldMaterial = gal_vac;
   AttenuatorMaterial = Tantalum; // AC
   MagnetMaterial = NdFeB; // AC
   DetectorMaterial = silicon; // AC
   DetectorHousingMaterial = StainlessSteel; // AC
   DetectorWindowMaterial = silicon; // AC
+  DetectorHolderMaterial = Acetal; // AC
+  SourceBackingMaterial = Nickel; // AC
 
-  G4cout << "end material"<< G4endl;  
+  // G4cout << "end material"<< G4endl;  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -238,6 +186,20 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
   G4VisAttributes* simpleWorldVisAtt= new G4VisAttributes(G4Colour(1.0,1.0,1.0)); //White
   simpleWorldVisAtt->SetVisibility(true);
   logicWorld->SetVisAttributes(simpleWorldVisAtt);
+
+  // add a piece of stainless steel at z=9.1 mm for source backing
+  G4double sourceBackingThickness = 1.0*mm;
+  G4double sourceBackingZ = 9.01*mm;
+  G4Box* solidSourceBacking = new G4Box("SourceBacking", WorldSizeXY/2, WorldSizeXY/2, sourceBackingThickness/2);
+  G4LogicalVolume* logicSourceBacking = new G4LogicalVolume(solidSourceBacking, SourceBackingMaterial, "SourceBacking");
+  new G4PVPlacement(0, G4ThreeVector(0, 0, sourceBackingZ + sourceBackingThickness/2.0), logicSourceBacking, "SourceBacking", logicWorld, false, 0);
+
+  // visualization attributes
+  G4VisAttributes* simpleSourceBackingVisAtt = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5)); // grey
+  simpleSourceBackingVisAtt->SetVisibility(true);
+  simpleSourceBackingVisAtt->SetForceSolid(true);
+  logicSourceBacking->SetVisAttributes(simpleSourceBackingVisAtt);
+
  
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 #if DETECTOR
@@ -459,7 +421,25 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
                     logicDetector,  // Parent volume
                     false,  // No boolean operation
                     0);  // Copy number
-              
+
+  // create the detector holder 
+  #if DETECTORHOLDER
+    auto detectorHolder = CADMesh::TessellatedMesh::FromPLY("./cad_files/PIPS_holder.PLY");
+    solidDetectorHolder = detectorHolder->GetSolid();
+    logicDetectorHolder = new G4LogicalVolume(solidDetectorHolder,
+                                              DetectorHolderMaterial,
+                                              "DetectorHolder");
+
+    // Place the holder at the origin of the detector volume
+    physiDetectorHolder = new G4PVPlacement(nullptr,  // No rotation
+                    G4ThreeVector(0, 0, 1.0*mm),  // Position relative to housing center
+                    logicDetectorHolder,
+                    "DetectorHolder",
+                    logicDetector,  // Parent volume
+                    false,  // No boolean operation
+                    0);  // Copy number
+  #endif
+
   physiDetector = new G4PVPlacement(nullptr,  // no rotation
               G4ThreeVector(0, 0, DetectorPosition-DetectorThickness/2.),  // position in world
               logicDetector,  // logical volume to place
@@ -481,38 +461,14 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
 
   G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
   visAttributesHousing->SetVisibility(true);
-  visAttributesHousing->SetForceSolid(false);
+  visAttributesHousing->SetForceSolid(true);
   logicDetectorHousing->SetVisAttributes(visAttributesHousing);
 
+  #if DETECTORHOLDER
+    G4VisAttributes* visAttributesHolder = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0));  // blue for the holder
+    visAttributesHolder->SetVisibility(true);
+    visAttributesHolder->SetForceSolid(true);
+    logicDetectorHolder->SetVisAttributes(visAttributesHolder);
+  #endif
+
   }
-
-void ICESPICEDetectorConstruction::PIPSTransmissionDetector(G4double activeArea, G4double thickness) {
-  // create a tube for the detector
-  solidTransmissionDetector = new G4Tubs("Detector",
-                                      0,  // Inner radius
-                                      std::sqrt(activeArea / 3.14),  // Outer radius
-                                      thickness / 2.,  // Half-height
-                                      0.*deg,  // Start angle
-                                      360.*deg);  // Spanning angle
-
-  logicTransmissionDetector = new G4LogicalVolume(solidTransmissionDetector,
-                                        DetectorMaterial,
-                                        "Detector");
-
-  // Place the detector at -25mm
-  physiTransmissionDetector = new G4PVPlacement(nullptr,  // No rotation
-                G4ThreeVector(0, 0, -25.*mm),  // Position in the detector
-                logicTransmissionDetector,
-                "Detector",
-                logicWorld,  // Parent volume
-                false,  // No boolean operation
-                0);  // Copy number
-
-            
-  // Visualization attributes for various components
-  G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));  // Green for the detector
-  visAttributesDetector->SetVisibility(true);
-  visAttributesDetector->SetForceSolid(true);
-  logicTransmissionDetector->SetVisAttributes(visAttributesDetector);
-
-}

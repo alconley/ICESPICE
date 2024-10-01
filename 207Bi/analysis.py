@@ -245,6 +245,8 @@ if __name__ == "__main__":
     axs[1].step(real_bins[:-1], (real_hist - scaled_sim_filtered_hist)/real_hist * 100, where="mid", color="black", linewidth=1)
     axs[1].set_xlabel(r"Energy [keV]")
     axs[1].set_ylabel(r"Exp-Sim/Exp * 100 [%]")
+    # draw a horizontal line y=0
+    axs[1].axhline(y=0, color='black', linestyle='--', linewidth=1)
     axs[1].set_ylim(-100, 100)
     ###############################################################################################################
 

@@ -42,26 +42,45 @@ void ICESPICESteppingAction::UserSteppingAction(const G4Step* aStep)
 
 	// // energy deposit
 	auto edep = aStep->GetTotalEnergyDeposit();
+
+    // Get the secondaries produced in this step
+    // const G4TrackVector* secondaries = aStep->GetSecondary();
+
+    // Check if there are any secondaries
+    // if (secondaries->size() > 0) {
+    //     G4cout << "Secondaries produced in this step: " << G4endl;
+        
+    //     // Loop through the secondaries and print details
+    //     for (size_t i = 0; i < secondaries->size(); ++i) {
+    //         G4Track* secondary = (*secondaries)[i];
+    //         G4ParticleDefinition* particleDef = secondary->GetDefinition();
+    //         G4String particleName = particleDef->GetParticleName();
+    //         G4double energy = secondary->GetKineticEnergy();
+    //         G4cout << "  Particle: " << particleName 
+    //             << "  Energy: " << energy / keV << " keV"
+    //             << G4endl;
+    //     }
+    // }
 			
     if (volume == fDetConstruction->GetSiliconPV()) {
-        G4Track* track = aStep->GetTrack();
+        // G4Track* track = aStep->GetTrack();
 
-        // Print track information
-        G4int trackID = track->GetTrackID();
-        G4int parentID = track->GetParentID();
-        G4String particleName = track->GetDefinition()->GetParticleName();
-        G4double kineticEnergy = track->GetKineticEnergy();
-        G4double globalTime = track->GetGlobalTime();
-        G4double localTime = track->GetLocalTime();
-        G4double trackLength = track->GetTrackLength();
-        G4ThreeVector position = track->GetPosition();
-        G4ThreeVector momentumDirection = track->GetMomentumDirection();
-        G4double velocity = track->GetVelocity();
-        G4VPhysicalVolume* currentVolume = track->GetVolume();
-        G4int stepNumber = track->GetCurrentStepNumber();
-        const G4ParticleDefinition* particleDefinition = track->GetDefinition();
+        // // Print track information
+        // G4int trackID = track->GetTrackID();
+        // G4int parentID = track->GetParentID();
+        // G4String particleName = track->GetDefinition()->GetParticleName();
+        // G4double kineticEnergy = track->GetKineticEnergy();
+        // G4double globalTime = track->GetGlobalTime();
+        // G4double localTime = track->GetLocalTime();
+        // G4double trackLength = track->GetTrackLength();
+        // G4ThreeVector position = track->GetPosition();
+        // G4ThreeVector momentumDirection = track->GetMomentumDirection();
+        // G4double velocity = track->GetVelocity();
+        // G4VPhysicalVolume* currentVolume = track->GetVolume();
+        // G4int stepNumber = track->GetCurrentStepNumber();
+        // const G4ParticleDefinition* particleDefinition = track->GetDefinition();
 
-        const G4VProcess* creatorProcess = track->GetCreatorProcess();
+        // const G4VProcess* creatorProcess = track->GetCreatorProcess();
         
         // For radioactive decay sources
         // if (creatorProcess->GetProcessName() == "Radioactivation") {
@@ -94,6 +113,7 @@ void ICESPICESteppingAction::UserSteppingAction(const G4Step* aStep)
 
 
         // }
+
 
 
 
