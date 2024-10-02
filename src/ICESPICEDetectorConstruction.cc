@@ -484,28 +484,28 @@ void ICESPICEDetectorConstruction::Bi207SourceBacking() {
   logicSourceBacking = new G4LogicalVolume(solidSourceBacking, SourceBackingMaterial, "SourceBacking");
 
   // // add an ring with a hole in the center with a diameter of 0.75 in and and outer diameter of 1 in
-  // G4double ringThickness = 0.5*mm; // 0.125 inches
-  // G4double ringInnerDiameter = 0.75*25.4*mm; // 0.75 inches
-  // G4double ringOuterDiameter = 1.0*25.4*mm; // 1 inch
+  G4double ringThickness = 0.5*mm; // 0.125 inches
+  G4double ringInnerDiameter = 0.75*25.4*mm; // 0.75 inches
+  G4double ringOuterDiameter = 1.0*25.4*mm; // 1 inch
 
-  // G4Tubs* solidRing = new G4Tubs("SourceRing",
-  //                                 ringInnerDiameter/2.0,  // Inner radius
-  //                                 ringOuterDiameter/2.0,  // Outer radius
-  //                                 ringThickness/2.0,  // Half-height
-  //                                 0.*deg,  // Start angle
-  //                                 360.*deg);  // Spanning angle
+  G4Tubs* solidRing = new G4Tubs("SourceRing",
+                                  ringInnerDiameter/2.0,  // Inner radius
+                                  ringOuterDiameter/2.0,  // Outer radius
+                                  ringThickness/2.0,  // Half-height
+                                  0.*deg,  // Start angle
+                                  360.*deg);  // Spanning angle
 
-  // G4LogicalVolume* logicRing = new G4LogicalVolume(solidRing, SourceBackingMaterial, "SourceRing");
+  G4LogicalVolume* logicRing = new G4LogicalVolume(solidRing, SourceBackingMaterial, "SourceRing");
 
-  // // place the ring at the center of the source backing
-  // new G4PVPlacement(0,  // No rotation
-  //             G4ThreeVector(0, 0, - SourceBackingThickness/2.0 - ringThickness/2.0 + 1.0*micrometer ),  // Position in the world
-  //             logicRing,
-  //             "SourceRing",
-  //             logicSourceBacking,  // Parent volume
-  //             false,  // No boolean operation
-  //             0,  // Copy number
-  //             false);
+  // place the ring at the center of the source backing
+  new G4PVPlacement(0,  // No rotation
+              G4ThreeVector(0, 0, - SourceBackingThickness/2.0 - ringThickness/2.0 + 1.0*micrometer ),  // Position in the world
+              logicRing,
+              "SourceRing",
+              logicSourceBacking,  // Parent volume
+              false,  // No boolean operation
+              0,  // Copy number
+              false);
 
   physiSourceBacking = new G4PVPlacement(0,  // No rotation
               G4ThreeVector(0, 0, SourcePosition + SourceBackingThickness/2.0),  // Position in the world
@@ -521,10 +521,10 @@ void ICESPICEDetectorConstruction::Bi207SourceBacking() {
   simpleSourceBackingVisAtt->SetForceSolid(true);
   logicSourceBacking->SetVisAttributes(simpleSourceBackingVisAtt);
 
-  // G4VisAttributes* simpleRingVisAtt = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // grey
-  // simpleRingVisAtt->SetVisibility(true);
-  // simpleRingVisAtt->SetForceSolid(true);
-  // logicRing->SetVisAttributes(simpleRingVisAtt);
+  G4VisAttributes* simpleRingVisAtt = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // grey
+  simpleRingVisAtt->SetVisibility(true);
+  simpleRingVisAtt->SetForceSolid(true);
+  logicRing->SetVisAttributes(simpleRingVisAtt);
 
 }
 
