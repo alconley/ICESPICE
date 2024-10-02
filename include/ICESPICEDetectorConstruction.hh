@@ -1,40 +1,3 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
-// Code developed by:
-//  S.Larsson 
-//  Modified by: Alex Conley
-//    *****************************************
-//    *                                       *
-//    *    ICESPICEDetectorConstruction.hh     *
-//    *                                       *
-//    *****************************************
-//
-//
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 #ifndef ICESPICEDetectorConstruction_h
 #define ICESPICEDetectorConstruction_h 1
@@ -88,10 +51,13 @@ public:
   void PIPS300Detector(); 
   void PIPS500Detector(); 
   void PIPS1000Detector();
+  void Bi207SourceBacking();
   void ICESPICE();
 
   void SetDetectorPosition(G4double val); 
   G4double GetDetectorPosition() const {return DetectorPosition;}; 
+
+  void SetSourcePosition(G4double val);
 
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
   const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } 
@@ -117,6 +83,7 @@ private:
   G4Material*        MagnetMaterial; 
 
   G4double           DetectorPosition;   
+  G4double           SourcePosition;
 
   G4VPhysicalVolume* physiDetector; 
   G4LogicalVolume*   logicDetector;
@@ -147,7 +114,11 @@ private:
   G4VSolid*          solidDetectorHolder;
   G4Material*        DetectorHolderMaterial;
 
-  G4Material*       SourceBackingMaterial;
+  G4VPhysicalVolume* physiSourceBacking;
+  G4LogicalVolume*   logicSourceBacking;
+  G4Tubs*            solidSourceBacking;
+  G4double           SourceBackingThickness;
+  G4Material*        SourceBackingMaterial;
 
   G4Cache<G4MagneticField*> fField;  //pointer to the thread-local fields
 

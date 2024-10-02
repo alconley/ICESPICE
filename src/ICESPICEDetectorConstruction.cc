@@ -21,7 +21,7 @@
 #include "G4GenericMessenger.hh"
 #include "G4RunManager.hh"
 #include "CADMesh.hh"
-
+#include "G4UImanager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
@@ -31,6 +31,7 @@
 #define DETECTOR 1     // AC: Volume for detector
 #define DETECTORHOLDER 1 // AC: Volume for detector holder
 #define MAGNETHOLDER 0 // AC: Volume for magnet holder/mounting rings
+#define SOURCEBACKING 1 // AC: Volume for source backing
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -41,17 +42,20 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
     physiDetectorHousing(NULL), logicDetectorHousing(NULL), solidDetectorHousing(NULL),
     physiDetectorHolder(NULL), logicDetectorHolder(NULL), solidDetectorHolder(NULL),
     physiAttenuator(NULL), logicAttenuator(NULL), solidAttenuator(NULL),
+    physiSourceBacking(NULL), logicSourceBacking(NULL), solidSourceBacking(NULL),
     WorldMaterial(NULL), 
     AttenuatorMaterial(NULL), 
     MagnetMaterial(NULL), 
     DetectorMaterial(NULL), 
     DetectorHousingMaterial(NULL), 
     DetectorWindowMaterial(NULL),
+    SourceBackingMaterial(NULL),
     fMessenger(0)  
 {
   fField.Put(0);
   WorldSizeXY=WorldSizeZ=0;
   DetectorPosition=-30.*mm; // AC
+  SourcePosition=70.*mm; // AC
   DefineCommands();
 }  
 
@@ -186,37 +190,18 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
   G4VisAttributes* simpleWorldVisAtt= new G4VisAttributes(G4Colour(1.0,1.0,1.0)); //White
   simpleWorldVisAtt->SetVisibility(true);
   logicWorld->SetVisAttributes(simpleWorldVisAtt);
-
-  // add a piece of stainless steel at z=9.1 mm for source backing
-  G4double sourceBackingThickness = 1.0*mm;
-  G4double sourceBackingZ = 9.01*mm;
-  G4Box* solidSourceBacking = new G4Box("SourceBacking", WorldSizeXY/2, WorldSizeXY/2, sourceBackingThickness/2);
-  G4LogicalVolume* logicSourceBacking = new G4LogicalVolume(solidSourceBacking, SourceBackingMaterial, "SourceBacking");
-  new G4PVPlacement(0, G4ThreeVector(0, 0, sourceBackingZ + sourceBackingThickness/2.0), logicSourceBacking, "SourceBacking", logicWorld, false, 0);
-
-  // visualization attributes
-  G4VisAttributes* simpleSourceBackingVisAtt = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5)); // grey
-  simpleSourceBackingVisAtt->SetVisibility(true);
-  simpleSourceBackingVisAtt->SetForceSolid(true);
-  logicSourceBacking->SetVisAttributes(simpleSourceBackingVisAtt);
-
  
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 #if DETECTOR
-
   PIPS1000Detector();
-  // PIPS500Detector();
+#endif
 
-
-  // // transmission detector thickness
-  // G4double activeArea = 300.*mm2; // Active area of the detector
-  // G4double thickness = 300.*micrometer; // Thickness of the detector
-
-  // PIPSTransmissionDetector(activeArea, thickness);
-
+#if SOURCEBACKING
+  Bi207SourceBacking();
 #endif
 
 ICESPICE();
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -333,17 +318,26 @@ void ICESPICEDetectorConstruction::ConstructSDandField()
 void ICESPICEDetectorConstruction::DefineCommands() {
 
     fMessenger = new G4GenericMessenger(this, 
-                                        "/ICESPICE/Detector/", 
+                                        "/ICESPICE/", 
                                         "Detector control");
 
     // Detector Position
     G4GenericMessenger::Command& detectorPosition
-      = fMessenger->DeclareMethodWithUnit("Position","mm",
+      = fMessenger->DeclareMethodWithUnit("DetectorPosition","mm",
                                   &ICESPICEDetectorConstruction::SetDetectorPosition, 
-                                  "Set the position of the detector");
+                                  "Set the position of the detector face");
     detectorPosition.SetParameterName("position", true);
     detectorPosition.SetRange("position>-100. && position<=0.");
     detectorPosition.SetDefaultValue("-30.");
+
+
+    // Source Position
+    G4GenericMessenger::Command& sourcePosition
+      = fMessenger->DeclareMethodWithUnit("SourcePosition","mm",
+                                  &ICESPICEDetectorConstruction::SetSourcePosition, 
+                                  "Set the position of the source");
+    sourcePosition.SetParameterName("position", true);
+    sourcePosition.SetDefaultValue("70.");
 
 }
 
@@ -365,7 +359,7 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
   //                                       "Detector");
 
 
-  DetectorActiveArea = 50.*mm2; // Active area of the detector
+  DetectorActiveArea = 49.9*mm2; // Active area of the detector
   DetectorThickness = 1000.*micrometer; // Thickness of the detector
   DetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
   G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
@@ -461,14 +455,97 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
 
   G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
   visAttributesHousing->SetVisibility(true);
-  visAttributesHousing->SetForceSolid(true);
+  visAttributesHousing->SetForceSolid(false);
   logicDetectorHousing->SetVisAttributes(visAttributesHousing);
 
   #if DETECTORHOLDER
     G4VisAttributes* visAttributesHolder = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0));  // blue for the holder
-    visAttributesHolder->SetVisibility(true);
-    visAttributesHolder->SetForceSolid(true);
+    visAttributesHolder->SetVisibility(false);
+    visAttributesHolder->SetForceSolid(false);
     logicDetectorHolder->SetVisAttributes(visAttributesHolder);
   #endif
 
   }
+
+void ICESPICEDetectorConstruction::Bi207SourceBacking() {
+  // Create the source backing
+  SourceBackingThickness = 0.25*25.4*mm; // 0.5 inches;
+  G4double SourceBackingDiameter = 1.0*25.4*mm; // 1 inch;
+
+  // create a cylinder that is 1 inch in diameter and 0.5 in thick
+
+  solidSourceBacking=  new G4Tubs("SourceBacking",
+                                  0,  // Inner radius
+                                  SourceBackingDiameter/2.0,  // Outer radius
+                                  SourceBackingThickness/2.0,  // Half-height
+                                  0.*deg,  // Start angle
+                                  360.*deg);  // Spanning angle
+
+  logicSourceBacking = new G4LogicalVolume(solidSourceBacking, SourceBackingMaterial, "SourceBacking");
+
+  // // add an ring with a hole in the center with a diameter of 0.75 in and and outer diameter of 1 in
+  // G4double ringThickness = 0.5*mm; // 0.125 inches
+  // G4double ringInnerDiameter = 0.75*25.4*mm; // 0.75 inches
+  // G4double ringOuterDiameter = 1.0*25.4*mm; // 1 inch
+
+  // G4Tubs* solidRing = new G4Tubs("SourceRing",
+  //                                 ringInnerDiameter/2.0,  // Inner radius
+  //                                 ringOuterDiameter/2.0,  // Outer radius
+  //                                 ringThickness/2.0,  // Half-height
+  //                                 0.*deg,  // Start angle
+  //                                 360.*deg);  // Spanning angle
+
+  // G4LogicalVolume* logicRing = new G4LogicalVolume(solidRing, SourceBackingMaterial, "SourceRing");
+
+  // // place the ring at the center of the source backing
+  // new G4PVPlacement(0,  // No rotation
+  //             G4ThreeVector(0, 0, - SourceBackingThickness/2.0 - ringThickness/2.0 + 1.0*micrometer ),  // Position in the world
+  //             logicRing,
+  //             "SourceRing",
+  //             logicSourceBacking,  // Parent volume
+  //             false,  // No boolean operation
+  //             0,  // Copy number
+  //             false);
+
+  physiSourceBacking = new G4PVPlacement(0,  // No rotation
+              G4ThreeVector(0, 0, SourcePosition + SourceBackingThickness/2.0),  // Position in the world
+              logicSourceBacking,
+              "SourceBacking",
+              logicWorld,  // Parent volume
+              false,  // No boolean operation
+              0);  // Copy number
+
+  // visualization attributes
+  G4VisAttributes* simpleSourceBackingVisAtt = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0));  // grey
+  simpleSourceBackingVisAtt->SetVisibility(true);
+  simpleSourceBackingVisAtt->SetForceSolid(true);
+  logicSourceBacking->SetVisAttributes(simpleSourceBackingVisAtt);
+
+  // G4VisAttributes* simpleRingVisAtt = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // grey
+  // simpleRingVisAtt->SetVisibility(true);
+  // simpleRingVisAtt->SetForceSolid(true);
+  // logicRing->SetVisAttributes(simpleRingVisAtt);
+
+}
+
+void ICESPICEDetectorConstruction::SetSourcePosition(G4double val) {
+
+    G4double halfTragetThickness = 500.0*nanometer; 
+    SourcePosition = val - halfTragetThickness;
+
+    // Now, use the same value to update the GPS position
+    G4UImanager* UI = G4UImanager::GetUIpointer();
+    std::ostringstream command;
+    command << "/gps/pos/centre 0 0 " << SourcePosition << " mm";  // Assuming the GPS is along the z-axis
+    UI->ApplyCommand(command.str());
+
+    G4cout << "Source position set to: " << SourcePosition << G4endl;
+    G4cout << "GPS center set to: (0, 0, " << SourcePosition << ") mm" << G4endl;
+
+    G4double BackingPosition = val + SourceBackingThickness/2.0 + 0.01*micrometer;
+
+    physiSourceBacking->SetTranslation(G4ThreeVector(0, 0, BackingPosition));
+    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+    G4RunManager::GetRunManager() -> PhysicsHasBeenModified();
+    G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
