@@ -59,7 +59,7 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
   G4LossTableManager::Instance();
   // fix lower limit for cut
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(10*eV, 1*GeV);
-  SetDefaultCutValue(1000*micrometer);
+  SetDefaultCutValue(10*micrometer);
 
 }
 
@@ -87,17 +87,17 @@ void ICESPICEPhysicsList::ConstructProcess()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "G4PhysicsListHelper.hh"
-#include "G4RadioactiveDecay.hh"
+// #include "G4RadioactiveDecay.hh"
 #include "G4Radioactivation.hh"
 #include "G4GenericIon.hh"
 
 void ICESPICEPhysicsList::AddRadioactiveDecay()
 {  
-  G4RadioactiveDecay* radioactiveDecay = new G4RadioactiveDecay();
+  // G4RadioactiveDecay* radioactiveDecay = new G4RadioactiveDecay();
   
-  // G4Radioactivation* radioactiveDecay = new G4Radioactivation();
+  G4Radioactivation* radioactiveDecay = new G4Radioactivation();
 
-  G4bool ARMflag = false;
+  G4bool ARMflag = true;
   radioactiveDecay->SetARM(ARMflag);        //Atomic Rearangement
   radioactiveDecay->SetThresholdForVeryLongDecayTime(1.0e+60);
 
@@ -107,13 +107,17 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
   if (!deex) {
      G4EmParameters::Instance()->SetFluo(ARMflag);
      G4EmParameters::Instance()->SetAugerCascade(ARMflag);
-     G4EmParameters::Instance()->SetPixe(ARMflag);
      deex = new G4UAtomicDeexcitation();
      deex->InitialiseAtomicDeexcitation();
      deex->SetAuger(ARMflag);
-     deex->SetPIXE(ARMflag);
      deex->SetFluo(ARMflag);
      man->SetAtomDeexcitation(deex);
+  } else {
+     G4EmParameters::Instance()->SetFluo(false);
+
+      deex = new G4UAtomicDeexcitation();
+      deex->InitialiseAtomicDeexcitation();
+      deex->SetFluo(false);
   }
 
   // register radioactiveDecay

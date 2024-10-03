@@ -6,6 +6,7 @@ from scipy.optimize import minimize
 import argparse  
 import os
 import glob
+import lmfit
 
 # for virtual environment
 # source $(brew --prefix root)/bin/thisroot.sh  # for ROOT
@@ -15,7 +16,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Run analysis on a specified ROOT file")
     parser.add_argument("root_file_path", nargs='?', default=None, help="Path to the ROOT file")
     parser.add_argument("--icespice", action="store_true", default=False, help="If ICESPICE in the simultation")
-    parser.add_argument("--fwhm", type=float, default=10, help="FWHM value for Gaussian smearing (default: 10.0)")
+    parser.add_argument("--fwhm", type=float, default=8, help="FWHM value for Gaussian smearing (default: 10.0)")
     parser.add_argument("--save-pic", action="store_true", default=False, help="Save the plot as an image if this flag is set (default: False)")
     parser.add_argument("--save-path", type=str, default="picture.png", help="Path to save the plot image (default: picture.png)")
 
@@ -25,27 +26,38 @@ def parse_args():
 def list_root_files(directory):
     return glob.glob(os.path.join(directory, "*.root"))
 
-# Function to compute residuals
-def residuals(scale, real_hist, sim_hist):
-    """
-    Calculate the residuals between real and scaled simulation histograms.
-    
-    Parameters:
-    - scale: Scale factor to apply to the simulation histogram.
-    - real_hist: The real data histogram.
-    - sim_hist: The simulation data histogram.
-    
-    Returns:
-    - The sum of squared residuals.
-    """
-    # Scale the simulation histogram
+# Function to calculate chi-squared with experimental and simulation uncertainties
+def chi_squared_func(params, real_hist, real_hist_error, sim_hist, sim_hist_low, sim_hist_high):
+    scale = params['scale'].value
     scaled_sim_hist = sim_hist * scale
     
-    # Compute the residuals (difference between real and scaled simulation)
-    res = real_hist - scaled_sim_hist
+    # Compute simulation uncertainty (only bin uncertainties during minimization)
+    sim_bin_uncertainty = (sim_hist_high - sim_hist_low) / 2 * scale
     
-    # Return the sum of squared residuals (minimize this)
-    return np.sum(res**2)
+    # Total uncertainty (experimental + simulation bin uncertainty)
+    total_uncertainty = np.sqrt(real_hist_error**2 + sim_bin_uncertainty**2)
+
+    # Chi-squared: (y_exp - y_sim)^2 / (s_exp^2 + s_sim^2)
+    chi2 = np.sum(((real_hist - scaled_sim_hist) ** 2) / total_uncertainty**2)
+
+    return chi2
+
+# Calculate reduced chi-squared
+def calculate_chi_squared_reduced(chi2, n_data_points, n_parameters):
+    """
+    Calculate the reduced chi-squared value.
+    
+    Parameters:
+    - chi2: The chi-squared value.
+    - n_data_points: The number of data points.
+    - n_parameters: The number of fitting parameters (degrees of freedom).
+    
+    Returns:
+    - chi_squared_reduced: The reduced chi-squared value.
+    """
+    degrees_of_freedom = n_data_points - n_parameters
+    chi_squared_reduced = chi2 / degrees_of_freedom
+    return chi_squared_reduced
 
 # Function to smear a histogram bin with a Gaussian
 def gaussian_smear(bin_centers, bin_contents, fwhm):
@@ -115,6 +127,7 @@ def get_root_hist_and_gauss_smear(root_file_path, histogram_name, fwhm, rebin_fa
     # Prepare lists to store bin centers and smeared contents
     bin_centers = []
     bin_contents = []
+    bin_uncertainties = []
     
     n_sim_particles = 0
     n_interactions = 0
@@ -124,13 +137,16 @@ def get_root_hist_and_gauss_smear(root_file_path, histogram_name, fwhm, rebin_fa
         if bin_center == 0.5:
             n_sim_particles = histogram.GetBinContent(i)
             bin_content = 0
+            bin_uncertainity = 0
         else:
             bin_content = histogram.GetBinContent(i)
             n_sim_particles += bin_content
             n_interactions += bin_content
+            bin_uncertainity = histogram.GetBinError(i)
         
         bin_centers.append(bin_center)
         bin_contents.append(bin_content)
+        bin_uncertainties.append(bin_uncertainity)
 
     # Close the ROOT file
     root_file.Close()
@@ -138,11 +154,15 @@ def get_root_hist_and_gauss_smear(root_file_path, histogram_name, fwhm, rebin_fa
     # Convert to numpy arrays for easy manipulation
     bin_centers = np.array(bin_centers)
     bin_contents = np.array(bin_contents)
+    bin_contents_low = bin_contents - np.array(bin_uncertainties)
+    bin_contents_high = bin_contents + np.array(bin_uncertainties)
     
     # Apply Gaussian smearing
     smeared_bin_contents = gaussian_smear(np.array(bin_centers), np.array(bin_contents), fwhm)
+    smeared_bin_contents_low = gaussian_smear(np.array(bin_centers), np.array(bin_contents_low), fwhm)
+    smeared_bin_contents_high = gaussian_smear(np.array(bin_centers), np.array(bin_contents_high), fwhm)
     
-    return bin_centers, smeared_bin_contents, n_sim_particles, n_interactions
+    return bin_centers, smeared_bin_contents, smeared_bin_contents_low, smeared_bin_contents_high, n_sim_particles, n_interactions
 
 # Main part of your code
 if __name__ == "__main__":
@@ -198,10 +218,13 @@ if __name__ == "__main__":
         real_hist, real_bins = np.histogram(df_withICESPICE["PIPS1000EnergyCalibrated"], bins=799, range=[400, 1199])
     else:
         real_hist, real_bins = np.histogram(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=799, range=[400, 1199])
+        
+    real_hist_error = np.sqrt(real_hist)  # Poisson error on the counts
 
     fwhm = args.fwhm  # Get the FWHM value from the argument
 
-    geant_bin_centers, geant_bin_counts, n_sim_particles, n_interactions = get_root_hist_and_gauss_smear(root_file_path, "Esil", fwhm=fwhm)
+    geant_bin_centers, geant_bin_counts, geant_bin_counts_low, geant_bin_counts_high, n_sim_particles, n_interactions = get_root_hist_and_gauss_smear(root_file_path, "Esil", fwhm=fwhm)
+    geant_count_uncertainty = (geant_bin_counts_high - geant_bin_counts_low) / 2
     
     # convert bin_centers to left edges
     geant_bin_edges = geant_bin_centers - 0.5 * (geant_bin_centers[1] - geant_bin_centers[0])
@@ -209,15 +232,28 @@ if __name__ == "__main__":
     # Filter simulation data to only include energies between 200-1200 keV
     filtered_geant_bin_centers = geant_bin_centers[(geant_bin_centers >= 400) & (geant_bin_centers <= 1200)]
     filtered_geant_bin_counts = geant_bin_counts[(geant_bin_centers >= 400) & (geant_bin_centers <= 1200)]
+    filtered_geant_bin_counts_low = geant_bin_counts_low[(geant_bin_centers >= 400) & (geant_bin_centers <= 1200)]
+    filtered_geant_bin_counts_high = geant_bin_counts_high[(geant_bin_centers >= 400) & (geant_bin_centers <= 1200)]
+    filtered_geant_bin_count_uncertainty = (filtered_geant_bin_counts_high - filtered_geant_bin_counts_low) / 2
 
     # Make sure the binning of the real and sim data matches
     sim_hist, sim_bins = np.histogram(filtered_geant_bin_centers, bins=real_bins, weights=filtered_geant_bin_counts)
 
-    # Minimize the residuals
-    initial_scale = 10.0
-    result = minimize(residuals, initial_scale, args=(real_hist, sim_hist))
-    best_scale = result.x[0]
+    # Initialize lmfit parameters
+    params = lmfit.Parameters()
+    params.add('scale', value=10.0)  # Initial scale guess
 
+    # Perform chi-squared minimization using lmfit
+    minimizer = lmfit.Minimizer(chi_squared_func, params, fcn_args=(real_hist, real_hist_error, sim_hist, filtered_geant_bin_counts_low[:-1], filtered_geant_bin_counts_high[:-1]))
+    result = minimizer.minimize()
+    
+    
+
+    best_scale = result.params['scale'].value    
+    result.params.pretty_print()
+    
+    print(f"Best scale: {best_scale:.3f}")
+    
     # # Apply the best scale to the simulation
     scaled_sim_filtered_hist = sim_hist * best_scale
 
@@ -230,11 +266,11 @@ if __name__ == "__main__":
     else:
         axs[0].hist(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=1200, range=[0, 1200], histtype="step", color='#5CB8B2', label="without ICESPICE", linewidth=linewidth)
     
-    # axs[0].step(filtered_geant_bin_centers[:-1], scaled_sim_hist, color="#425563", label="Scaled Geant4 simulation", linewidth=1, where="mid")
-    # plot scaled sim hist
-    axs[0].step(geant_bin_centers, scaled_sim_og_hist, color="#425563", label="Scaled Geant4 simulation", linewidth=1, where="mid")
 
-    axs[0].text(0.50, 0.95, f"Scale factor: {best_scale:.3f}\nTotal Counts: {n_sim_particles}\nSimulation Counts in Detector: {n_interactions}", transform=axs[0].transAxes, ha='center', va='top')
+    axs[0].step(geant_bin_centers, geant_bin_counts * best_scale, color="dodgerblue", label="Scaled Geant4 simulation", linewidth=1, where="mid")    
+    axs[0].fill_between(geant_bin_centers, geant_bin_counts_low * best_scale, geant_bin_counts_high * best_scale, color='dodgerblue', alpha=0.2, label="Uncertainty")
+
+    axs[0].text(0.49, 0.95, f"Scale factor: {best_scale:.3f}\nTotal Counts: {n_sim_particles}\nSimulation Counts in Detector: {n_interactions}", transform=axs[0].transAxes, ha='left', va='top')
     axs[0].set_xlabel(r"Energy [keV]")
     axs[0].set_ylabel(r"Counts/keV")
 
@@ -246,15 +282,36 @@ if __name__ == "__main__":
 # \nSimulation particles: {n_sim_particles:.1e}
     ###############################################################################################################
 
-    axs[1].step(real_bins[:-1], (real_hist - scaled_sim_filtered_hist)/real_hist * 100, where="mid", color="black", linewidth=1)
+
+
+    axs[1].plot(real_bins[:-1] + 0.5, (real_hist - scaled_sim_filtered_hist)/real_hist, marker='o', markersize=1, color="black", linestyle='None', label="Exp-Sim/Exp")
+    
+    # axs[1].errorbar(real_bins[:-1] + 0.5, (real_hist - scaled_sim_filtered_hist), yerr= np.sqrt(filtered_geant_bin_count_uncertainty[:-1]**2+real_hist_error**2), fmt='none', color='black', capsize=2, capthick=1, elinewidth=1)
     axs[1].set_xlabel(r"Energy [keV]")
-    axs[1].set_ylabel(r"Exp-Sim/Exp * 100 [%]")
+    axs[1].set_ylabel(r"Exp-Sim/Exp")
     # draw a horizontal line y=0
     axs[1].axhline(y=0, color='black', linestyle='--', linewidth=1)
-    axs[1].set_ylim(-100, 100)
+    
+    axs[1].fill_between(real_bins[:-1] + 0.5, -0.1, 0.1, color='green', alpha=0.2, label="10%")
+    
+    axs[1].fill_between(real_bins[:-1] + 0.5, 0.1, 0.2, color='yellow', alpha=0.2, label="10-20%")
+    axs[1].fill_between(real_bins[:-1] + 0.5, -0.1, -0.2, color='yellow', alpha=0.2)
+    
+    axs[1].fill_between(real_bins[:-1] + 0.5, 0.2, 0.3, color='red', alpha=0.2, label="20-30%")
+    axs[1].fill_between(real_bins[:-1] + 0.5, -0.2, -0.3, color='red', alpha=0.2)
+    
+    
+    axs[1].set_ylim(-1, 1)
     ###############################################################################################################
 
     for ax in axs:
+        ax.axvline(x=481.6935, color='green', linestyle='--', linewidth=1)
+        ax.axvline(x=553.8372, color='green', linestyle='--', linewidth=1)
+        ax.axvline(x=565.8473, color='green', linestyle='--', linewidth=1)
+        ax.axvline(x=975.651, color='green', linestyle='--', linewidth=1)
+        ax.axvline(x=1047.795, color='green', linestyle='--', linewidth=1)
+        ax.axvline(x=1059.805, color='green', linestyle='--', linewidth=1)
+        
         ax.legend(loc='upper left', shadow=False, frameon=True, fancybox=False, edgecolor='none', facecolor='none')
         ax.set_xlim(0, 1200)   
         ax.minorticks_on()
