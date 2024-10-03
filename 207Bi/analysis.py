@@ -15,7 +15,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Run analysis on a specified ROOT file")
     parser.add_argument("root_file_path", nargs='?', default=None, help="Path to the ROOT file")
     parser.add_argument("--icespice", action="store_true", default=False, help="If ICESPICE in the simultation")
-    parser.add_argument("--fwhm", type=float, default=10.0, help="FWHM value for Gaussian smearing (default: 10.0)")
+    parser.add_argument("--fwhm", type=float, default=10, help="FWHM value for Gaussian smearing (default: 10.0)")
     parser.add_argument("--save-pic", action="store_true", default=False, help="Save the plot as an image if this flag is set (default: False)")
     parser.add_argument("--save-path", type=str, default="picture.png", help="Path to save the plot image (default: picture.png)")
 
@@ -86,7 +86,7 @@ def gaussian_smear(bin_centers, bin_contents, fwhm):
     return smeared_contents
 
 # Function to extract bin centers and contents from a ROOT histogram and apply Gaussian smearing
-def get_root_hist_and_gauss_smear(root_file_path, histogram_name, fwhm):
+def get_root_hist_and_gauss_smear(root_file_path, histogram_name, fwhm, rebin_factor=1):
     """
     Extracts bin centers and bin contents from a ROOT histogram and applies Gaussian smearing.
 
@@ -107,6 +107,10 @@ def get_root_hist_and_gauss_smear(root_file_path, histogram_name, fwhm):
     
     if not histogram:
         raise ValueError(f"Histogram '{histogram_name}' not found in {root_file_path}")
+    
+        # Rebin the histogram if the rebin factor is greater than 1
+    if rebin_factor > 1:
+        histogram.Rebin(rebin_factor)
     
     # Prepare lists to store bin centers and smeared contents
     bin_centers = []

@@ -154,7 +154,7 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   DetectorHousingMaterial = StainlessSteel; // AC
   DetectorWindowMaterial = silicon; // AC
   DetectorHolderMaterial = Acetal; // AC
-  SourceBackingMaterial = Nickel; // AC
+  SourceBackingMaterial = StainlessSteel; // AC
 
   // G4cout << "end material"<< G4endl;  
 }

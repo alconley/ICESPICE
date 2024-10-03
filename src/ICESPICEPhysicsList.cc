@@ -52,14 +52,14 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
     G4NuclearLevelData::GetInstance()->GetParameters();
   deex->SetCorrelatedGamma(false);
   deex->SetStoreAllLevels(true);
-  //  deex->SetIsomerProduction(true);  
+  // deex->SetIsomerProduction(true);  
   deex->SetMaxLifeTime(G4NuclideTable::GetInstance()->GetThresholdOfHalfLife()
                 /std::log(2.));
 
   G4LossTableManager::Instance();
   // fix lower limit for cut
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(10*eV, 1*GeV);
-  SetDefaultCutValue(1*micrometer);
+  SetDefaultCutValue(1000*micrometer);
 
 }
 
@@ -87,15 +87,15 @@ void ICESPICEPhysicsList::ConstructProcess()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "G4PhysicsListHelper.hh"
-//#include "G4RadioactiveDecay.hh"
+#include "G4RadioactiveDecay.hh"
 #include "G4Radioactivation.hh"
 #include "G4GenericIon.hh"
 
 void ICESPICEPhysicsList::AddRadioactiveDecay()
 {  
-  //G4RadioactiveDecay* radioactiveDecay = new G4RadioactiveDecay();
+  G4RadioactiveDecay* radioactiveDecay = new G4RadioactiveDecay();
   
-  G4Radioactivation* radioactiveDecay = new G4Radioactivation();
+  // G4Radioactivation* radioactiveDecay = new G4Radioactivation();
 
   G4bool ARMflag = false;
   radioactiveDecay->SetARM(ARMflag);        //Atomic Rearangement

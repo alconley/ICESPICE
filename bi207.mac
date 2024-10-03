@@ -8,9 +8,9 @@
 #/control/alias e_str 1633keV
 /control/alias e 0
 /control/alias e_str 0keV
-#/control/alias cut 500
-/control/alias runno 60
-/control/alias half_target_thickness 10
+#/control/alias cut 1
+/control/alias runno 70
+/control/alias half_target_thickness 500
 /control/alias File RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PIPS1000_AllProcesses_SiWindow50nm_Source{half_target_thickness}nmThick_run{runno}
 
 # Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
