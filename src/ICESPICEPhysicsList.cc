@@ -52,12 +52,10 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
     G4NuclearLevelData::GetInstance()->GetParameters();
   deex->SetCorrelatedGamma(false);
   deex->SetStoreAllLevels(true);
-  // deex->SetIsomerProduction(true);  
   deex->SetMaxLifeTime(G4NuclideTable::GetInstance()->GetThresholdOfHalfLife()
                 /std::log(2.));
 
   G4LossTableManager::Instance();
-  // fix lower limit for cut
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(10*eV, 1*GeV);
   SetDefaultCutValue(10*micrometer);
 
@@ -111,13 +109,15 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
      deex->InitialiseAtomicDeexcitation();
      deex->SetAuger(ARMflag);
      deex->SetFluo(ARMflag);
+     deex->SetPIXE(ARMflag);
      man->SetAtomDeexcitation(deex);
   } else {
-     G4EmParameters::Instance()->SetFluo(false);
-
+      G4EmParameters::Instance()->SetFluo(false);
       deex = new G4UAtomicDeexcitation();
       deex->InitialiseAtomicDeexcitation();
       deex->SetFluo(false);
+      man->SetAtomDeexcitation(deex);
+
   }
 
   // register radioactiveDecay
@@ -126,7 +126,3 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
   ph->RegisterProcess(radioactiveDecay, G4GenericIon::GenericIon());
 
 }
-
-// void ICESPICEPhysicsList::SetCuts() {
-//   G4VUserPhysicsList::SetCuts();
-// }

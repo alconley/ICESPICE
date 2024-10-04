@@ -455,13 +455,13 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
 
   G4VisAttributes* visAttributesHousing = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  // Gray for the housing
   visAttributesHousing->SetVisibility(true);
-  visAttributesHousing->SetForceSolid(false);
+  visAttributesHousing->SetForceSolid(true);
   logicDetectorHousing->SetVisAttributes(visAttributesHousing);
 
   #if DETECTORHOLDER
     G4VisAttributes* visAttributesHolder = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0));  // blue for the holder
-    visAttributesHolder->SetVisibility(false);
-    visAttributesHolder->SetForceSolid(false);
+    visAttributesHolder->SetVisibility(true);
+    visAttributesHolder->SetForceSolid(true);
     logicDetectorHolder->SetVisAttributes(visAttributesHolder);
   #endif
 
@@ -469,7 +469,7 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
 
 void ICESPICEDetectorConstruction::Bi207SourceBacking() {
   // Create the source backing
-  SourceBackingThickness = 0.25*25.4*mm; // 0.5 inches;
+  SourceBackingThickness = 0.25*25.4*mm;;
   G4double SourceBackingDiameter = 1.0*25.4*mm; // 1 inch;
 
   // create a cylinder that is 1 inch in diameter and 0.5 in thick
@@ -484,8 +484,8 @@ void ICESPICEDetectorConstruction::Bi207SourceBacking() {
   logicSourceBacking = new G4LogicalVolume(solidSourceBacking, SourceBackingMaterial, "SourceBacking");
 
   // // add an ring with a hole in the center with a diameter of 0.75 in and and outer diameter of 1 in
-  G4double ringThickness = 0.5*mm; // 0.125 inches
-  G4double ringInnerDiameter = 0.75*25.4*mm; // 0.75 inches
+  G4double ringThickness = 1.0*mm; // 0.125 inches
+  G4double ringInnerDiameter = 0.6*25.4*mm; // 0.75 inches
   G4double ringOuterDiameter = 1.0*25.4*mm; // 1 inch
 
   G4Tubs* solidRing = new G4Tubs("SourceRing",
@@ -516,12 +516,12 @@ void ICESPICEDetectorConstruction::Bi207SourceBacking() {
               0);  // Copy number
 
   // visualization attributes
-  G4VisAttributes* simpleSourceBackingVisAtt = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0));  // grey
+  G4VisAttributes* simpleSourceBackingVisAtt = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0));
   simpleSourceBackingVisAtt->SetVisibility(true);
   simpleSourceBackingVisAtt->SetForceSolid(true);
   logicSourceBacking->SetVisAttributes(simpleSourceBackingVisAtt);
 
-  G4VisAttributes* simpleRingVisAtt = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));  // grey
+  G4VisAttributes* simpleRingVisAtt = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0)); 
   simpleRingVisAtt->SetVisibility(true);
   simpleRingVisAtt->SetForceSolid(true);
   logicRing->SetVisAttributes(simpleRingVisAtt);
