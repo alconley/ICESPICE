@@ -1,7 +1,7 @@
 # variables
 /control/alias f 9
 /control/alias g 0
-/control/alias n 10000000
+/control/alias n 100000000
 /control/alias z 83
 /control/alias a 207
 #/control/alias e 1633.356
@@ -9,7 +9,7 @@
 /control/alias e 0
 /control/alias e_str 0keV
 #/control/alias cut 1
-/control/alias runno 77
+/control/alias runno 78
 /control/alias half_target_thickness 500
 /control/alias File RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PIPS1000_AllProcesses_SiWindow50nm_Source{half_target_thickness}nmThick_run{runno}
 
