@@ -338,8 +338,8 @@ if __name__ == "__main__":
         exp_hist_data = exp_hist_withICESPICE  # Replace with the appropriate experimental data
         exp_hist_uncertainity = exp_hist_withICESPICE_uncertainity
         
-        threshold_ranges = [100, 380]
-        scale_range = [390, 1100]
+        threshold_ranges = [100, 450]
+        scale_range = [450, 1100]
     else:
         exp_v_geant_fig,  exp_v_geant_axs = plt.subplots(2, 1, figsize=(10, 6), sharex=True, num="Experiment vs Simulation without ICESPICE")
         exp_v_geant_axs = exp_v_geant_axs.flatten()
@@ -350,7 +350,7 @@ if __name__ == "__main__":
         exp_hist_data = exp_hist_withoutICESPICE  # Replace with the appropriate experimental data
         exp_hist_uncertainity = exp_hist_withoutICESPICE_uncertainity
         
-        threshold_ranges = [100, 390]
+        threshold_ranges = [300, 390]
         scale_range = [390, 1080]
             
     # Section for getting the threshold function
