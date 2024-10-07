@@ -1,7 +1,7 @@
 # variables
 /control/alias f 70
 /control/alias g 30
-/control/alias n 10000000
+/control/alias n 1000000000
 /control/alias z 83
 /control/alias a 207
 #/control/alias e 1633.356
