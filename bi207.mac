@@ -27,9 +27,7 @@
 # Set a very high time threshold for decays to allow all radioactive decays to happen without prematurely stopping
 #/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year # currently hardcoded
 
-# Add a user defined radioactive decay file
-#/process/had/rdm/setRadioactiveDecayFile 82 207 ../UserData/UserRadData_z82.a207
-/process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207
+/process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207 # Add a user defined radioactive decay file
 
 /ICESPICE/DetectorPosition -{g}          # Position the detector
 /ICESPICE/SourcePosition {f}     # Position the 207Bi source backing 
@@ -44,18 +42,13 @@
 /gps/pos/shape Cylinder
 /gps/pos/radius 2.5 mm       # Radius is half of the diameter (5 mm)
 /gps/pos/halfz {half_target_thickness} nanometer      # Half of the height (aligned along z-axis)
-#/gps/pos/centre 0 0 8.5 mm             # Set the center of the source
 
 #/gps/pos/type Point                    # Set the GPS source position type to a point source
-
 
 /gps/particle ion                      # Set the particle type to an ion
 /gps/ion {z} {a} 0 {e}                 # Define the ion 
 /gps/ene/type Mono                     # Set a monoenergetic energy distribution (all particles have the same energy)
 /gps/ene/mono 0 eV                     # Set the energy of the particles to 0 eV (since radioactive decay will handle energy)
-
-
-/geometry/test/run 1e-3  # Tolerance of 0.001 mm
 
 # Set the output file name for analysis results
 /analysis/setFileName {File}
@@ -67,8 +60,8 @@
 /run/beamOn {n}
 
 /control/shell cp {File}.root ../207Bi/geant_sim/
-/control/shell git add ../207Bi/geant_sim/{File}.root && git commit -m "Add {File}.root" && git push
+#/control/shell git add ../207Bi/geant_sim/{File}.root && git commit -m "Add {File}.root" && git push
 
-/control/shell python3 ../207Bi/analysis.py {File}.root --fwhm 10 --icepsice --save-pic --save-path ../207Bi/geant_sim/{File}.png
+/control/shell python3 ../207Bi/analysis.py {File}.root --fwhm 10 --icepsice --save-pic
 
 

@@ -19,7 +19,6 @@ def parse_args():
     parser.add_argument("--icespice", action="store_true", default=False, help="If ICESPICE in the simultation")
     parser.add_argument("--fwhm", type=float, default=10, help="FWHM value for Gaussian smearing (default: 10.0)")
     parser.add_argument("--save-pic", action="store_true", default=False, help="Save the plot as an image if this flag is set (default: False)")
-    parser.add_argument("--save-path", type=str, default="picture.png", help="Path to save the plot image (default: picture.png)")
 
     return parser.parse_args()
 
@@ -333,7 +332,7 @@ if __name__ == "__main__":
         exp_v_geant_fig,  exp_v_geant_axs = plt.subplots(2, 1, figsize=(10, 6), sharex=True, num="Experiment vs Simulation with ICESPICE")
         exp_v_geant_axs = exp_v_geant_axs.flatten()
         
-        exp_v_geant_axs[0].stairs(values=exp_hist_withICESPICE, edges=exp_bin_edges_withICESPICE, color="#5CB8B2", label=r"$^{207}$Bi with ICESPICE", linewidth=linewidth)
+        exp_v_geant_axs[0].stairs(values=exp_hist_withICESPICE, edges=exp_bin_edges_withICESPICE, color="black", label=r"$^{207}$Bi with ICESPICE", linewidth=linewidth)
         exp_bin_centers = (exp_bin_edges_withICESPICE[:-1] + exp_bin_edges_withICESPICE[1:]) / 2
         exp_hist_data = exp_hist_withICESPICE  # Replace with the appropriate experimental data
         exp_hist_uncertainity = exp_hist_withICESPICE_uncertainity
@@ -344,7 +343,7 @@ if __name__ == "__main__":
         exp_v_geant_fig,  exp_v_geant_axs = plt.subplots(2, 1, figsize=(10, 6), sharex=True, num="Experiment vs Simulation without ICESPICE")
         exp_v_geant_axs = exp_v_geant_axs.flatten()
         
-        exp_v_geant_axs[0].stairs(values=exp_hist_withoutICESPICE, edges=exp_bin_edges_withoutICESPICE, color="#A6192E", label=r"$^{207}$Bi without ICESPICE", linewidth=linewidth)
+        exp_v_geant_axs[0].stairs(values=exp_hist_withoutICESPICE, edges=exp_bin_edges_withoutICESPICE, color="black", label=r"$^{207}$Bi without ICESPICE", linewidth=linewidth)
         
         exp_bin_centers = (exp_bin_edges_withoutICESPICE[:-1] + exp_bin_edges_withoutICESPICE[1:]) / 2
         exp_hist_data = exp_hist_withoutICESPICE  # Replace with the appropriate experimental data
@@ -480,10 +479,10 @@ if __name__ == "__main__":
     ###############################################################################################################
     
     save_pic = args.save_pic
-    save_path = args.save_path
-
     # If save-pic is False, ignore save-path
     if save_pic: 
+        # take the file name without the extension
+        save_path = root_file_path.split(".root")[0] + ".png"
         print(f"Saving the plot to {save_path}")
         # Save the plot to the provided path
         plt.savefig(save_path, dpi=300)
