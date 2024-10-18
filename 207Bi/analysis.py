@@ -329,7 +329,7 @@ if __name__ == "__main__":
         
     ###############################################################################################################
     if args.icespice:
-        exp_v_geant_fig,  exp_v_geant_axs = plt.subplots(2, 1, figsize=(10, 6), sharex=True, num="Experiment vs Simulation with ICESPICE")
+        exp_v_geant_fig,  exp_v_geant_axs = plt.subplots(3, 1, figsize=(10, 9), sharex=True, num="Experiment vs Simulation with ICESPICE")
         exp_v_geant_axs = exp_v_geant_axs.flatten()
         
         exp_v_geant_axs[0].stairs(values=exp_hist_withICESPICE, edges=exp_bin_edges_withICESPICE, color="black", label=r"$^{207}$Bi with ICESPICE", linewidth=linewidth)
@@ -340,7 +340,7 @@ if __name__ == "__main__":
         threshold_ranges = [100, 450]
         scale_range = [450, 1100]
     else:
-        exp_v_geant_fig,  exp_v_geant_axs = plt.subplots(2, 1, figsize=(10, 6), sharex=True, num="Experiment vs Simulation without ICESPICE")
+        exp_v_geant_fig,  exp_v_geant_axs = plt.subplots(3, 1, figsize=(10, 9), sharex=True, num="Experiment vs Simulation without ICESPICE")
         exp_v_geant_axs = exp_v_geant_axs.flatten()
         
         exp_v_geant_axs[0].stairs(values=exp_hist_withoutICESPICE, edges=exp_bin_edges_withoutICESPICE, color="black", label=r"$^{207}$Bi without ICESPICE", linewidth=linewidth)
@@ -459,6 +459,12 @@ if __name__ == "__main__":
     exp_v_geant_axs[1].axhline(y=0, color='black', linestyle='--', linewidth=1)
     exp_v_geant_axs[1].set_xlabel(r"Energy [keV]")
     exp_v_geant_axs[1].set_ylabel(r"Exp-Sim/Exp [%]")
+    
+    
+    exp_v_geant_axs[2].errorbar(scale_exp_bin_centers, exp_minus_sim, yerr=exp_minus_sim_uncertainity, ecolor='red', capsize=1)
+    exp_v_geant_axs[2].axhline(y=0, color='black', linestyle='--', linewidth=1)
+    exp_v_geant_axs[2].set_xlabel(r"Energy [keV]")
+    exp_v_geant_axs[2].set_ylabel(r"Residuals")
                                     
     for ax in exp_v_geant_axs:
         ax.axvline(x=481.6935, color='green', linestyle='--', linewidth=1)
