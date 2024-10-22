@@ -9,10 +9,9 @@ import glob
 import lmfit
 import warnings
 
-# for virtual environment
+# for virtual environment on mac
 # source $(brew --prefix root)/bin/thisroot.sh  # for ROOT
 
-# Function to parse command-line arguments
 def parse_args():
     parser = argparse.ArgumentParser(description="Run analysis on a specified ROOT file")
     parser.add_argument("root_file_path", nargs='?', default=None, help="Path to the ROOT file")
@@ -22,11 +21,9 @@ def parse_args():
 
     return parser.parse_args()
 
-# Function to get list of .root files
 def list_root_files(directory):
     return glob.glob(os.path.join(directory, "*.root"))
 
-# Function to get the histogram data from a ROOT file
 def get_root_hist_data(root_file_path: str, histogram_name: str, print=False):
 
     root_file = ROOT.TFile(root_file_path, "READ") # Open the ROOT file    
@@ -60,7 +57,6 @@ def get_root_hist_data(root_file_path: str, histogram_name: str, print=False):
     
     return sim_hist, sim_bin_centers, sim_bin_edges, sim_hist_uncertainity
 
-# Function to smear a histogram bin with a Gaussian
 def gaussian_smear(bin_contents, bin_centers, bin_uncertainity, fwhm):
     """
     Apply Gaussian smearing to histogram data.
@@ -433,7 +429,13 @@ if __name__ == "__main__":
         label="Uncertainty"
     )
     
-    exp_v_geant_axs[0].text(0.5, 0.95, f"N: {np.sum(sim_hist):.1e}\nBest Scale: {best_scale:.2f} ± {scale_uncertainty:.2f}", transform=exp_v_geant_axs[0].transAxes, ha='center', va='top')
+    
+    if args.icespice:
+        activity = (np.sum(sim_hist)*best_scale)/52200
+    else:   
+        activity = (np.sum(sim_hist)*best_scale)/4080
+        
+    exp_v_geant_axs[0].text(0.5, 0.95, f"N: {np.sum(sim_hist):.1e}\nBest Scale: {best_scale:.2f} ± {scale_uncertainty:.2f}\nActivity Estimate: {activity:.0f} Bq", transform=exp_v_geant_axs[0].transAxes, ha='center', va='top')
     
     # Set the y-axis to log scale and adjust limits
     exp_v_geant_axs[0].set_ylim(0, 7000)
