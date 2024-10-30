@@ -1,6 +1,6 @@
 # variables
-/control/alias f 8
-/control/alias g 0
+/control/alias f 71
+/control/alias g 31
 /control/alias n 100000000
 /control/alias z 83
 /control/alias a 207
@@ -9,7 +9,7 @@
 /control/alias e 0
 /control/alias e_str 0keV
 #/control/alias cut 1
-/control/alias runno 81
+/control/alias runno 82
 /control/alias half_target_thickness 500
 /control/alias File ICESPICE_RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PIPS1000_AllProcesses_SiWindow50nm_Source{half_target_thickness}nmThick_run{runno}
 
@@ -54,7 +54,7 @@
 /analysis/setFileName {File}
 
 # Print progress every # events during the simulation run
-/run/printProgress 100000
+/run/printProgress 1000000
 
 # Begin the simulation with # particles
 /run/beamOn {n}
@@ -62,6 +62,6 @@
 /control/shell cp {File}.root ../207Bi/geant_sim/
 #/control/shell git add ../207Bi/geant_sim/{File}.root && git commit -m "Add {File}.root" && git push
 
-/control/shell python3 ../207Bi/analysis.py {File}.root --fwhm 10 --save-pic
+/control/shell python3 ../207Bi/analysis.py {File}.root --fwhm 10 --save-pic --icespice
 
 
