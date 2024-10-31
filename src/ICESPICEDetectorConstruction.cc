@@ -25,13 +25,13 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 1         // Magnetic field grid
-#define MAGNETS 1      // N42 1"X1"x1/8"
-#define ATTENUATOR 1   // AC: Volume for attenuator 
+#define MAG 0         // Magnetic field grid
+#define MAGNETS 0      // N42 1"X1"x1/8"
+#define ATTENUATOR 0  // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
-#define DETECTORHOLDER 1 // AC: Volume for detector holder
+#define DETECTORHOLDER 0 // AC: Volume for detector holder
 #define MAGNETHOLDER 0 // AC: Volume for magnet holder/mounting rings
-#define SOURCEBACKING 1 // AC: Volume for source backing
+#define SOURCEBACKING 0 // AC: Volume for source backing
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 

@@ -2,16 +2,13 @@
 /control/alias f 9
 /control/alias g 0
 /control/alias n 10000000
-/control/alias z 83
+/control/alias z 82
 /control/alias a 207
-#/control/alias e 1633.356
-#/control/alias e_str 1633keV
-/control/alias e 0
-/control/alias e_str 0keV
-#/control/alias cut 1
+/control/alias e 1633.356
+/control/alias e_str 1633keV
 /control/alias runno 86
-/control/alias half_target_thickness 500
-/control/alias File RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PIPS1000_AllProcesses_SiWindow50nm_Source{half_target_thickness}nmThick_run{runno}
+
+/control/alias File run{runno}_RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PIPS1000_PointSource
 
 # Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
 /control/verbose 0         # output for general control commands
@@ -22,28 +19,12 @@
 # Initialize the run manager (prepare the simulation geometry and physics)
 /run/initialize
 
-#/run/setCut {cut} micrometer
-
-# Set a very high time threshold for decays to allow all radioactive decays to happen without prematurely stopping
-#/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year # currently hardcoded
-
-/process/had/rdm/setRadioactiveDecayFile 83 207 ../UserData/UserRadData_z83.a207 # Add a user defined radioactive decay file
-
 /ICESPICE/DetectorPosition -{g}          # Position the detector
 /ICESPICE/SourcePosition {f}     # Position the 207Bi source backing 
 
-### For internal decay
-
 # Set up the General Particle Source (GPS) parameters
 /gps/ang/type iso                      # Set the particle angular distribution to isotropic (equal probability in all directions)
-
-# Define the cylindrical source volume
-/gps/pos/type Volume
-/gps/pos/shape Cylinder
-/gps/pos/radius 2.5 mm       # Radius is half of the diameter (5 mm)
-/gps/pos/halfz {half_target_thickness} nanometer      # Half of the height (aligned along z-axis)
-
-#/gps/pos/type Point                    # Set the GPS source position type to a point source
+/gps/pos/type Point                    # Set the GPS source position type to a point source
 
 /gps/particle ion                      # Set the particle type to an ion
 /gps/ion {z} {a} 0 {e}                 # Define the ion 
@@ -60,8 +41,6 @@
 /run/beamOn {n}
 
 /control/shell cp {File}.root ../207Bi/geant_sim/
-#/control/shell git add ../207Bi/geant_sim/{File}.root && git commit -m "Add {File}.root" && git push
-
 /control/shell python3 ../207Bi/analysis.py {File}.root --fwhm 10 --save-pic --icespice
 
 

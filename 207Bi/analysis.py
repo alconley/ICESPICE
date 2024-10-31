@@ -490,7 +490,7 @@ if __name__ == "__main__":
     # If save-pic is False, ignore save-path
     if save_pic: 
         # take the file name without the extension
-        save_path = root_file_path.split(".root")[0] + ".png"
+        save_path = "../207Bi/geant_sim/" + root_file_path.split(".root")[0] + ".png"
         print(f"Saving the plot to {save_path}")
         # Save the plot to the provided path
         plt.savefig(save_path, dpi=300)
