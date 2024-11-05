@@ -1,12 +1,12 @@
 # variables
-/control/alias f 9
-/control/alias g 0
-/control/alias n 10000000
+/control/alias f 70
+/control/alias g 30
+/control/alias n 1000000
 /control/alias z 82
 /control/alias a 207
 /control/alias e 1633.356
 /control/alias e_str 1633keV
-/control/alias runno 86
+/control/alias runno 90
 
 /control/alias File run{runno}_RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PIPS1000_PointSource
 
@@ -20,7 +20,7 @@
 /run/initialize
 
 /ICESPICE/DetectorPosition -{g}          # Position the detector
-/ICESPICE/SourcePosition {f}     # Position the 207Bi source backing 
+/ICESPICE/SourcePosition {f}
 
 # Set up the General Particle Source (GPS) parameters
 /gps/ang/type iso                      # Set the particle angular distribution to isotropic (equal probability in all directions)
@@ -39,8 +39,10 @@
 
 # Begin the simulation with # particles
 /run/beamOn {n}
+#
+/control/shell cp {File}.root ../207Pb/
+/control/shell python3 ../207Pb/analysis.py {File}.root --fwhm 10 --save-pic --icespice
 
-/control/shell cp {File}.root ../207Bi/geant_sim/
-/control/shell python3 ../207Bi/analysis.py {File}.root --fwhm 10 --save-pic --icespice
+
 
 

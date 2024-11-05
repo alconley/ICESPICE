@@ -56,7 +56,6 @@ set(ICESPICE_SCRIPT
     gui.mac
     ICESPICE3D.TABLE
     Plots.C
-    bi207.mac
     Fold.C
   )
 
@@ -70,6 +69,10 @@ endforeach()
 
 # Copy the entire cad_files directory to the build directory
 file(COPY ${PROJECT_SOURCE_DIR}/cad_files DESTINATION ${PROJECT_BINARY_DIR})
+
+configure_file(${PROJECT_SOURCE_DIR}/207Bi/bi207.mac ${PROJECT_BINARY_DIR}/bi207.mac COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/207Pb/pb207.mac ${PROJECT_BINARY_DIR}/pb207.mac COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/TransmissionProbablilty/transmission_prob.mac ${PROJECT_BINARY_DIR}/transmission_prob.mac COPYONLY)
 
 #----------------------------------------------------------------------------
 # Add program to the project targets

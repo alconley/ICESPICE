@@ -25,11 +25,11 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 0         // Magnetic field grid
-#define MAGNETS 0      // N42 1"X1"x1/8"
-#define ATTENUATOR 0  // AC: Volume for attenuator 
+#define MAG 1         // Magnetic field grid
+#define MAGNETS 1      // N42 1"X1"x1/8"
+#define ATTENUATOR 1  // AC: Volume for attenuator 
 #define DETECTOR 1     // AC: Volume for detector
-#define DETECTORHOLDER 0 // AC: Volume for detector holder
+#define DETECTORHOLDER 1 // AC: Volume for detector holder
 #define MAGNETHOLDER 0 // AC: Volume for magnet holder/mounting rings
 #define SOURCEBACKING 0 // AC: Volume for source backing
 
@@ -542,10 +542,11 @@ void ICESPICEDetectorConstruction::SetSourcePosition(G4double val) {
     G4cout << "Source position set to: " << SourcePosition << G4endl;
     G4cout << "GPS center set to: (0, 0, " << SourcePosition << ") mm" << G4endl;
 
-    G4double BackingPosition = val + SourceBackingThickness/2.0 + 0.01*micrometer;
-
-    physiSourceBacking->SetTranslation(G4ThreeVector(0, 0, BackingPosition));
-    G4RunManager::GetRunManager()->GeometryHasBeenModified();
-    G4RunManager::GetRunManager() -> PhysicsHasBeenModified();
-    G4RunManager::GetRunManager()->ReinitializeGeometry();
+    if (physiSourceBacking) {
+        G4double BackingPosition = val + SourceBackingThickness/2.0 + 0.01*micrometer;
+        physiSourceBacking->SetTranslation(G4ThreeVector(0, 0, BackingPosition));
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+        G4RunManager::GetRunManager() -> PhysicsHasBeenModified();
+        G4RunManager::GetRunManager()->ReinitializeGeometry();
+    }
 }
