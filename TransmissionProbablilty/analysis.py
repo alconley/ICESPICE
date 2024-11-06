@@ -103,6 +103,8 @@ def batch_plot_by_fg(files_by_fg):
     for ax in axs:
         ax.legend(loc="upper right")
     fig.tight_layout()
+    
+    plt.savefig("../TransmissionProbablilty/transmission_probabilities.png", dpi=300)
     plt.show()
 
 # energy_1000keV, trans_prob_1000keV, fep_trans_prob_1000keV = transmission_histogram("../TransmissionProbablilty/TransmissionProb_f70mm_g30mm_n1000000_PIPS1000_PointSource_1000keV.root", 1000, plot=True)
@@ -115,7 +117,7 @@ n = 1000000
 # Define the range of energies and values for f and g
 energies = range(100, 2100, 100)  # From 100 keV to 2000 keV in 100 keV steps
 f_values = [70]  # Example values for f
-g_values = [25, 30, 35]  # Example values for g
+g_values = [20, 25, 30, 35, 40]  # Example values for g
 
 # Generate file paths for all combinations of f, g, and energy
 files_by_fg = {

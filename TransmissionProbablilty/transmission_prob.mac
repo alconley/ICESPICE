@@ -1,6 +1,6 @@
 # Define common parameters
 /control/alias f 70
-/control/alias g 35
+/control/alias g 40
 /control/alias n 1000000
 
 /control/verbose 0
