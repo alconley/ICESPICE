@@ -1,0 +1,36 @@
+ply
+format ascii 1.0
+comment SOLIDWORKS generated,length unit = millimeters
+element vertex 10
+property float x
+property float y
+property float z
+element face 12
+property uchar red
+property uchar green
+property uchar blue
+property uchar alpha
+property list uchar int vertex_indices
+end_header
+-0.79375 0 0 
+0.79375 0 0 
+-0.79375 17.9605 -17.9605 
+0.79375 17.9605 -17.9605 
+-0.79375 17.9605 17.9605 
+0.79375 17.9605 17.9605 
+-0.79375 35.921 0 
+0.79375 35.921 0 
+-0.79375 35.921 2.1684e-16 
+0.79375 35.921 2.1684e-16 
+202 209 238 0 3 3 1 0
+202 209 238 0 3 2 3 0
+202 209 238 0 3 1 4 0
+202 209 238 0 3 4 6 0
+202 209 238 0 3 6 2 0
+202 209 238 0 3 5 4 1
+202 209 238 0 3 3 5 1
+202 209 238 0 3 7 3 2
+202 209 238 0 3 6 7 2
+202 209 238 0 3 7 5 3
+202 209 238 0 3 5 6 4
+202 209 238 0 3 7 6 5

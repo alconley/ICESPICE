@@ -104,14 +104,17 @@ def batch_plot_by_fg(files_by_fg):
         ax.legend(loc="upper right")
     fig.tight_layout()
     
-    plt.savefig("../TransmissionProbablilty/transmission_probabilities.png", dpi=300)
-    plt.show()
-
 # energy_1000keV, trans_prob_1000keV, fep_trans_prob_1000keV = transmission_histogram("../TransmissionProbablilty/TransmissionProb_f70mm_g30mm_n1000000_PIPS1000_PointSource_1000keV.root", 1000, plot=True)
 
 # Define fixed parameters and base path
-base_path = "../TransmissionProbablilty/data"
-detector = "PIPS1000"
+# base_path = "../TransmissionProbablilty/data/5N42_1x1x1_8in_PIPS1000"
+# detector = "PIPS1000"
+
+# base_path = "../TransmissionProbablilty/data/5N42_1x1x1_16in_PIPS300"
+base_path = "../TransmissionProbablilty/data/6N42_1x1x1_16in_PIPS300"
+
+detector = "PIPS300"
+
 n = 1000000
 
 # Define the range of energies and values for f and g
@@ -128,6 +131,8 @@ files_by_fg = {
     for f, g in product(f_values, g_values)
 }
 
-
 # Call the plotting function with the files_by_fg dictionary
 batch_plot_by_fg(files_by_fg)
+
+plt.savefig(f"../TransmissionProbablilty/6N42_1x1x1_16in_{detector}_transmission_probabilities.png", dpi=300)
+plt.show()

@@ -1,5 +1,5 @@
 /.vscode
 /build
 /.venv
-*.TABLE
+*.mag
 /.DS_Store

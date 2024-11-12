@@ -54,7 +54,9 @@ target_link_libraries(ICESPICE ${Geant4_LIBRARIES})
 set(ICESPICE_SCRIPT
     vis.mac 
     gui.mac
-    ICESPICE3D.TABLE
+    comsol_output_5N42_1x1x8in_x50_y50_z70_res1_2mm.mag
+    comsol_output_5N42_1x1x16in_x50_y50_z70_res1_2mm.mag
+    comsol_output_6N42_1x1x16in_x50_y50_z70_res1_2mm.mag
     Plots.C
     Fold.C
   )

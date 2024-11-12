@@ -51,8 +51,10 @@ public:
   void PIPS300Detector(); 
   void PIPS500Detector(); 
   void PIPS1000Detector();
+  void ICESPICE_5N42_1x1x1_8in();
+  void ICESPICE_5N42_1x1x1_16in();
+  void ICESPICE_6N42_1x1x1_16in();
   void Bi207SourceBacking();
-  void ICESPICE();
 
   void SetDetectorPosition(G4double val); 
   G4double GetDetectorPosition() const {return DetectorPosition;}; 
@@ -62,7 +64,6 @@ public:
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
   const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } 
   const G4VPhysicalVolume* GetSiliconPV() const { return physiDetector; } 
-  const G4VPhysicalVolume* GetAttenuatorPV() const { return physiAttenuator; }
   const G4VPhysicalVolume* GetDetectorWindowPV() const { return physiDetectorWindow; }
   const G4VPhysicalVolume* GetDetectorHousingPV() const { return physiDetectorHousing; }
   const G4VPhysicalVolume* GetDetectorHolderPV() const { return physiDetectorHolder; }
@@ -93,9 +94,6 @@ private:
   G4double           DetectorActiveArea;
   G4double           DetectorThickness;
 
-  G4VPhysicalVolume* physiAttenuator;
-  G4LogicalVolume*   logicAttenuator;
-  G4VSolid*          solidAttenuator;
   G4Material*        AttenuatorMaterial; 
   
   G4VPhysicalVolume* physiDetectorWindow;
