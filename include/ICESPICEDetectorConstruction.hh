@@ -52,6 +52,7 @@ public:
   void PIPS500Detector(); 
   void PIPS1000Detector();
   void ICESPICE_5N42_1x1x1_8in();
+  void ICESPICE_3N42_1x1x1_16in();
   void ICESPICE_5N42_1x1x1_16in();
   void ICESPICE_6N42_1x1x1_16in();
   void Bi207SourceBacking();

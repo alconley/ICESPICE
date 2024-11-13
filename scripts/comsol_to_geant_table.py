@@ -3,7 +3,9 @@ import pandas as pd
 # Load the CSV file and skip the initial lines containing metadata
 # file_path = './python_scripts/new_field.csv'
 
-file_path = '/home/alconley/Downloads/comsol_output_5N42_1x1x16in_x50_y50_z70_res1_2mm.csv'
+# file_path = '/home/alconley/Downloads/comsol_output_5N42_1x1x16in_x50_y50_z70_res1_2mm.csv'
+file_path = '/home/alconley/Downloads/comsol_output_3N42_1x1x16in_x50_y50_z70_res1_2mm.csv'
+
 
 column_names = ['X', 'Y', 'Z', 'BX', 'BY', 'BZ', 'BMOD/HMOD']
 data = pd.read_csv(file_path, comment='%', skiprows=9, names=column_names)
@@ -45,7 +47,7 @@ header_info = f"""
 00 [METRE] """ 
  
 # Write to file
-output_file_path = './comsol_output_5N42_1x1x16in_x50_y50_z70_res1_2mm.mag'
+output_file_path = './comsol_output_3N42_1x1x16in_x50_y50_z70_res1_2mm.mag'
 with open(output_file_path, 'w') as file:
     file.write(header_info + '\n')
     formatted_data.to_csv(file, header=False, index=False, sep=' ', mode='a')

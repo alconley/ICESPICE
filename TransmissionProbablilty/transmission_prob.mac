@@ -2,7 +2,7 @@
 /control/alias f 70
 /control/alias n 1000000
 /control/alias det PIPS300
-/control/alias pathsuffix 6N42_1x1x1_16in_{det}/
+/control/alias pathsuffix 3N42_1x1x1_16in_{det}/
 
 /control/verbose 0
 /run/verbose 0

@@ -28,8 +28,9 @@
 #define MAG 1
 
 #define ICESPICE_5N42_1x1x1_8in_FLAG 0 
+#define ICESPICE_3N42_1x1x1_16in_FLAG 1 
 #define ICESPICE_5N42_1x1x1_16in_FLAG 0 
-#define ICESPICE_6N42_1x1x1_16in_FLAG 1 
+#define ICESPICE_6N42_1x1x1_16in_FLAG 0 
 
 #define PIPS1000 0  
 #define PIPS500 0
@@ -221,6 +222,10 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
   ICESPICE_5N42_1x1x1_8in();
 #endif
 
+#if ICESPICE_3N42_1x1x1_16in_FLAG
+  ICESPICE_3N42_1x1x1_16in();
+#endif
+
 #if ICESPICE_5N42_1x1x1_16in_FLAG
   ICESPICE_5N42_1x1x1_16in();
 #endif
@@ -246,6 +251,10 @@ void ICESPICEDetectorConstruction::ConstructSDandField()
 
       #if ICESPICE_5N42_1x1x1_8in_FLAG
         G4MagneticField* ICESPICEField= new ICESPICETabulatedField3D("comsol_output_5N42_1x1x8in_x50_y50_z70_res1_2mm.mag", zOffset);
+      #endif
+
+      #if ICESPICE_3N42_1x1x1_16in_FLAG
+        G4MagneticField* ICESPICEField= new ICESPICETabulatedField3D("comsol_output_3N42_1x1x16in_x50_y50_z70_res1_2mm.mag", zOffset);
       #endif
 
       #if ICESPICE_5N42_1x1x1_16in_FLAG
@@ -885,6 +894,61 @@ void ICESPICEDetectorConstruction::ICESPICE_5N42_1x1x1_8in() {
     // Calculate the placement and rotation for each magnet
     G4double placementRadius = 3.5*mm;  // Adjusting for the corner to be at 3.5mm
     G4int numMagnets = 5;
+    G4double angleStep = 360.0*deg / numMagnets;
+
+    for (int i = 0; i < numMagnets; i++) {
+        G4double angle = i * angleStep;
+        G4ThreeVector pos(placementRadius * std::sin(angle), placementRadius * std::cos(angle), 0);
+        G4RotationMatrix* rot = new G4RotationMatrix();
+        rot->rotateZ(angle); // Rotation to spread magnets around the origin
+
+        new G4PVPlacement(rot,          // rotation
+                          pos,          // position
+                          logicMagnet,  // logical volume
+                          "Magnet",     // name
+                          logicWorld,   // mother volume
+                          false,        // no boolean operations
+                          i);           // copy number
+    }
+
+    // Set visualization attributes to make it look shiny
+    G4VisAttributes* MagnetVisAtt = new G4VisAttributes(G4Colour(0.75, 0.75, 0.75));  // light grey color
+    MagnetVisAtt->SetVisibility(true);
+    MagnetVisAtt->SetForceSolid(true);
+    logicMagnet->SetVisAttributes(MagnetVisAtt);
+}
+
+void ICESPICEDetectorConstruction::ICESPICE_3N42_1x1x1_16in() {
+  // Add the attenuator at the origin
+    auto attenuator = CADMesh::TessellatedMesh::FromPLY("./cad_files/attenuator_3_slots_1_16in.PLY");
+    auto solidAttenuator = attenuator->GetSolid();
+    auto logicAttenuator = new G4LogicalVolume(solidAttenuator, AttenuatorMaterial, "Attenuator");
+    // rotate 180 degrees to match the CAD file
+    G4RotationMatrix* rot = new G4RotationMatrix();
+    rot->rotateY(0*deg);
+
+    G4VPhysicalVolume* physiAttenuator = new G4PVPlacement(rot,			             //no rotation
+            G4ThreeVector(0.,0.,0.), //at (0,0,0)
+                                  "Attenuator",		             //its name
+                                  logicAttenuator,		             //its logical volume
+                                  physiWorld,			             //its mother  volume
+                                  false,			                     //no boolean operation
+                                  0);			                     //copy number
+
+    // Visualization attributes
+    G4VisAttributes* simpleAttenuatorVisAtt= new G4VisAttributes(G4Colour(0.25, 0.25, 0.25)); //grey
+    simpleAttenuatorVisAtt->SetVisibility(true);
+    simpleAttenuatorVisAtt->SetForceSolid(true);
+    logicAttenuator->SetVisAttributes(simpleAttenuatorVisAtt);
+
+  //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+    auto magnet = CADMesh::TessellatedMesh::FromPLY("./cad_files/1x1x1_16in_square_magnet.PLY");
+    auto solidMagnet = magnet->GetSolid();
+    auto logicMagnet = new G4LogicalVolume(solidMagnet, MagnetMaterial, "Magnet");
+
+    // Calculate the placement and rotation for each magnet
+    G4double placementRadius = 3.38*mm;  // Adjusting for the corner to be at 3.5mm
+    G4int numMagnets = 3;
     G4double angleStep = 360.0*deg / numMagnets;
 
     for (int i = 0; i < numMagnets; i++) {

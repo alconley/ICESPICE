@@ -110,8 +110,10 @@ def batch_plot_by_fg(files_by_fg):
 # base_path = "../TransmissionProbablilty/data/5N42_1x1x1_8in_PIPS1000"
 # detector = "PIPS1000"
 
+base_path = "../TransmissionProbablilty/data/3N42_1x1x1_16in_PIPS300"
 # base_path = "../TransmissionProbablilty/data/5N42_1x1x1_16in_PIPS300"
-base_path = "../TransmissionProbablilty/data/6N42_1x1x1_16in_PIPS300"
+# base_path = "../TransmissionProbablilty/data/6N42_1x1x1_16in_PIPS300"
+
 
 detector = "PIPS300"
 
@@ -134,5 +136,5 @@ files_by_fg = {
 # Call the plotting function with the files_by_fg dictionary
 batch_plot_by_fg(files_by_fg)
 
-plt.savefig(f"../TransmissionProbablilty/6N42_1x1x1_16in_{detector}_transmission_probabilities.png", dpi=300)
+plt.savefig(f"../TransmissionProbablilty/3N42_1x1x1_16in_{detector}_transmission_probabilities.png", dpi=300)
 plt.show()
