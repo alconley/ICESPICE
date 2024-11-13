@@ -1,14 +1,14 @@
 # variables
 /control/alias f 70
-/control/alias g 30
-/control/alias n 1000000
+/control/alias g 25
+/control/alias n 100000000
 /control/alias z 82
 /control/alias a 207
 /control/alias e 1633.356
 /control/alias e_str 1633keV
-/control/alias runno 90
+/control/alias runno 93
 
-/control/alias File run{runno}_RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PIPS1000_PointSource
+/control/alias File run{runno}_RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PointSource_PIPS300_6N42_1x1x1_16in
 
 # Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
 /control/verbose 0         # output for general control commands
@@ -35,7 +35,7 @@
 /analysis/setFileName {File}
 
 # Print progress every # events during the simulation run
-/run/printProgress 1000000
+/run/printProgress 10000000
 
 # Begin the simulation with # particles
 /run/beamOn {n}

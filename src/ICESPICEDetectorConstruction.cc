@@ -37,7 +37,7 @@
 #define PIPS100 0
 
 
-#define DETECTORHOLDER 0 // AC: Volume for detector holder
+#define DETECTORHOLDER 1 // AC: Volume for detector holder
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
