@@ -1,0 +1,35 @@
+# Define common parameters
+/control/alias f 0
+/control/alias g 10
+/control/alias n 100000
+/control/alias e 1000
+/control/alias det PIPS1000
+
+/control/alias File BackScattering_f{f}mm_g{g}mm_n{n}_{det}_PointSource_Zdirection_{e}keV
+
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/fluo false
+/process/em/pixe false
+/process/em/auger false
+
+# Initialize the run manager
+/run/initialize
+
+
+/ICESPICE/SourcePosition {f}
+/ICESPICE/DetectorPosition -{g}
+
+# General Particle Source (GPS) parameters
+/gps/pos/type Point
+/gps/particle e-
+/gps/direction 0 0 -1
+/gps/energy {e} keV
+
+/analysis/setFileName {File}
+/run/printProgress 1000
+/run/beamOn {n}
+/control/shell cp {File}.root ../BackScattering/
