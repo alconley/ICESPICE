@@ -77,6 +77,7 @@ configure_file(${PROJECT_SOURCE_DIR}/207Bi/bi207.mac ${PROJECT_BINARY_DIR}/bi207
 configure_file(${PROJECT_SOURCE_DIR}/207Pb/pb207.mac ${PROJECT_BINARY_DIR}/pb207.mac COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/TransmissionProbablilty/transmission_prob.mac ${PROJECT_BINARY_DIR}/transmission_prob.mac COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/BackScattering/backscattering.mac ${PROJECT_BINARY_DIR}/backscattering.mac COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/PIPSSpectrumTempletes/spectrum_templetes.mac ${PROJECT_BINARY_DIR}/spectrum_templetes.mac COPYONLY)
 
 #----------------------------------------------------------------------------
 # Add program to the project targets

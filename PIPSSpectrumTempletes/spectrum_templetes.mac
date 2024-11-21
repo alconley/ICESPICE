@@ -1,0 +1,131 @@
+# Define common parameters
+/control/alias f 0
+/control/alias g 10
+/control/alias n 100000
+/control/alias det PIPS100
+
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/fluo false
+/process/em/pixe false
+/process/em/auger false
+
+# Initialize the run manager
+/run/initialize
+/run/printProgress 10000
+
+/ICESPICE/SourcePosition {f}
+/ICESPICE/DetectorPosition -{g}
+
+# General Particle Source (GPS) parameters
+/gps/pos/type Point
+/gps/particle e-
+/gps/direction 0 0 -1
+
+/control/alias e 100
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 200
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 300
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 400
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 500
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 600
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 700
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 800
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 900
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 1000
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 1100
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 1200
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 1300
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 1400
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/
+
+/control/alias e 1500
+/gps/energy {e} keV
+/control/alias File {det}_{e}keV_SpectrumTemplete_f{f}mm_g{g}mm_n{n}_PointSource_Zdirection
+/analysis/setFileName {File}
+/run/beamOn {n}
+/control/shell cp {File}.root ../PIPSSpectrumTempletes/data/

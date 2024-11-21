@@ -32,10 +32,10 @@
 #define ICESPICE_5N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_6N42_1x1x1_16in_FLAG 0 
 
-#define PIPS1000 1
+#define PIPS1000 0
 #define PIPS500 0
 #define PIPS300 0
-#define PIPS100 0
+#define PIPS100 1
 
 
 #define DETECTORHOLDER 1 // AC: Volume for detector holder
