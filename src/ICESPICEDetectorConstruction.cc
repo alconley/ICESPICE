@@ -27,18 +27,19 @@
 // Possibility to turn off (0) magnetic field and measurement volume. 
 #define MAG 0
 
-#define ICESPICE_5N42_1x1x1_8in_FLAG 0 
+#define ICESPICE_5N42_1x1x1_8in_FLAG 1 
 #define ICESPICE_3N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_5N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_6N42_1x1x1_16in_FLAG 0 
 
-#define PIPS1000 0
+#define PIPS1000 1
 #define PIPS500 0
 #define PIPS300 0
-#define PIPS100 1
-
+#define PIPS100 0
 
 #define DETECTORHOLDER 1 // AC: Volume for detector holder
+
+#define BI207SOURCEBACKING 1
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -232,6 +233,10 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
 
 #if ICESPICE_6N42_1x1x1_16in_FLAG
   ICESPICE_6N42_1x1x1_16in();
+#endif
+
+#if BI207SOURCEBACKING
+  Bi207SourceBacking();
 #endif
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

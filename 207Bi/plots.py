@@ -75,29 +75,3 @@ axs.tick_params(axis='both',which='major',direction='in',top=True,right=True,lef
 # show the plot
 plt.show()
 
-
-# # Create the histograms using numpy.histogram with 1200 bins and range 0-1200
-# hist_withICESPICE, bin_edges_with = np.histogram(
-#     df_withICESPICE["PIPS1000EnergyCalibrated"], 
-#     bins=1200, 
-#     range=[0, 1200]
-# )
-
-# hist_withoutICESPICE, bin_edges_without = np.histogram(
-#     df_withoutICESPICE["PIPS1000EnergyCalibrated"], 
-#     bins=1200, 
-#     range=[0, 1200], 
-#     weights=[scale] * len(df_withoutICESPICE)
-# )
-
-# # Export the histogram data for ROOT macro or any other format
-# # Save histogram bins and counts for with ICESPICE
-# with open("207Bi_withICESPICE.txt", "w") as f:
-#     for i in range(len(hist_withICESPICE)):
-#         f.write(f"{bin_edges_with[i]:.2f} {hist_withICESPICE[i]:.2f}\n")
-
-# # Save histogram bins and counts for without ICESPICE
-# with open("207Bi_withoutICESPICE.txt", "w") as f:
-#     for i in range(len(hist_withoutICESPICE)):
-#         f.write(f"{bin_edges_without[i]:.2f} {hist_withoutICESPICE[i]:.2f}\n")
-        
