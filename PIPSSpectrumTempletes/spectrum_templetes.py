@@ -110,6 +110,10 @@ def spectrums(files, fwhm, ax: plt.Axes):
     num_files = len(files)
     
     for idx, file in enumerate(files):
+        # Extract the energy from the file name
+        base_name = os.path.basename(file)
+        energy_label = base_name.split('_')[1]  # Assumes format "PIPS1000_100keV_SpectrumTemplete..."
+        
         # Create analyzer for each file
         analyzer = Geant4Analyzer(file, "Esil")
         
@@ -120,9 +124,11 @@ def spectrums(files, fwhm, ax: plt.Axes):
         ax.stairs(
             values=smeared_content, 
             edges=edges, 
-            label=os.path.basename(file), 
+            label=f"{energy_label} keV", 
             color=cmap(idx / num_files)  # Assign a unique color based on file index
         )
+        
+        
 
 pips1000_files = []
 pips500_files = []
@@ -133,7 +139,7 @@ base_path = "./PIPSSpectrumTempletes/data"
 
 detectors = ["PIPS1000", "PIPS500", "PIPS300", "PIPS100"]
     
-for energy in range(100, 1500, 100):
+for energy in range(100, 1600, 100):
     for detector in detectors:
         file = os.path.join(base_path, f"{detector}_{energy}keV_SpectrumTemplete_f0mm_g10mm_n100000_PointSource_Zdirection.root")
         if not os.path.exists(file):
@@ -158,6 +164,23 @@ spectrums(pips500_files, fwhm=10, ax=axs[1])
 spectrums(pips300_files, fwhm=10, ax=axs[2])
 spectrums(pips100_files, fwhm=10, ax=axs[3])
 
+axs[0].text(0.5, 0.95, f"PIPS1000", transform=axs[0].transAxes, ha='center', va='top')
+axs[1].text(0.5, 0.95, f"PIPS500", transform=axs[1].transAxes, ha='center', va='top')
+axs[2].text(0.5, 0.95, f"PIPS300", transform=axs[2].transAxes, ha='center', va='top')
+axs[3].text(0.5, 0.95, f"PIPS100", transform=axs[3].transAxes, ha='center', va='top')
+
+
+# Collect handles and labels from all axes for a global legend
+handles, labels = [], []
+for ax in axs:
+    for handle, label in zip(*ax.get_legend_handles_labels()):
+        if label not in labels:  # Avoid duplicate labels
+            handles.append(handle)
+            labels.append(label)
+
+# Add a single legend at the top
+fig.legend(handles, labels, loc='upper center', ncol=6)
+
 for ax in axs:
     ax.set_ylabel("Counts/keV")
     ax.set_yscale("log")
@@ -166,6 +189,13 @@ for ax in axs:
     
 axs[3].set_xlabel("Energy (keV)")
 
-fig.tight_layout()
+fig.subplots_adjust(top=0.916,
+bottom=0.049,
+left=0.07,
+right=0.985,
+hspace=0.19,
+wspace=0.2)
+
+plt.savefig("PIPSSpectrumTempletes/spectrum_templetes.png", dpi=300)
 
 plt.show()
