@@ -138,10 +138,14 @@ pips100_files = []
 base_path = "./PIPSSpectrumTempletes/data"
 
 detectors = ["PIPS1000", "PIPS500", "PIPS300", "PIPS100"]
+# detectors = ["PIPS100"]
+
     
 for energy in range(100, 1600, 100):
     for detector in detectors:
-        file = os.path.join(base_path, f"{detector}_{energy}keV_SpectrumTemplete_f0mm_g10mm_n100000_PointSource_Zdirection.root")
+        # file = os.path.join(base_path, f"{detector}_{energy}keV_SpectrumTemplete_f0mm_g10mm_n100000_PointSource_Zdirection.root")
+        file = os.path.join(base_path, f"{detector}_ICESPICE_{energy}keV_SpectrumTemplete_f70mm_g30mm_n100000000_PointSource_isotropic.root")
+        
         if not os.path.exists(file):
             continue
         if detector == "PIPS1000":
@@ -196,6 +200,6 @@ right=0.985,
 hspace=0.19,
 wspace=0.2)
 
-plt.savefig("PIPSSpectrumTempletes/spectrum_templetes.png", dpi=300)
+plt.savefig("PIPSSpectrumTempletes/ICESPICE_spectrum_templetes.png", dpi=300)
 
 plt.show()
