@@ -9,12 +9,12 @@ tex_fonts = {
     "font.family": "serif",
     "font.serif" : ["CMR10"],
     # Use 10pt font in plots, to match 10pt font in document
-    "axes.labelsize": 12,
-    "font.size": 12,
+    "axes.labelsize": 8,
+    "font.size": 6,
     # Make the legend/label fonts a little smaller
-    "legend.fontsize": 10,
-    "xtick.labelsize": 10,
-    "ytick.labelsize": 10
+    "legend.fontsize": 5,
+    "xtick.labelsize": 6,
+    "ytick.labelsize": 6
 }
 
 
@@ -87,18 +87,18 @@ pips500_counts, pips500_edges, pips500_fep, pips500_bs = histogram("../BackScatt
 pips300_counts, pips300_edges, pips300_fep, pips300_bs = histogram("../BackScattering/BackScattering_f0mm_g10mm_n100000_PIPS300_PointSource_Zdirection_1000keV.root", 1000)
 pips100_counts, pips100_edges, pips100_fep, pips100_bs = histogram("../BackScattering/BackScattering_f0mm_g10mm_n100000_PIPS100_PointSource_Zdirection_1000keV.root", 1000)
 
-fig, ax = plt.subplots(1,1,figsize=set_size(469))
+fig, ax = plt.subplots(1,1,figsize=set_size(222))
 fig.subplots_adjust(top=0.99,
-    bottom=0.103,
-    left=0.079,
-    right=0.992,
+    bottom=0.17,
+    left=0.126,
+    right=0.989,
     hspace=0.2,
     wspace=0.2)
 
-ax.step(pips1000_edges, np.append(pips1000_counts, 0), where="post", label=r"1000 $\mu$m", linewidth=1, color='#782F40')
-ax.step(pips500_edges, np.append(pips500_counts, 0), where="post", label=r"500 $\mu$m", linewidth=1, color='#CEB888')
-ax.step(pips300_edges, np.append(pips300_counts, 0), where="post", label=r"300 $\mu$m", linewidth=1, color='#5CB8B2')
-ax.step(pips100_edges, np.append(pips100_counts, 0), where="post", label=r"100 $\mu$m", linewidth=1, color='#425563')
+ax.step(pips1000_edges, np.append(pips1000_counts, 0), where="post", label=r"1000 $\mu$m", linewidth=0.5, color='#782F40')
+ax.step(pips500_edges, np.append(pips500_counts, 0), where="post", label=r"500 $\mu$m", linewidth=0.5, color='#CEB888')
+ax.step(pips300_edges, np.append(pips300_counts, 0), where="post", label=r"300 $\mu$m", linewidth=0.5, color='#5CB8B2')
+ax.step(pips100_edges, np.append(pips100_counts, 0), where="post", label=r"100 $\mu$m", linewidth=0.5, color='#425563')
 
 
 # Define the range of x and y
@@ -106,7 +106,7 @@ x_start, x_end = 10, 995
 y_value = 6000
 
 # Plot the horizontal line with caps
-ax.plot([x_start, x_end], [y_value, y_value], color='black', linewidth=1, linestyle='--', label='Backscattered Electrons')
+ax.plot([x_start, x_end], [y_value, y_value], color='black', linewidth=0.5, linestyle='--', label=r'Backscattered e$^{-}$')
 ax.plot(x_start, y_value, marker='|', color='black', markersize=8)  # Start cap
 ax.plot(x_end, y_value, marker='|', color='black', markersize=8)    # End cap
 
@@ -126,12 +126,12 @@ table = ax.table(
     colLabels=columns,
     cellLoc='center',
     loc='upper right',  # Top-right corner
-    bbox=[0.4, 0.7, 0.5, 0.25]  # Adjust position and size [x, y, width, height]
+    bbox=[0.38, 0.7, 0.6, 0.25]  # Adjust position and size [x, y, width, height]
 )
 
 # Beautify the table
 table.auto_set_font_size(False)
-table.set_fontsize(12)  # Smaller font size
+table.set_fontsize(5)  # Smaller font size
 table.auto_set_column_width([0, 1, 2])  # Adjust column widths
 
 # Remove cell lines
@@ -149,7 +149,7 @@ ax.minorticks_on()
 ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=2)
 ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=4)
 
-plt.savefig("../BackScattering/backscattering_histogram.pdf")
+plt.savefig("../BackScattering/PIPS_backscattering.pdf")
 
 plt.show()
 

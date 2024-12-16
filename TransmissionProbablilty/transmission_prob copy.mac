@@ -1,0 +1,978 @@
+# Define common parameters
+/control/alias f 70
+/control/alias n 1000000
+/control/alias det PIPS300
+/control/alias pathsuffix 3N42_1x1x1_16in_{det}/
+
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+# Initialize the run manager
+/run/initialize
+
+# Detector and source positioning
+/ICESPICE/SourcePosition {f}
+
+# General Particle Source (GPS) parameters
+/gps/ang/type iso
+/gps/pos/type Point
+/gps/particle e-          # Set particle to electron for monoenergetic electron gun
+/gps/ene/type Mono
+
+/control/alias g 20
+/ICESPICE/DetectorPosition -{g}
+
+# 100 keV
+/control/alias e 100
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 200 keV
+/control/alias e 200
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 300 keV
+/control/alias e 300
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 400 keV
+/control/alias e 400
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 500 keV
+/control/alias e 500
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 600 keV
+/control/alias e 600
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 700 keV
+/control/alias e 700
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 800 keV
+/control/alias e 800
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 900 keV
+/control/alias e 900
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1000 keV
+/control/alias e 1000
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1100 keV
+/control/alias e 1100
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1200 keV
+/control/alias e 1200
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1300 keV
+/control/alias e 1300
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1400 keV
+/control/alias e 1400
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1500 keV
+/control/alias e 1500
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1600 keV
+/control/alias e 1600
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1700 keV
+/control/alias e 1700
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1800 keV
+/control/alias e 1800
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1900 keV
+/control/alias e 1900
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 2000 keV
+/control/alias e 2000
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+
+
+
+
+
+###################################################################################################3
+
+
+
+
+
+/control/alias g 25
+/ICESPICE/DetectorPosition -{g}
+
+# 100 keV
+/control/alias e 100
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 200 keV
+/control/alias e 200
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 300 keV
+/control/alias e 300
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 400 keV
+/control/alias e 400
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 500 keV
+/control/alias e 500
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 600 keV
+/control/alias e 600
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 700 keV
+/control/alias e 700
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 800 keV
+/control/alias e 800
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 900 keV
+/control/alias e 900
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1000 keV
+/control/alias e 1000
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1100 keV
+/control/alias e 1100
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1200 keV
+/control/alias e 1200
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1300 keV
+/control/alias e 1300
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1400 keV
+/control/alias e 1400
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1500 keV
+/control/alias e 1500
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1600 keV
+/control/alias e 1600
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1700 keV
+/control/alias e 1700
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1800 keV
+/control/alias e 1800
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1900 keV
+/control/alias e 1900
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 2000 keV
+/control/alias e 2000
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+
+
+
+
+###################################################################################################3
+
+
+
+
+
+/control/alias g 30
+/ICESPICE/DetectorPosition -{g}
+
+# 100 keV
+/control/alias e 100
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 200 keV
+/control/alias e 200
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 300 keV
+/control/alias e 300
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 400 keV
+/control/alias e 400
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 500 keV
+/control/alias e 500
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 600 keV
+/control/alias e 600
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 700 keV
+/control/alias e 700
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 800 keV
+/control/alias e 800
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 900 keV
+/control/alias e 900
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1000 keV
+/control/alias e 1000
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1100 keV
+/control/alias e 1100
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1200 keV
+/control/alias e 1200
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1300 keV
+/control/alias e 1300
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1400 keV
+/control/alias e 1400
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1500 keV
+/control/alias e 1500
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1600 keV
+/control/alias e 1600
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1700 keV
+/control/alias e 1700
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1800 keV
+/control/alias e 1800
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1900 keV
+/control/alias e 1900
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 2000 keV
+/control/alias e 2000
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+
+
+
+
+###################################################################################################3
+
+
+
+
+
+/control/alias g 35
+/ICESPICE/DetectorPosition -{g}
+
+# 100 keV
+/control/alias e 100
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 200 keV
+/control/alias e 200
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 300 keV
+/control/alias e 300
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 400 keV
+/control/alias e 400
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 500 keV
+/control/alias e 500
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 600 keV
+/control/alias e 600
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 700 keV
+/control/alias e 700
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 800 keV
+/control/alias e 800
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 900 keV
+/control/alias e 900
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1000 keV
+/control/alias e 1000
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1100 keV
+/control/alias e 1100
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1200 keV
+/control/alias e 1200
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1300 keV
+/control/alias e 1300
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1400 keV
+/control/alias e 1400
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1500 keV
+/control/alias e 1500
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1600 keV
+/control/alias e 1600
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1700 keV
+/control/alias e 1700
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1800 keV
+/control/alias e 1800
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1900 keV
+/control/alias e 1900
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 2000 keV
+/control/alias e 2000
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+
+
+
+
+###################################################################################################3
+
+
+
+
+
+/control/alias g 40
+/ICESPICE/DetectorPosition -{g}
+
+# 100 keV
+/control/alias e 100
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 200 keV
+/control/alias e 200
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 300 keV
+/control/alias e 300
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 400 keV
+/control/alias e 400
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 500 keV
+/control/alias e 500
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 600 keV
+/control/alias e 600
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 700 keV
+/control/alias e 700
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 800 keV
+/control/alias e 800
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 900 keV
+/control/alias e 900
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1000 keV
+/control/alias e 1000
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1100 keV
+/control/alias e 1100
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1200 keV
+/control/alias e 1200
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1300 keV
+/control/alias e 1300
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1400 keV
+/control/alias e 1400
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1500 keV
+/control/alias e 1500
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1600 keV
+/control/alias e 1600
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1700 keV
+/control/alias e 1700
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1800 keV
+/control/alias e 1800
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 1900 keV
+/control/alias e 1900
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
+
+# 2000 keV
+/control/alias e 2000
+/control/alias File TransmissionProb_f{f}mm_g{g}mm_n{n}_{det}_PointSource_{e}keV
+/gps/ene/mono {e} keV
+/analysis/setFileName {File}
+/run/printProgress 1000000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbablilty/data/{pathsuffix}
