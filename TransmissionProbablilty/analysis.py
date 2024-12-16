@@ -208,7 +208,7 @@ def demo_plot():
 
 
         # Plot Transmission Probability with error bars
-        ax[0].errorbar(energies, trans_probs, yerr=trans_errors, marker="o", linestyle=line_style, color=color, label=f"g={g} mm", markersize=0.5, linewidth=1)
+        ax[0].plot(energies, trans_probs, marker="o", linestyle=line_style, color=color, label=f"g={g} mm", markersize=1, linewidth=1)
 
     # ax[0].legend(loc='upper right', shadow=False, frameon=True, fancybox=False, edgecolor='none', facecolor='none')
     ax[0].minorticks_on()
@@ -236,7 +236,7 @@ def demo_plot():
         line_style = line_styles.pop(0)  # Select the next line style
 
         # Plot Transmission Probability with error bars
-        ax[1].errorbar(energies, trans_probs, yerr=trans_errors, marker="o", linestyle=line_style, color=color, label=f"g={g} mm", markersize=0.5, linewidth=1)
+        ax[1].plot(energies, trans_probs, marker="o", linestyle=line_style, color=color, label=f"g={g} mm", markersize=1, linewidth=1)
 
     # ax[1].legend(loc='upper right', shadow=False, frameon=True, fancybox=False, edgecolor='none', facecolor='none')
     ax[1].minorticks_on()
