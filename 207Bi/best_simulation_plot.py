@@ -5,6 +5,7 @@ import ROOT
 import lmfit
 import warnings
 import matplotlib
+import matplotlib.gridspec as gridspec
 
 # for virtual environment on mac
 # source $(brew --prefix root)/bin/thisroot.sh  # for ROOT
@@ -15,12 +16,12 @@ tex_fonts = {
     "font.family": "serif",
     "font.serif" : ["CMR10"],
     # Use 10pt font in plots, to match 10pt font in document
-    "axes.labelsize": 10,
-    "font.size": 10,
+    "axes.labelsize": 6,
+    "font.size": 6,
     # Make the legend/label fonts a little smaller
-    "legend.fontsize": 8,
-    "xtick.labelsize": 8,
-    "ytick.labelsize": 8
+    "legend.fontsize": 5,
+    "xtick.labelsize": 6,
+    "ytick.labelsize": 6
 }
 
 
@@ -110,15 +111,15 @@ def gaussian_smear(bin_contents, bin_centers, bin_uncertainity, fwhm):
     return smeared_bin_contents, smeared_bin_contents_low, smeared_bin_contents_high
 
 def experimental_results(plot=True):
-    df_withICESPICE = pl.read_parquet("../207Bi/exp_data/207Bi_ICESPICE_f70mm_g30mm_run_*.parquet")
-    df_withoutICESPICE = pl.read_parquet("../207Bi/exp_data/207Bi_noICESPICE_f9mm_g0mm_run_13.parquet")
+    df_withICESPICE = pl.read_parquet("./207Bi/exp_data/207Bi_ICESPICE_f70mm_g30mm_run_*.parquet")
+    df_withoutICESPICE = pl.read_parquet("./207Bi/exp_data/207Bi_noICESPICE_f9mm_g0mm_run_13.parquet")
 
     # Energy calibration of m=0.5395 and b=2.5229
     df_withICESPICE = df_withICESPICE.with_columns([(pl.col("PIPS1000Energy") * 0.5395 + 2.5229).alias("PIPS1000EnergyCalibrated")])
     df_withoutICESPICE = df_withoutICESPICE.with_columns([(pl.col("PIPS1000Energy") * 0.5395 + 2.5229).alias("PIPS1000EnergyCalibrated")])
     
-    exp_bins = 1100
-    exp_range = [0, 1100]
+    exp_bins = 1200
+    exp_range = [0, 1200]
 
     exp_hist_withICESPICE, exp_bin_edges_withICESPICE = np.histogram(df_withICESPICE["PIPS1000EnergyCalibrated"], bins=exp_bins, range=exp_range)
     exp_hist_withoutICESPICE, exp_bin_edges_withoutICESPICE = np.histogram(df_withoutICESPICE["PIPS1000EnergyCalibrated"], bins=exp_bins, range=exp_range)
@@ -293,17 +294,15 @@ def scale_residuals(params, exp_hist, exp_unc, sim_hist, sim_unc):
     residuals = (exp_hist - scaled_sim_hist) / total_unc
 
     return residuals
-
-
+    
 # Main part of your code
 if __name__ == "__main__":
     
-    noICESPICE_root_file = "../207Bi/geant_sim/RadDecay_z83_a207_e0keV_f8mm_g0mm_n100000000_PIPS1000_AllProcesses_SiWindow50nm_Source500nmThick_run81.root"
-    ICESPICE_root_file = "../207Bi/geant_sim/ICESPICE_RadDecay_z83_a207_e0keV_f70mm_g30mm_n1000000000_PIPS1000_AllProcesses_SiWindow50nm_Source500nmThick_run79.root"
+    noICESPICE_root_file = "./207Bi/geant_sim/RadDecay_z83_a207_e0keV_f8mm_g0mm_n100000000_PIPS1000_AllProcesses_SiWindow50nm_Source500nmThick_run81.root"
+    ICESPICE_root_file = "./207Bi/geant_sim/ICESPICE_RadDecay_z83_a207_e0keV_f70mm_g30mm_n1000000000_PIPS1000_AllProcesses_SiWindow50nm_Source500nmThick_run79.root"
     
-    linewidth = 1
-    fs = 10
-    
+    linewidth = 0.5
+
     ###############################################################################################################
 
     exp_hist_withICESPICE, exp_bin_edges_withICESPICE, exp_hist_withICESPICE_uncertainity, \
@@ -314,25 +313,41 @@ if __name__ == "__main__":
     noICSPICE_sim_hist, noICSPICE_sim_bin_centers, noICSPICE_sim_bin_edges, noICSPICE_sim_hist_uncertainity = geant4_simulation_results(noICESPICE_root_file, 10, plot=False)
     ICSPICE_sim_hist, ICSPICE_sim_bin_centers, ICSPICE_sim_bin_edges, ICSPICE_sim_hist_uncertainity = geant4_simulation_results(ICESPICE_root_file, 10, plot=False)
 
-    fig, axs = plt.subplots(2, 2, figsize=(6.5, 4))
-    axs = axs.flatten()
+    # Create a figure and GridSpec with 4 rows and 1 column
+    fig = plt.figure(figsize=(2.8919330289193304, 5))  # Adjust the height for better visualization
+    gs = gridspec.GridSpec(5, 1, figure=fig, height_ratios=[3, 3, 1, 3, 1], hspace=0.05)
 
+    # Create axes for the main plots and residuals
+    axs_exp_comparison = fig.add_subplot(gs[0, 0])
+    axs_icepsice_sim = fig.add_subplot(gs[1, 0])
+    axs_icepsice_sim_residuals = fig.add_subplot(gs[2, 0])
+    axs_no_icepsice_sim = fig.add_subplot(gs[3, 0])
+    axs_no_icepsice_sim_residuals = fig.add_subplot(gs[4, 0])
+
+    axs = [axs_exp_comparison, axs_icepsice_sim, axs_icepsice_sim_residuals, axs_no_icepsice_sim, axs_no_icepsice_sim_residuals]
+
+    # scale of the hist of the data with out ICESPICE so the counts match the 975 peak
+    scale = 51700/65625
+
+    axs[0].stairs(values=exp_hist_withoutICESPICE*scale, edges=exp_bin_edges_withoutICESPICE, color="#6e072b", label=r"$^{207}$Bi without ICESPICE [Scaled]", linewidth=linewidth)
+    axs[0].stairs(values=exp_hist_withICESPICE, edges=exp_bin_edges_withICESPICE, color="#088a45", label=r"$^{207}$Bi with ICESPICE", linewidth=linewidth)
+    
     fig.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.1, hspace=0.025, wspace=0.025)
         
-    axs[0].stairs(values=exp_hist_withoutICESPICE, edges=exp_bin_edges_withoutICESPICE, color="black", label=r"$^{207}$Bi without ICESPICE", linewidth=linewidth)
-    axs[1].stairs(values=exp_hist_withICESPICE, edges=exp_bin_edges_withICESPICE, color="black", label=r"$^{207}$Bi with ICESPICE", linewidth=linewidth)
+    axs[1].stairs(values=exp_hist_withoutICESPICE, edges=exp_bin_edges_withoutICESPICE, color="#6e072b", label=r"$^{207}$Bi without ICESPICE", linewidth=linewidth)
+    axs[3].stairs(values=exp_hist_withICESPICE, edges=exp_bin_edges_withICESPICE, color="#088a45", label=r"$^{207}$Bi with ICESPICE", linewidth=linewidth)
     
     noICESPICE_exp_bin_centers = (exp_bin_edges_withoutICESPICE[:-1] + exp_bin_edges_withoutICESPICE[1:]) / 2
     noICESPICE_exp_hist_data = exp_hist_withoutICESPICE  # Replace with the appropriate experimental data
     noICESPICE_exp_hist_uncertainity = exp_hist_withoutICESPICE_uncertainity
     noICESPICE_threshold_ranges = [300, 390]
-    noICESPICE_scale_range = [390, 1080]
+    noICESPICE_scale_range = [390, 1200]
     
     ICESPICE_exp_bin_centers = (exp_bin_edges_withICESPICE[:-1] + exp_bin_edges_withICESPICE[1:]) / 2
     ICESPICE_exp_hist_data = exp_hist_withICESPICE  # Replace with the appropriate experimental data
     ICESPICE_exp_hist_uncertainity = exp_hist_withICESPICE_uncertainity
     ICESPICE_threshold_ranges = [100, 450]
-    ICESPICE_scale_range = [450, 1100]
+    ICESPICE_scale_range = [450, 1200]
 
     def scaling(exp_bin_centers, exp_hist_data, exp_hist_uncertainity, sim_bin_centers, sim_bin_edges, sim_hist, sim_hist_uncertainity, threshold_ranges, scale_range, axs: plt.Axes, diff_axs: plt.Axes):
 
@@ -407,7 +422,7 @@ if __name__ == "__main__":
         scaled_sim_hist_with_threshold[below_threshold_mask] = scaled_sim_hist_threshold
 
         # Plot the scaled simulated histogram with threshold
-        axs.stairs(values=scaled_sim_hist_with_threshold, edges=sim_bin_edges, color='dodgerblue', label="Simulation")
+        axs.stairs(values=scaled_sim_hist_with_threshold, edges=sim_bin_edges, color='dodgerblue', label="Simulation", linewidth=0.4)
         axs.fill_between(
             scale_sim_bin_centers,
             scaled_sim_hist_mask - scaled_sim_hist_uncertainty_mask,
@@ -422,45 +437,186 @@ if __name__ == "__main__":
         percent_diff = 100 * exp_minus_sim / scale_exp_hist_data
         percent_difference_uncertainty = percent_diff * np.sqrt( (exp_minus_sim_uncertainity / exp_minus_sim)**2 + (scale_exp_hist_uncertainity / scale_exp_hist_data)**2)
             
-        diff_axs.plot(scale_exp_bin_centers, percent_diff, marker='o', markersize=0.5, color="black", linestyle='None', label="Exp-Sim/Exp [%]")
+        diff_axs.plot(scale_exp_bin_centers, percent_diff, marker='.', markersize=0.3, color="black", linestyle='None') 
         diff_axs.fill_between(scale_exp_bin_centers, 
                                         percent_diff - np.abs(percent_difference_uncertainty),
                                         percent_diff + np.abs(percent_difference_uncertainty),
                                         color='dodgerblue',
-                                        alpha=0.2,
-                                        label="Uncertainty"
+                                        alpha=0.4,
         )
         
-    scaling(noICESPICE_exp_bin_centers, noICESPICE_exp_hist_data, noICESPICE_exp_hist_uncertainity, noICSPICE_sim_bin_centers, noICSPICE_sim_bin_edges, noICSPICE_sim_hist, noICSPICE_sim_hist_uncertainity, noICESPICE_threshold_ranges, noICESPICE_scale_range, axs[0], axs[2])
-    scaling(ICESPICE_exp_bin_centers, ICESPICE_exp_hist_data, ICESPICE_exp_hist_uncertainity, ICSPICE_sim_bin_centers, ICSPICE_sim_bin_edges, ICSPICE_sim_hist, ICSPICE_sim_hist_uncertainity, ICESPICE_threshold_ranges, ICESPICE_scale_range, axs[1], axs[3])
+    scaling(noICESPICE_exp_bin_centers, noICESPICE_exp_hist_data, noICESPICE_exp_hist_uncertainity, noICSPICE_sim_bin_centers, noICSPICE_sim_bin_edges, noICSPICE_sim_hist, noICSPICE_sim_hist_uncertainity, noICESPICE_threshold_ranges, noICESPICE_scale_range, axs[1], axs[2])
+    scaling(ICESPICE_exp_bin_centers, ICESPICE_exp_hist_data, ICESPICE_exp_hist_uncertainity, ICSPICE_sim_bin_centers, ICSPICE_sim_bin_edges, ICSPICE_sim_hist, ICSPICE_sim_hist_uncertainity, ICESPICE_threshold_ranges, ICESPICE_scale_range, axs[3], axs[4])
 
-    for (i, ax) in enumerate(axs):        
-        ax.legend(loc='upper left', shadow=False, frameon=True, fancybox=False, edgecolor='none', facecolor='none')
-        ax.set_xlim(270, 1080)   
-        ax.minorticks_on()
-        ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=3)
-        ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=5)
+    labels = [r'(a)', r'(b)', r'(c)', r'(d)', r'(e)']  # Labels for each subplot
 
+    for (i, ax) in enumerate(axs):  
         if i == 0:
-            ax.set_ylabel(r"Counts/keV")
-            ax.set_ylim(0.1, 6999)
+            coord = (0.5, 1)
+        else:
+            coord = (0.6, 1)     
+
+        legend = ax.legend(
+            loc='upper center',  # Position the legend in the center vertically, aligned to the left edge
+            bbox_to_anchor=coord,  # (x, y) relative to the axes; x=0 aligns with the left edge, y=0.5 centers vertically
+            shadow=False, 
+            frameon=True, 
+            fancybox=False, 
+            edgecolor='none'
+        )
+        # Make the legend background transparent
+        legend.get_frame().set_alpha(0.5)  # Adjust the transparency level (0.0 to 1.0)
+        legend.get_frame().set_facecolor('white')  # Optional: Set a specific color with transparency
+
+        ax.set_xlim(270, 1099)   
+        ax.minorticks_on()
+        ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=2)
+        ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=4)
+
+        if i != 0:
+            ax.axvline(x=481.6935, color='black', linestyle='--', linewidth=0.5)
+            ax.axvline(x=553.8372, color='black', linestyle='--', linewidth=0.5)
+            ax.axvline(x=565.8473, color='black', linestyle='--', linewidth=0.5)
+            ax.axvline(x=975.651, color='black', linestyle='--', linewidth=0.5)
+            ax.axvline(x=1047.795, color='black', linestyle='--', linewidth=0.5)
+            ax.axvline(x=1059.805, color='black', linestyle='--', linewidth=0.5)
+        else:
+            bbox = dict(facecolor='none', edgecolor='none')
+            
+            fs = 6
+            ax.text(481, 3800, r"570K", horizontalalignment='center', verticalalignment='bottom', fontsize=fs, rotation=90, bbox=bbox)
+            ax.text(553, 3000, r"570L", horizontalalignment='center', verticalalignment='bottom', fontsize=fs, rotation=90, bbox=bbox)
+            ax.text(565, 1500, r"570M", horizontalalignment='left', verticalalignment='bottom', fontsize=fs, rotation=90, bbox=bbox)
+            ax.text(975, 5200, r"1064K", horizontalalignment='center', verticalalignment='bottom', fontsize=fs, rotation=90, bbox=bbox)
+            ax.text(1047, 3500, r"1064L", horizontalalignment='center', verticalalignment='bottom', fontsize=fs, rotation=90, bbox=bbox)
+            ax.text(1059, 2000, r"1064M", horizontalalignment='left', verticalalignment='bottom', fontsize=fs, rotation=90, bbox=bbox)
+
+            # vertical lines for the peaks that stop at the label
+            ax.vlines(x=481.6935, ymin=0, ymax=3800 - 50, color='black', linestyle='--', linewidth=0.5)
+            ax.vlines(x=553.8372, ymin=0, ymax=3000 - 50, color='black', linestyle='--', linewidth=0.5)
+            ax.vlines(x=565.8473, ymin=0, ymax=1500 - 50, color='black', linestyle='--', linewidth=0.5)
+
+            ax.vlines(x=975.651, ymin=0, ymax=5200 - 50, color='black', linestyle='--', linewidth=0.5)
+            ax.vlines(x=1047.795, ymin=0, ymax=3500 - 50, color='black', linestyle='--', linewidth=0.5)
+            ax.vlines(x=1059.805, ymin=0, ymax=2000 - 50, color='black', linestyle='--', linewidth=0.5)
+
+        # Add label to the top-right corner of the axes
+        ax.text(
+            0.08, 0.92,  # Position (95% of width and height in normalized coordinates)
+            labels[i],    # Text label
+            transform=ax.transAxes,  # Use axes coordinate system
+            ha='right',   # Horizontal alignment
+            va='top',     # Vertical alignment
+            bbox=dict(facecolor='none', edgecolor='none', alpha=0.5)  # Optional: Transparent box around text
+        )
+
+        if i != 4:
             ax.set_xticklabels([])
+        else:
+            ax.set_xlabel(r"Energy [keV]")
         
-        if i == 1:
+        if i == 0 or i == 1 or i == 3:
             ax.set_ylim(0.1, 6999)
-            ax.set_yticklabels([])
-            ax.set_xticklabels([])
-        if i == 2:
-            ax.set_xlabel(r"Energy [keV]")
-            ax.set_ylabel(r"Exp-Sim/Exp [%]")
-            ax.set_ylim(-99, 99)
-            ax.axhline(y=0, color='black', linestyle='--', linewidth=1)
-        if i == 3:
-            ax.set_xlabel(r"Energy [keV]")
-            ax.set_ylim(-99, 99)
-            ax.axhline(y=0, color='black', linestyle='--', linewidth=1)
-            ax.set_yticklabels([])
 
-    plt.savefig("../207Bi/207Bi_best_exp_sim_comparison.pdf")
+        if i == 2 or i == 4:
+            ax.set_ylim(-99, 99)
+            ax.set_ylabel(r"Difference [%]")
+            ax.axhline(y=0, color='black', linestyle='--', linewidth=1)
+        else:
+            ax.set_ylabel(r"Counts/keV")
 
+    fig.subplots_adjust(left=0.133, right=0.99, top=0.99, bottom=0.064, hspace=0.025, wspace=0.025)
+
+    plt.savefig("./207Bi/207Bi_best_exp_sim_comparison.pdf")
     plt.show()
+
+    def demo_plot():
+
+        tex_fonts = {
+            # Use LaTeX to write all text
+            # "text.usetex": True,
+            "font.family": "serif",
+            "font.serif" : ["CMR10"],
+            # Use 10pt font in plots, to match 10pt font in document
+            "axes.labelsize": 8,
+            "font.size": 8,
+            # Make the legend/label fonts a little smaller
+            "legend.fontsize": 8,
+            "xtick.labelsize": 8,
+            "ytick.labelsize": 8
+        }
+
+
+        plt.rcParams.update(tex_fonts)
+        matplotlib.rcParams['axes.unicode_minus'] = False
+
+        # Create a figure and GridSpec with 4 rows and 1 column
+        fig = plt.figure(figsize=(2.8919330289193304, 4))  # Adjust the height for better visualization
+        gs = gridspec.GridSpec(4, 1, figure=fig, height_ratios=[3, 1, 3, 1], hspace=0.05)
+
+        # Create axes for the main plots and residuals
+        axs_main_0 = fig.add_subplot(gs[0, 0])
+        axs_residuals_0 = fig.add_subplot(gs[1, 0])
+        axs_main_1 = fig.add_subplot(gs[2, 0])
+        axs_residuals_1 = fig.add_subplot(gs[3, 0])
+
+        axs_main_0.stairs(values=exp_hist_withoutICESPICE, edges=exp_bin_edges_withoutICESPICE, color="black", label=r"$^{207}$Bi without ICESPICE", linewidth=0.5)
+        axs_main_1.stairs(values=exp_hist_withICESPICE, edges=exp_bin_edges_withICESPICE, color="black", label=r"$^{207}$Bi with ICESPICE", linewidth=0.5)
+
+        axs = [axs_main_0, axs_main_1, axs_residuals_0, axs_residuals_1]
+
+        # Call the scaling function to add data and plots
+        scaling(
+            noICESPICE_exp_bin_centers,
+            noICESPICE_exp_hist_data,
+            noICESPICE_exp_hist_uncertainity,
+            noICSPICE_sim_bin_centers,
+            noICSPICE_sim_bin_edges,
+            noICSPICE_sim_hist,
+            noICSPICE_sim_hist_uncertainity,
+            noICESPICE_threshold_ranges,
+            noICESPICE_scale_range,
+            axs[0],
+            axs[2]
+        )
+
+        scaling(
+            ICESPICE_exp_bin_centers,
+            ICESPICE_exp_hist_data,
+            ICESPICE_exp_hist_uncertainity,
+            ICSPICE_sim_bin_centers,
+            ICSPICE_sim_bin_edges,
+            ICSPICE_sim_hist,
+            ICSPICE_sim_hist_uncertainity,
+            ICESPICE_threshold_ranges,
+            ICESPICE_scale_range,
+            axs[1],
+            axs[3]
+        )
+
+        # Configure axes labels, legends, and layout
+        for i, ax in enumerate(axs):
+            ax.legend(loc='upper left', shadow=False, frameon=True, fancybox=False, edgecolor='none', facecolor='none')
+            ax.set_xlim(270, 1080)
+            ax.minorticks_on()
+            ax.tick_params(axis='both', which='minor', direction='in', top=True, right=True, left=True, bottom=True, length=2)
+            ax.tick_params(axis='both', which='major', direction='in', top=True, right=True, left=True, bottom=True, length=4)
+
+            if i in [0, 1]:  # Main plots
+                ax.set_ylabel(r"Counts/keV")
+                ax.set_ylim(0.1, 6999)
+                ax.set_xticklabels([])
+                # ax.set_yticklabels([])
+            else:  # Residual plots
+                ax.set_xlabel(r"Energy [keV]")
+                ax.set_ylabel(r"Difference [%]")
+                ax.set_ylim(-99, 99)
+                ax.axhline(y=0, color='black', linestyle='--', linewidth=1)
+                if i == 2:
+                    ax.set_xticklabels([])
+
+        fig.subplots_adjust(left=0.163, right=0.99, top=0.99, bottom=0.08, hspace=0.025, wspace=0.025)
+
+        plt.savefig("./207Bi/207Bi_best_exp_sim_comparison.pdf")
+        plt.show()
+
