@@ -4,8 +4,8 @@ import pandas as pd
 # file_path = './python_scripts/new_field.csv'
 
 # file_path = '/home/alconley/Downloads/comsol_output_5N42_1x1x16in_x50_y50_z70_res1_2mm.csv'
-file_path = '/home/alconley/Downloads/comsol_output_3N42_1x1x16in_x50_y50_z70_res1_2mm.csv'
-
+# file_path = '/home/alconley/Downloads/comsol_output_3N42_1x1x16in_x50_y50_z70_res1_2mm.csv'
+file_path = '/Users/alconley/OneDrive - Florida State University/ICESPICE/5N42_1x1x1_8/geant4/comsol_output_5N42_1x1x1_8in_withmounts_1_2mm_grid.csv'
 
 column_names = ['X', 'Y', 'Z', 'BX', 'BY', 'BZ', 'BMOD/HMOD']
 data = pd.read_csv(file_path, comment='%', skiprows=9, names=column_names)
@@ -47,7 +47,7 @@ header_info = f"""
 00 [METRE] """ 
  
 # Write to file
-output_file_path = './comsol_output_3N42_1x1x16in_x50_y50_z70_res1_2mm.mag'
+output_file_path = './comsol_output_5N42_1x1x8in_with_mounts_x50_y50_z70_res1_2mm.mag'
 with open(output_file_path, 'w') as file:
     file.write(header_info + '\n')
     formatted_data.to_csv(file, header=False, index=False, sep=' ', mode='a')

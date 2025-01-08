@@ -58,6 +58,7 @@ set(ICESPICE_SCRIPT
     comsol_output_3N42_1x1x16in_x50_y50_z70_res1_2mm.mag
     comsol_output_5N42_1x1x16in_x50_y50_z70_res1_2mm.mag
     comsol_output_6N42_1x1x16in_x50_y50_z70_res1_2mm.mag
+    comsol_output_5N42_1x1x8in_with_mounts_x50_y50_z70_res1_2mm.mag
     Plots.C
     Fold.C
   )

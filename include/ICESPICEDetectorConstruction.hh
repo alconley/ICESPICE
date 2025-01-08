@@ -42,11 +42,6 @@ public:
                     
   G4double GetWorldSizeXY()  const       {return WorldSizeXY;};
   G4double GetWorldSizeZ() const          {return WorldSizeZ;}; 
-
-  G4Material* GetWorldMaterial()         {return WorldMaterial;};
-  G4Material* GetAttenuatorMaterial()           {return AttenuatorMaterial;}; 
-  G4Material* GetMagnetMaterial()           {return MagnetMaterial;}; 
-
   void PIPS100Detector();
   void PIPS300Detector(); 
   void PIPS500Detector(); 
@@ -80,9 +75,6 @@ private:
   G4VPhysicalVolume* physiWorld;
   G4LogicalVolume*   logicWorld;  
   G4Box*             solidWorld;
-  G4Material*        WorldMaterial;
-
-  G4Material*        MagnetMaterial; 
 
   G4double           DetectorPosition;   
   G4double           SourcePosition;
@@ -91,33 +83,36 @@ private:
   G4LogicalVolume*   logicDetector;
   // G4VSolid*          solidDetector; // uncomment if using CADMesh
   G4Tubs*            solidDetector; 
-  G4Material*        DetectorMaterial;
   G4double           DetectorActiveArea;
   G4double           DetectorThickness;
 
-  G4Material*        AttenuatorMaterial; 
   
   G4VPhysicalVolume* physiDetectorWindow;
   G4LogicalVolume*   logicDetectorWindow;
   G4Tubs*            solidDetectorWindow; 
-  G4Material*        DetectorWindowMaterial; 
   G4double           DetectorWindowThickness;
 
   G4VPhysicalVolume* physiDetectorHousing;
   G4LogicalVolume*   logicDetectorHousing;
   G4VSolid*          solidDetectorHousing;   
-  G4Material*        DetectorHousingMaterial; 
 
   G4VPhysicalVolume* physiDetectorHolder;
   G4LogicalVolume*   logicDetectorHolder;
   G4VSolid*          solidDetectorHolder;
-  G4Material*        DetectorHolderMaterial;
 
   G4VPhysicalVolume* physiSourceBacking;
   G4LogicalVolume*   logicSourceBacking;
   G4Tubs*            solidSourceBacking;
   G4double           SourceBackingThickness;
-  G4Material*        SourceBackingMaterial;
+
+  G4Material*        Aluminum;
+  G4Material*        Silicon;
+  G4Material*        StainlessSteel;
+  G4Material*        Tantalum;
+  G4Material*        Nylon;
+  G4Material*        NdFeB;
+  G4Material*        Acetal;
+  G4Material*        Vacuum;  
 
   G4Cache<G4MagneticField*> fField;  //pointer to the thread-local fields
 
