@@ -25,7 +25,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 0
+#define MAG 1
 
 #define ICESPICE_5N42_1x1x1_8in_FLAG 1 
 #define ICESPICE_3N42_1x1x1_16in_FLAG 0 
@@ -39,7 +39,7 @@
 
 #define DETECTORHOLDER 1 // AC: Volume for detector holder
 
-#define BI207SOURCEBACKING 0
+#define BI207SOURCEBACKING 1
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -53,7 +53,7 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
     physiSourceBacking(NULL), logicSourceBacking(NULL), solidSourceBacking(NULL),
 
     Aluminum(NULL), Silicon(NULL), StainlessSteel(NULL), Tantalum(NULL), Nylon(NULL),
-    NdFeB(NULL), Acetal(NULL), Vacuum(NULL),
+    NdFeB(NULL), Acetal(NULL), Vacuum(NULL), SiO2(NULL),
 
     fMessenger(0)  
 {
@@ -150,6 +150,12 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   G4Material* gal_vac = nist->FindOrBuildMaterial("G4_Galactic");
   Vacuum = gal_vac;
 
+  // SiO2 for the detector window
+  G4Material* sio2 = new G4Material("SiO2", 2.2*g/cm3, ncomponents = 2);
+  sio2->AddElement(Si, 1);
+  sio2->AddElement(O, 2);
+  SiO2 = sio2;
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -241,7 +247,9 @@ void ICESPICEDetectorConstruction::ConstructSDandField()
       //Field grid in A9.TABLE. File must be in accessible from run urn directory. 
 
       #if ICESPICE_5N42_1x1x1_8in_FLAG
-        G4MagneticField* ICESPICEField= new ICESPICETabulatedField3D("comsol_output_5N42_1x1x8in_x50_y50_z70_res1_2mm.mag", zOffset);
+        // G4MagneticField* ICESPICEField= new ICESPICETabulatedField3D("comsol_output_5N42_1x1x8in_x50_y50_z70_res1_2mm.mag", zOffset);
+        G4MagneticField* ICESPICEField= new ICESPICETabulatedField3D("comsol_output_5N42_1x1x8in_with_mounts_x50_y50_z70_res1_2mm.mag", zOffset);
+
       #endif
 
       #if ICESPICE_3N42_1x1x1_16in_FLAG
@@ -329,16 +337,7 @@ void ICESPICEDetectorConstruction::SetSourcePosition(G4double val) {
 }
 
 void ICESPICEDetectorConstruction::PIPS1000Detector() {
-  // Assuming that the detector window and housing are positioned relative to the detector's dimensions.
-  // auto detector = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips1000/active_area.PLY");
-
-  // solidDetector = detector->GetSolid();
-  // logicDetector = new G4LogicalVolume(solidDetector,
-  //                                       DetectorMaterial,
-  //                                       "Detector");
-
-
-  DetectorActiveArea = 49.9*mm2; // Active area of the detector
+  DetectorActiveArea = 50.0*mm2; // Active area of the detector
   DetectorThickness = 1000.*micrometer; // Thickness of the detector
   DetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
   G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
@@ -364,7 +363,7 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
                                     360.*deg);  // Spanning angle
 
   logicDetectorWindow = new G4LogicalVolume(solidDetectorWindow,
-                                      Silicon,
+                                      SiO2,
                                       "DetectorWindow");
 
 
@@ -899,6 +898,8 @@ void ICESPICEDetectorConstruction::ICESPICE_5N42_1x1x1_8in() {
         logicMagnet->SetVisAttributes(simpleMagnetVisAtt);
     }
 
+    /*
+
     // magnet holders: Aluminum  
     std::vector<std::string> magnetHolderNames = {
         "magnet_holder",
@@ -1051,8 +1052,7 @@ void ICESPICEDetectorConstruction::ICESPICE_5N42_1x1x1_8in() {
         logicHardwareNylon->SetVisAttributes(simpleHardwareNylonVisAtt);
     }
 
-
-
+  */
 
                                                                                                    
 }

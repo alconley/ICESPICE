@@ -79,7 +79,7 @@ void ICESPICEPhysicsList::ConstructProcess()
 
   fDecPhysicsList->ConstructProcess();
 
-  // AddRadioactiveDecay();
+  AddRadioactiveDecay();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -113,6 +113,7 @@ private:
   G4Material*        NdFeB;
   G4Material*        Acetal;
   G4Material*        Vacuum;  
+  G4Material*        SiO2;
 
   G4Cache<G4MagneticField*> fField;  //pointer to the thread-local fields
 

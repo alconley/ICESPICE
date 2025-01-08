@@ -9,12 +9,13 @@ The goal of this simulation is to import an external magnetic field from [COMSOL
 
 ## Installation and Running
 
-The field map, due to its large size (>1 GB), is not included in the repository. If required, please contact me for access via OneDrive or similar services.
-
 **Prerequisites:**
 - Geant4 version: 11.2.0
 - ROOT version: 6.30/06
 - CMake version: 3.29.2
+
+**Installing Geant4**
+I have included a script to install Geant4 on MacOS. A similar script exists at [geant4_setup_tools](https://github.com/eli-temanson/geant4_setup_tools) for Ubuntu 22.04.
 
 **Building and running the simulation:**
 ```bash
@@ -27,16 +28,16 @@ make
 
 ## COMSOL Magnetic Field Configuration
 
-In [COMSOL](https://www.comsol.com), the magnetic field is simulated for an arrangement involving five 1"x1"x1/8" N42 Neodymium magnets. These magnets are arranged around a tantalum attenuator, which is a rod with a diameter of 1/8" and a height of approximately 30mm, placed within a vacuum volume. The setup is strategically designed to create a toroidal magnetic field, optimizing the path of electrons from a positive z position (source) towards a focused negative z position (detector).
-
-The magnetic field configuration aims to ensure that when the source is positioned optimally, electrons are deflected in the negative phi direction (using cylindrical coordinates), enabling precise focusing at the detector's location.
+In [COMSOL](https://www.comsol.com), the magnetic field is simulated for an arrangement involving five 1"x1"x1/8" N42 Neodymium magnets. These magnets are arranged around a tantalum attenuator, which is a rod with a diameter of 1/8" and a height of approximately 30mm, placed within a vacuum volume. The setup is designed to create a toroidal magnetic field, optimizing the path of electrons from a positive z position (source) towards a focused negative z position (detector).
 
 ### Magnetic Field Data Export
 
-The magnetic field data from COMSOL is exported to a .csv file, which includes spatial and vector field data at half-millimeter intervals within a 10cm x 10cm x 14cm region centered at the origin. Given the extensive data coverage and fine resolution, the file size is typically large (>1 GB).
+The magnetic field data from COMSOL is exported to a .csv file, which includes spatial and vector field data at half-millimeter intervals within a 10cm x 10cm x 14cm region centered at the origin. Given the extensive data coverage and fine resolution, the file size is typically large (>1 GB) and could not be put on github. The COMSOL output must be converted to the correct format (same as the "purging_magnet" example) for the code to read it. This script can be found in ./scripts/comsol_to_geant_table.py.
 
-### Data Conversion for GEANT4
+## Geometry
 
-To facilitate the use of this COMSOL-generated magnetic field data in GEANT4, a Python script (`comsol_to_geant_table.py`) is provided. This script reformats the data from the COMSOL output to match the input requirements for the GEANT4 simulation, following the format used in the `purging_magnet` example. Users need to adjust the filepath in the script to point to the correct COMSOL .csv file.
+The geometry of ICESPICE is easily imported into Geant4 using [CADMESH](https://github.com/christopherpoole/CADMesh). From SolidWorks, the assembly geometry is exported to a .step file. This is then imported into [FreeCad](https://www.freecad.org/) and then exported as a .obj file. This is annoying but SolidWorks doesn't allow you to export an assembly as an .obj file. The .obj file can be easily read into geant4 using CADMESH. I had to change the groups ('g ') in the .obj file to objects ('o '). The name of the objects must not have spaces too.
 
-For more information or to request the large field map file, please reach out via the contact methods provided in this repository.
+## Scripts
+Multiple scripts exist in different folders for the simulations of different purposes.
+
