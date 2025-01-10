@@ -57,7 +57,7 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
 
   G4LossTableManager::Instance();
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(10*eV, 1*GeV);
-  SetDefaultCutValue(10*micrometer);
+  SetDefaultCutValue(1*micrometer);
 
 }
 

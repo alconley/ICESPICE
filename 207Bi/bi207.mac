@@ -4,14 +4,11 @@
 /control/alias n 100000000
 /control/alias z 83
 /control/alias a 207
-#/control/alias e 1633.356
-#/control/alias e_str 1633keV
 /control/alias e 0
 /control/alias e_str 0keV
-#/control/alias cut 1
-/control/alias runno 97
+/control/alias runno 98
 /control/alias half_target_thickness 500
-/control/alias File ICESPICE_RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PIPS1000_AllProcesses_Si02Window50nm_Source{half_target_thickness}nmThick_run{runno}
+/control/alias File run_{runno}_ICESPICE_RadDecay_z{z}_a{a}_e{e_str}_f{f}mm_g{g}mm_n{n}_PIPS1000_AllProcesses_Si02Window50nm_Source{half_target_thickness}nmThick
 
 # Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
 /control/verbose 0         # output for general control commands
@@ -21,8 +18,6 @@
 
 # Initialize the run manager (prepare the simulation geometry and physics)
 /run/initialize
-
-#/run/setCut {cut} micrometer
 
 # Set a very high time threshold for decays to allow all radioactive decays to happen without prematurely stopping
 #/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year # currently hardcoded
