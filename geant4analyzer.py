@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import warnings
 import os
 from lmfit import minimize, Parameters
+import sigfig
 
 # for virtual environment on mac
 # source $(brew --prefix root)/bin/thisroot.sh  # for ROOT
@@ -154,6 +155,9 @@ class Geant4Analyzer:
         
         if total_counts != round(smeared_total_counts):
             warnings.warn(f"Total counts before and after smearing do not match: {total_counts} vs {smeared_total_counts}")
+            print("\n")
+        
+        print(f"Smearing {self.geant4_histogram_name} histogram with FWHM = {fwhm} keV")
         
         self.geant4_bin_content = smeared_bin_contents
         self.geant4_bin_uncertainties = smeared_bin_contents_uncertainity
@@ -208,11 +212,12 @@ class Geant4Analyzer:
 
         # Extract the optimal scale factor
         optimal_scale = result.params['scale'].value
+        optimal_scale_uncertainty = result.params['scale'].stderr
 
         self.scale = optimal_scale
         self.scale_range = scaling_range
 
-        print(f"Optimal scale factor: {optimal_scale}")
+        print(f"Optimal scale factor: {formatted_round(optimal_scale, optimal_scale_uncertainty)}")
 
         # Update the Geant4 histogram with the optimal scale factor
         self.geant4_bin_content *= optimal_scale
@@ -255,8 +260,14 @@ class Geant4Analyzer:
             warnings.warn("Threshold fitting was unsuccessful.")
 
         fitted_width = threshold_result.params['width'].value
+        fitted_width_uncertainty = threshold_result.params['width'].stderr
+        
+        
         fitted_scale = threshold_result.params['scale'].value
+        fitted_scale_uncertainty = threshold_result.params['scale'].stderr
+        
         fitted_phase = threshold_result.params['phase'].value
+        fitted_phase_uncertainty = threshold_result.params['phase'].stderr
 
         # Apply the threshold to the Geant4 histogram for energies below the threshold max
         below_threshold_mask = self.geant4_bin_centers < threshold_range[1]
@@ -269,9 +280,11 @@ class Geant4Analyzer:
         # Set uncertainties to zero for bins within the threshold region
         self.geant4_bin_uncertainties[below_threshold_mask] = 0
 
+        print(f"Threshold range: {threshold_range}")
+        print(f"Threshold fit parameters: width = {formatted_round(fitted_width, fitted_width_uncertainty)}, scale = {formatted_round(fitted_scale, fitted_scale_uncertainty)}, phase = {formatted_round(fitted_phase, fitted_phase_uncertainty)}")
         self.threshold_range = threshold_range
         self.threshold_result = threshold_result
-
+        
     def plot_experiment(self, ax: plt.Axes):
         if self.experimental_bin_content is None or self.experimental_bin_edges is None:
             raise ValueError("Geant4 simulation data is not available for plotting.")
@@ -295,7 +308,7 @@ class Geant4Analyzer:
         ax.set_ylabel("Counts")
         ax.set_xlabel("Energy [keV]")
 
-        ax.legend(loc='upper right', shadow=False, frameon=True, fancybox=False, edgecolor='none', facecolor='none')
+        ax.legend(loc='upper center')
         ax.minorticks_on()
         ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=3)
         ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=5)
@@ -323,7 +336,7 @@ class Geant4Analyzer:
         ax.set_ylabel("Counts")
         ax.set_xlabel("Energy [keV]")
 
-        ax.legend(loc='upper right', shadow=False, frameon=True, fancybox=False, edgecolor='none', facecolor='none')
+        ax.legend(loc='upper center')
         ax.minorticks_on()
         ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=3)
         ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=5)
@@ -353,7 +366,7 @@ class Geant4Analyzer:
         ax.set_xlabel("Energy [keV]")
         ax.set_ylabel("Residuals [keV]")
 
-        # ax.legend(loc='upper right', shadow=False, frameon=True, fancybox=False, edgecolor='none', facecolor='none')
+        # ax.legend(loc='upper center')
         ax.minorticks_on()
         ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=3)
         ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=5)
@@ -395,7 +408,7 @@ class Geant4Analyzer:
         ax.set_xlabel("Energy [keV]")
         ax.set_ylabel("Percent Difference [%]")
 
-        ax.legend(loc='upper right', shadow=False, frameon=True, fancybox=False, edgecolor='none', facecolor='none')
+        ax.legend(loc='upper center')
         ax.minorticks_on()
         ax.tick_params(axis='both', which='minor', direction='in', top=True, right=True, left=True, bottom=True, length=3)
         ax.tick_params(axis='both', which='major', direction='in', top=True, right=True, left=True, bottom=True, length=5)
@@ -434,12 +447,12 @@ class Geant4Analyzer:
             # Plot scale range
             if self.scale_range:
                 for ax in axs:
-                    ax.axvspan(self.scale_range[0], self.scale_range[1], color='lightgreen', alpha=0.1, label="Scaling Range")
+                    ax.axvspan(self.scale_range[0], self.scale_range[1], color='lightgreen', alpha=0.3, label="Scaling Range")
 
             # Plot threshold range
             if self.threshold_range:
                 for ax in axs:
-                    ax.axvspan(self.threshold_range[0], self.threshold_range[1], color='lightsalmon', alpha=0.1, label="Threshold Range")
+                    ax.axvspan(self.threshold_range[0], self.threshold_range[1], color='lightsalmon', alpha=0.3, label="Threshold Range")
 
             # Plot experiment
             if experiment:
@@ -493,22 +506,29 @@ def threshold_residuals(params, x, data):
     model = arctan_threshold(x, width, scale, phase)
     return data - model
 
+def formatted_round(value, uncertainty):
+    import sigfig
+    return sigfig.round(value, uncertainty, style='Drake', sep='external_brackets', spacer='')
+
 if __name__ == "__main__":
-    simulation_root_file = "./207Bi/geant_sim/run_98_ICESPICE_RadDecay_z83_a207_e0keV_f70mm_g30mm_n100000000_PIPS1000_AllProcesses_Si02Window50nm_Source500nmThick.root"
+    simulation_root_file = "./207Bi/Sept2024_LSU/geant_sim/run_98_ICESPICE_RadDecay_z83_a207_e0keV_f70mm_g30mm_n100000000_PIPS1000_AllProcesses_Si02Window50nm_Source500nmThick.root"
     simulation_histogram_name = "Esil"
 
-    experimental_root_file = "./207Bi/exp_data/207Bi_ICESPICE_f70mm_g30mm_run_14_15.root"
+    experimental_root_file = "./207Bi/Sept2024_LSU/exp_data/207Bi_ICESPICE_f70mm_g30mm_run_14_15.root"
     experimental_histogram_name = "PIPS1000EnergyCalibrated"
 
     analyzer = Geant4Analyzer(geant4_root_file_path=simulation_root_file, geant4_histogram_name=simulation_histogram_name, experimental_root_file_path=experimental_root_file, experimental_histogram_name=experimental_histogram_name)
 
-    axes = analyzer.plot(experiment=True, simulation=True)
-    axes[1].set_yscale('log')
-    plt.show()
+    # axes = analyzer.plot(experiment=True, simulation=True)
+    # axes[1].set_yscale('log')
+    # plt.show()
 
     analyzer.gaussian_smear_simulation(fwhm=10)
     analyzer.scale_geant4_to_experiment(scaling_range=(462, 1075))
     analyzer.apply_threshold_to_geant4(threshold_range=(300, 462))
-    analyzer.plot(experiment=True, simulation=True, residuals=True, same_axes=True)
+    axes = analyzer.plot(experiment=True, simulation=True, residuals=True, same_axes=True)
+    
+    for ax in axes:
+        ax.set_xlim(200, 1200)
 
     plt.show()

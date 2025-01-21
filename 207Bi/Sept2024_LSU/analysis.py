@@ -106,8 +106,8 @@ def gaussian_smear(bin_contents, bin_centers, bin_uncertainity, fwhm):
     return smeared_bin_contents, smeared_bin_contents_low, smeared_bin_contents_high
 
 def experimental_results(plot=True):
-    df_withICESPICE = pl.read_parquet("../207Bi/exp_data/207Bi_ICESPICE_f70mm_g30mm_run_*.parquet")
-    df_withoutICESPICE = pl.read_parquet("../207Bi/exp_data/207Bi_noICESPICE_f9mm_g0mm_run_13.parquet")
+    df_withICESPICE = pl.read_parquet("../207Bi/Sept2024_LSU/exp_data/207Bi_ICESPICE_f70mm_g30mm_run_*.parquet")
+    df_withoutICESPICE = pl.read_parquet("../207Bi/Sept2024_LSU/exp_data/207Bi_noICESPICE_f9mm_g0mm_run_13.parquet")
 
     # Energy calibration of m=0.5395 and b=2.5229
     df_withICESPICE = df_withICESPICE.with_columns([(pl.col("PIPS1000Energy") * 0.5395 + 2.5229).alias("PIPS1000EnergyCalibrated")])
@@ -297,7 +297,7 @@ if __name__ == "__main__":
 
     # Use the parsed root_file_path from the arguments, or list files if not provided
     if args.root_file_path is None:
-        root_file_dir = "../207Bi/geant_sim/"
+        root_file_dir = "../207Bi/Sept2024_LSU/geant_sim/"
         root_files = list_root_files(root_file_dir)
         if not root_files:
             print(f"No .root files found in {root_file_dir}")
@@ -490,7 +490,7 @@ if __name__ == "__main__":
     # If save-pic is False, ignore save-path
     if save_pic: 
         # take the file name without the extension
-        save_path = "../207Bi/geant_sim/" + root_file_path.split(".root")[0] + ".png"
+        save_path = "../207Bi/Sept2024_LSU/geant_sim/" + root_file_path.split(".root")[0] + ".png"
         print(f"Saving the plot to {save_path}")
         # Save the plot to the provided path
         plt.savefig(save_path, dpi=300)
