@@ -55,7 +55,6 @@ public:
   void SetDetectorPosition(G4double val); 
   G4double GetDetectorPosition() const {return DetectorPosition;}; 
 
-  void SetSourcePosition(G4double val);
 
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
   const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } 
@@ -64,6 +63,10 @@ public:
   const G4VPhysicalVolume* GetDetectorHousingPV() const { return physiDetectorHousing; }
   const G4VPhysicalVolume* GetDetectorHolderPV() const { return physiDetectorHolder; }
 
+  void FSU207BiSource();
+  void Set207BiSourcePosition(G4double val);
+  void UpdateFSU207BiSourceThickness(G4double newThickness);
+  void ToggleFSU207BiSource(G4bool enable);
 
 private:
 
@@ -77,8 +80,7 @@ private:
   G4Box*             solidWorld;
 
   G4double           DetectorPosition;   
-  G4double           SourcePosition;
-
+  
   G4VPhysicalVolume* physiDetector; 
   G4LogicalVolume*   logicDetector;
   // G4VSolid*          solidDetector; // uncomment if using CADMesh
@@ -100,11 +102,6 @@ private:
   G4LogicalVolume*   logicDetectorHolder;
   G4VSolid*          solidDetectorHolder;
 
-  G4VPhysicalVolume* physiSourceBacking;
-  G4LogicalVolume*   logicSourceBacking;
-  G4Tubs*            solidSourceBacking;
-  G4double           SourceBackingThickness;
-
   G4Material*        Aluminum;
   G4Material*        Silicon;
   G4Material*        StainlessSteel;
@@ -114,10 +111,20 @@ private:
   G4Material*        Acetal;
   G4Material*        Vacuum;  
   G4Material*        SiO2;
+  G4Material*        Bi;
 
   G4Cache<G4MagneticField*> fField;  //pointer to the thread-local fields
 
   G4GenericMessenger* fMessenger;  // Messenger for dynamic configuration
+
+  // Variables for FSU's 207Bi source
+  G4bool f207BiSourceEnabled; // To enable/disable the source
+  G4double Source207BiThickness; // Thickness of the source
+  G4double Source207BiPosition; // Position of the source
+  G4LogicalVolume* logic207BiSource; // Logical volume of the source
+  G4VPhysicalVolume* physi207BiSource; // Physical volume of the source
+  G4Tubs*            solid207BiSource;
+  G4VisAttributes* visAttributes207BiSource; // Visualization attributes for the source
 
 private:
 

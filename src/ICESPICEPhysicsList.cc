@@ -36,7 +36,7 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
 : G4VModularPhysicsList() {
   
   // protected member of G4VModularPhysicsList
-  verboseLevel = 1;
+  verboseLevel = 0;
 
   fEmPhysicsList = new G4EmStandardPhysics_option4(verboseLevel);
 
@@ -56,9 +56,13 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
                 /std::log(2.));
 
   G4LossTableManager::Instance();
-  G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(10*eV, 1*GeV);
+  G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(0.01*eV, 1*GeV);
   SetDefaultCutValue(1*micrometer);
 
+  G4EmParameters* params = G4EmParameters::Instance();
+  params->SetDeexcitationIgnoreCut(false);
+  params->SetApplyCuts(true);
+  params->Dump();
 }
 
 ICESPICEPhysicsList::~ICESPICEPhysicsList() {
@@ -85,44 +89,44 @@ void ICESPICEPhysicsList::ConstructProcess()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "G4PhysicsListHelper.hh"
-// #include "G4RadioactiveDecay.hh"
+#include "G4RadioactiveDecay.hh"
 #include "G4Radioactivation.hh"
 #include "G4GenericIon.hh"
 
 void ICESPICEPhysicsList::AddRadioactiveDecay()
 {  
-  // G4RadioactiveDecay* radioactiveDecay = new G4RadioactiveDecay();
+  G4RadioactiveDecay* radioactiveDecay = new G4RadioactiveDecay();
   
-  G4Radioactivation* radioactiveDecay = new G4Radioactivation();
+  // G4Radioactivation* radioactiveDecay = new G4Radioactivation();
 
-  G4bool ARMflag = true;
-  radioactiveDecay->SetARM(ARMflag);        //Atomic Rearangement
-  radioactiveDecay->SetThresholdForVeryLongDecayTime(1.0e+60);
+  radioactiveDecay->SetARM(true);        //Atomic Rearangement
+  radioactiveDecay->SetThresholdForVeryLongDecayTime(1e+60);
 
-  // need to initialize atomic deexcitation
+  // Initialize atomic deexcitation
   G4LossTableManager* man = G4LossTableManager::Instance();
   G4VAtomDeexcitation* deex = man->AtomDeexcitation();
   if (!deex) {
-     G4EmParameters::Instance()->SetFluo(ARMflag);
-     G4EmParameters::Instance()->SetAugerCascade(ARMflag);
+     G4EmParameters::Instance()->SetFluo(true);
+     G4EmParameters::Instance()->SetAugerCascade(true);
      deex = new G4UAtomicDeexcitation();
      deex->InitialiseAtomicDeexcitation();
-     deex->SetAuger(ARMflag);
-     deex->SetFluo(ARMflag);
-     deex->SetPIXE(ARMflag);
+     deex->SetAuger(false);
+     deex->SetFluo(false);
+     deex->SetPIXE(false);
+     deex->SetVerboseLevel(1);
      man->SetAtomDeexcitation(deex);
   } else {
       G4EmParameters::Instance()->SetFluo(false);
       deex = new G4UAtomicDeexcitation();
       deex->InitialiseAtomicDeexcitation();
       deex->SetFluo(false);
+      deex->SetVerboseLevel(1);
       man->SetAtomDeexcitation(deex);
-
   }
 
-  // register radioactiveDecay
-  //
+  // Register radioactive decay for relevant particles
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
   ph->RegisterProcess(radioactiveDecay, G4GenericIon::GenericIon());
-
+  ph->RegisterProcess(radioactiveDecay, G4Electron::Electron());
+  ph->RegisterProcess(radioactiveDecay, G4Gamma::Gamma());
 }

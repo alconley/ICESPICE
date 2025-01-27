@@ -25,9 +25,9 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 1
+#define MAG 0
 
-#define ICESPICE_5N42_1x1x1_8in_FLAG 1 
+#define ICESPICE_5N42_1x1x1_8in_FLAG 0 
 #define ICESPICE_3N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_5N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_6N42_1x1x1_16in_FLAG 0 
@@ -39,7 +39,7 @@
 
 #define DETECTORHOLDER 1 // AC: Volume for detector holder
 
-#define BI207SOURCEBACKING 1
+#define BI207SOURCEBACKING 0
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -50,19 +50,22 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
     physiDetectorWindow(NULL), logicDetectorWindow(NULL), solidDetectorWindow(NULL),
     physiDetectorHousing(NULL), logicDetectorHousing(NULL), solidDetectorHousing(NULL),
     physiDetectorHolder(NULL), logicDetectorHolder(NULL), solidDetectorHolder(NULL),
-    physiSourceBacking(NULL), logicSourceBacking(NULL), solidSourceBacking(NULL),
 
     Aluminum(NULL), Silicon(NULL), StainlessSteel(NULL), Tantalum(NULL), Nylon(NULL),
-    NdFeB(NULL), Acetal(NULL), Vacuum(NULL), SiO2(NULL),
+    NdFeB(NULL), Acetal(NULL), Vacuum(NULL), SiO2(NULL), Bi(NULL),
+
+    f207BiSourceEnabled(false), physi207BiSource(NULL), logic207BiSource(NULL), solid207BiSource(NULL), visAttributes207BiSource(NULL),
 
     fMessenger(0)  
 {
   fField.Put(0);
   WorldSizeXY=WorldSizeZ=0;
   DetectorPosition=-30.*mm; // AC
-  SourcePosition=70.*mm; // AC
+  Source207BiPosition=70.*mm; // AC
+  Source207BiThickness=1000.0*nanometer; // AC
   DefineCommands();
 }  
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -121,6 +124,7 @@ void ICESPICEDetectorConstruction::DefineMaterials()
 
   Aluminum = nist->FindOrBuildMaterial("G4_Al");
   Silicon = nist->FindOrBuildMaterial("G4_Si");
+  Bi = nist->FindOrBuildMaterial("G4_Bi");
 
   G4Material* stainlesssteel = new G4Material("StainlessSteel", 8.00*g/cm3, 3);
     stainlesssteel->AddElement(Fe, 70 * perCent);  // 70% Iron
@@ -129,7 +133,6 @@ void ICESPICEDetectorConstruction::DefineMaterials()
     StainlessSteel = stainlesssteel;
 
   Tantalum = nist->FindOrBuildMaterial("G4_Ta");
-
 
   G4Material* nylon = new G4Material("Nylon", 1.14 * g / cm3, ncomponents = 4);
     // Add elements to Nylon
@@ -234,9 +237,9 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
   ICESPICE_6N42_1x1x1_16in();
 #endif
 
-#if BI207SOURCEBACKING
-  Bi207SourceBacking();
-#endif
+if (f207BiSourceEnabled) {
+    FSU207BiSource();
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -301,14 +304,30 @@ void ICESPICEDetectorConstruction::DefineCommands() {
     detectorPosition.SetRange("position>-100. && position<=0.");
     detectorPosition.SetDefaultValue("-30.");
 
+    // 207Bi Source Enable
+    G4GenericMessenger::Command& toggleSourceCommand =
+    fMessenger->DeclareMethod("FSU207BiSourceEnable",
+                               &ICESPICEDetectorConstruction::ToggleFSU207BiSource,
+                               "Enable or disable the Bi-207 source.");
+    toggleSourceCommand.SetParameterName("enable", true);
+    toggleSourceCommand.SetDefaultValue("false");
 
-    // Source Position
+    // 207Bi Source Position
     G4GenericMessenger::Command& sourcePosition
-      = fMessenger->DeclareMethodWithUnit("SourcePosition","mm",
-                                  &ICESPICEDetectorConstruction::SetSourcePosition, 
+      = fMessenger->DeclareMethodWithUnit("FSU207BiSourcePosition","mm",
+                                  &ICESPICEDetectorConstruction::Set207BiSourcePosition, 
                                   "Set the position of the source");
     sourcePosition.SetParameterName("position", true);
     sourcePosition.SetDefaultValue("70.");
+
+    // 207Bi Source Thickness
+    G4GenericMessenger::Command& sourceThicknessCommand =
+    fMessenger->DeclareMethodWithUnit("FSU207BiSourceThickness", "nanometer",
+                                       &ICESPICEDetectorConstruction::UpdateFSU207BiSourceThickness,
+                                       "Set the thickness of the Bi-207 source.");
+    sourceThicknessCommand.SetParameterName("thickness", true);
+    sourceThicknessCommand.SetRange("thickness > 0");
+    sourceThicknessCommand.SetDefaultValue("1000.0");
 
 }
 
@@ -318,29 +337,6 @@ void ICESPICEDetectorConstruction::SetDetectorPosition(G4double val) {
     G4RunManager::GetRunManager()->GeometryHasBeenModified();
     G4RunManager::GetRunManager() -> PhysicsHasBeenModified();
     G4RunManager::GetRunManager()->ReinitializeGeometry();
-}
-
-void ICESPICEDetectorConstruction::SetSourcePosition(G4double val) {
-
-    G4double halfTragetThickness = 500.0*nanometer; 
-    SourcePosition = val - halfTragetThickness;
-
-    // Now, use the same value to update the GPS position
-    G4UImanager* UI = G4UImanager::GetUIpointer();
-    std::ostringstream command;
-    command << "/gps/pos/centre 0 0 " << SourcePosition << " mm";  // Assuming the GPS is along the z-axis
-    UI->ApplyCommand(command.str());
-
-    G4cout << "Source position set to: " << SourcePosition << G4endl;
-    G4cout << "GPS center set to: (0, 0, " << SourcePosition << ") mm" << G4endl;
-
-    if (physiSourceBacking) {
-        G4double BackingPosition = val + SourceBackingThickness/2.0 + 0.01*micrometer;
-        physiSourceBacking->SetTranslation(G4ThreeVector(0, 0, BackingPosition));
-        G4RunManager::GetRunManager()->GeometryHasBeenModified();
-        G4RunManager::GetRunManager() -> PhysicsHasBeenModified();
-        G4RunManager::GetRunManager()->ReinitializeGeometry();
-    }
 }
 
 void ICESPICEDetectorConstruction::PIPS1000Detector() {
@@ -358,9 +354,12 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
                              360.*deg);            // Spanning angle
   
   // Create the logical volume for the detector
+  // logicDetector = new G4LogicalVolume(solidDetector,
+  //                                     Silicon,
+  //                                     "Detector");
   logicDetector = new G4LogicalVolume(solidDetector,
-                                      Silicon,
-                                      "Detector");
+                                    Silicon,
+                                    "Detector");
 
   solidDetectorWindow = new G4Tubs("DetectorWindow",
                                     0,  // Inner radius
@@ -799,67 +798,6 @@ void ICESPICEDetectorConstruction::PIPS100Detector() {
 
   }
 
-void ICESPICEDetectorConstruction::Bi207SourceBacking() {
-  // Create the source backing
-  SourceBackingThickness = 0.25*25.4*mm;;
-  G4double SourceBackingDiameter = 1.0*25.4*mm; // 1 inch;
-
-  // create a cylinder that is 1 inch in diameter and 0.5 in thick
-
-  solidSourceBacking=  new G4Tubs("SourceBacking",
-                                  0,  // Inner radius
-                                  SourceBackingDiameter/2.0,  // Outer radius
-                                  SourceBackingThickness/2.0,  // Half-height
-                                  0.*deg,  // Start angle
-                                  360.*deg);  // Spanning angle
-
-  logicSourceBacking = new G4LogicalVolume(solidSourceBacking, StainlessSteel, "SourceBacking");
-
-  // // add an ring with a hole in the center with a diameter of 0.75 in and and outer diameter of 1 in
-  G4double ringThickness = 1.0*mm; // 0.125 inches
-  G4double ringInnerDiameter = 0.6*25.4*mm; // 0.75 inches
-  G4double ringOuterDiameter = 1.0*25.4*mm; // 1 inch
-
-  G4Tubs* solidRing = new G4Tubs("SourceRing",
-                                  ringInnerDiameter/2.0,  // Inner radius
-                                  ringOuterDiameter/2.0,  // Outer radius
-                                  ringThickness/2.0,  // Half-height
-                                  0.*deg,  // Start angle
-                                  360.*deg);  // Spanning angle
-
-  G4LogicalVolume* logicRing = new G4LogicalVolume(solidRing, StainlessSteel, "SourceRing");
-
-  // place the ring at the center of the source backing
-  new G4PVPlacement(0,  // No rotation
-              G4ThreeVector(0, 0, - SourceBackingThickness/2.0 - ringThickness/2.0 + 1.0*micrometer ),  // Position in the world
-              logicRing,
-              "SourceRing",
-              logicSourceBacking,  // Parent volume
-              false,  // No boolean operation
-              0,  // Copy number
-              false);
-
-  physiSourceBacking = new G4PVPlacement(0,  // No rotation
-              G4ThreeVector(0, 0, SourcePosition + SourceBackingThickness/2.0),  // Position in the world
-              logicSourceBacking,
-              "SourceBacking",
-              logicWorld,  // Parent volume
-              false,  // No boolean operation
-              0);  // Copy number
-
-  // visualization attributes
-  G4VisAttributes* simpleSourceBackingVisAtt = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0));
-  simpleSourceBackingVisAtt->SetVisibility(true);
-  simpleSourceBackingVisAtt->SetForceSolid(true);
-  logicSourceBacking->SetVisAttributes(simpleSourceBackingVisAtt);
-
-  G4VisAttributes* simpleRingVisAtt = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0)); 
-  simpleRingVisAtt->SetVisibility(true);
-  simpleRingVisAtt->SetForceSolid(true);
-  logicRing->SetVisAttributes(simpleRingVisAtt);
-
-}
-
 void ICESPICEDetectorConstruction::ICESPICE_5N42_1x1x1_8in() {
     auto mesh = CADMesh::TessellatedMesh::FromOBJ("./cad_files/5N42_1x1x1_8in.obj");
 
@@ -1227,4 +1165,264 @@ void ICESPICEDetectorConstruction::ICESPICE_6N42_1x1x1_16in() {
     MagnetVisAtt->SetVisibility(true);
     MagnetVisAtt->SetForceSolid(true);
     logicMagnet->SetVisAttributes(MagnetVisAtt);
+}
+
+void ICESPICEDetectorConstruction::FSU207BiSource() {
+    // Define the geometry, material, and placement of the 207Bi source
+    G4double sourceRadius = 2.5 * mm;    // Radius of the source
+    G4double sourceBackingRadius = sourceRadius + 1.0 * mm; // Radius of the source backing
+    G4double sourceBackingThickness = 10.0 * mm;            // Thickness of the source backing
+    G4double holderRadius = sourceBackingRadius + 3.0 * mm; // Radius of the holder
+    G4double holderLength = sourceBackingThickness + 0.5 * mm; // Length of the holder
+
+    // Create a cylinder for the 207Bi source
+    solid207BiSource = new G4Tubs("FSU207BiSource",
+                                  0.0, sourceRadius,
+                                  Source207BiThickness / 2,
+                                  0.0 * deg, 360.0 * deg);
+
+    logic207BiSource = new G4LogicalVolume(solid207BiSource,
+                                           Bi, // Material: Bismuth
+                                           "FSU207BiSource");
+
+    // Position the source at the specified SourcePosition
+    G4ThreeVector sourcePositionVector(0, 0, Source207BiPosition + Source207BiThickness / 2);
+
+    physi207BiSource = new G4PVPlacement(nullptr,                // No rotation
+                                         sourcePositionVector,   // Placement position
+                                         logic207BiSource,       // Logical volume
+                                         "FSU207BiSource",               // Name
+                                         logicWorld,             // Parent volume
+                                         false,                  // No boolean operation
+                                         0);                     // Copy number
+
+    // Set visualization attributes for the source
+    visAttributes207BiSource = new G4VisAttributes(G4Colour(1.0, 0.5, 1.0)); // Light purple
+    visAttributes207BiSource->SetVisibility(true);
+    visAttributes207BiSource->SetForceSolid(true);
+    logic207BiSource->SetVisAttributes(visAttributes207BiSource);
+
+    // Add source backing behind the source
+    G4Tubs* solidSourceBacking = new G4Tubs("SourceBacking",
+                                            0.0, sourceBackingRadius,
+                                            sourceBackingThickness / 2,
+                                            0.0 * deg, 360.0 * deg);
+
+    G4LogicalVolume* logicSourceBacking = new G4LogicalVolume(solidSourceBacking,
+                                                              StainlessSteel, // Material for backing
+                                                              "SourceBacking");
+
+    // Position the backing directly behind the source
+    G4ThreeVector backingPosition(0, 0, Source207BiThickness / 2 + sourceBackingThickness / 2);
+
+    new G4PVPlacement(nullptr,              // No rotation
+                      backingPosition,      // Placement position relative to the source
+                      logicSourceBacking,   // Logical volume
+                      "SourceBacking",      // Name
+                      logic207BiSource,     // Parent volume (source)
+                      false,                // No boolean operation
+                      0);                   // Copy number
+
+    // Set visualization attributes for the source backing
+    G4VisAttributes* visAttributesSourceBacking = new G4VisAttributes(G4Colour(0.3, 0.3, 0.3)); // Gray
+    visAttributesSourceBacking->SetVisibility(true);
+    visAttributesSourceBacking->SetForceSolid(true);
+    logicSourceBacking->SetVisAttributes(visAttributesSourceBacking);
+
+    // Add the holder housing around the source backing
+    G4Tubs* solidHolder = new G4Tubs("Holder",
+                                     sourceBackingRadius, holderRadius,
+                                     holderLength / 2,
+                                     0.0 * deg, 360.0 * deg);
+
+    G4LogicalVolume* logicHolder = new G4LogicalVolume(solidHolder,
+                                                       StainlessSteel, // Material for the holder
+                                                       "Holder");
+
+    // Position the holder to enclose the backing
+    G4ThreeVector holderPosition(0, 0, Source207BiThickness / 2 + sourceBackingThickness / 2 - 0.25 * mm);
+
+    new G4PVPlacement(nullptr,            // No rotation
+                      holderPosition,     // Placement position relative to the source
+                      logicHolder,        // Logical volume
+                      "Holder",           // Name
+                      logic207BiSource,   // Parent volume (source)
+                      false,              // No boolean operation
+                      0);                 // Copy number
+
+    // Set visualization attributes for the holder
+    G4VisAttributes* visAttributesHolder = new G4VisAttributes(G4Colour(0.3, 0.3, 0.3)); // Dark gray
+    visAttributesHolder->SetVisibility(true);
+    visAttributesHolder->SetForceSolid(true);
+    logicHolder->SetVisAttributes(visAttributesHolder);
+
+    // Apply GPS commands for particle source
+    G4UImanager* UI = G4UImanager::GetUIpointer();
+    G4String command;
+
+    // Set the source center at SourcePosition
+    // Adjust the GPS center to match the source position
+    std::ostringstream positionCommand;
+    positionCommand << "/gps/pos/centre 0 0 " << (Source207BiPosition + Source207BiThickness / 2) / mm << " mm";
+    UI->ApplyCommand(positionCommand.str());
+
+    // Set isotropic angular distribution
+    command = "/gps/ang/type iso";
+    UI->ApplyCommand(command);
+
+    // Set volume and shape of the source
+    command = "/gps/pos/type Volume";
+    UI->ApplyCommand(command);
+    command = "/gps/pos/shape Cylinder";
+    UI->ApplyCommand(command);
+    command = "/gps/pos/radius 2.5 mm";
+    UI->ApplyCommand(command);
+
+    // Set the height of the cylinder based on the source thickness
+    std::ostringstream halfZCommand;
+    halfZCommand << "/gps/pos/halfz " << (Source207BiThickness) / nm << " nanometer";
+    UI->ApplyCommand(halfZCommand.str());
+
+    command = "/gps/pos/confine FSU207BiSource";
+    UI->ApplyCommand(command);
+
+    // Set particle type and ion definition
+    command = "/gps/particle ion";
+    UI->ApplyCommand(command);
+
+    // Define the ion parameters (example: Z=83 for Bi, A=207, E=0)
+    G4int Z = 83;  // Atomic number of Bi
+    G4int A = 207; // Mass number
+    G4double E = 0; // Excitation energy
+    std::ostringstream ionCommand;
+    ionCommand << "/gps/ion " << Z << " " << A << " 0 " << E;
+    UI->ApplyCommand(ionCommand.str());
+
+    // Set monoenergetic energy distribution
+    command = "/gps/ene/type Mono";
+    UI->ApplyCommand(command);
+    command = "/gps/ene/mono 0 eV";
+    UI->ApplyCommand(command);
+
+    G4cout << "207Bi source geometry and GPS configuration updated successfully." << G4endl;
+}
+
+void ICESPICEDetectorConstruction::UpdateFSU207BiSourceThickness(G4double newThickness) {
+    G4cout << "Updating 207Bi source thickness to: " << newThickness / nanometer << " nanometer" << G4endl;
+
+    // Check if the thickness is actually changing
+    if (Source207BiThickness == newThickness) {
+        G4cout << "Thickness is already set to the given value. No update required." << G4endl;
+        return;
+    }
+
+    // Update the thickness variable
+    Source207BiThickness = newThickness;
+
+    // Completely remove the old source geometry
+    if (physi207BiSource) {
+        G4cout << "Removing existing 207Bi source." << G4endl;
+        delete physi207BiSource;
+        physi207BiSource = nullptr;
+    }
+
+    if (logic207BiSource) {
+        delete logic207BiSource;
+        logic207BiSource = nullptr;
+    }
+
+    if (solid207BiSource) {
+        delete solid207BiSource;
+        solid207BiSource = nullptr;
+    }
+
+    if (visAttributes207BiSource) {
+        delete visAttributes207BiSource;
+        visAttributes207BiSource = nullptr;
+    }
+
+    // Recreate the 207Bi source with the updated thickness
+    if (f207BiSourceEnabled) {
+        G4cout << "Recreating 207Bi source with updated thickness." << G4endl;
+        FSU207BiSource();
+    }
+
+    // Notify the RunManager about the geometry change
+    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+    G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
+void ICESPICEDetectorConstruction::ToggleFSU207BiSource(G4bool enable) {
+    G4cout << "ToggleFSU207BiSource called. Enable: " << enable << G4endl;
+
+    // Check if the state is changing
+    if (f207BiSourceEnabled == enable) {
+        G4cout << "No change in state. Returning." << G4endl;
+        return;
+    }
+
+    f207BiSourceEnabled = enable;
+
+    // If enabling the source, recreate it
+    if (f207BiSourceEnabled) {
+        G4cout << "Creating 207Bi source." << G4endl;
+        FSU207BiSource();
+    } 
+    // If disabling the source, remove it
+    else {
+        G4cout << "Removing 207Bi source." << G4endl;
+
+        // Remove the physical volume
+        if (physi207BiSource) {
+            delete physi207BiSource;
+            physi207BiSource = nullptr;
+        }
+
+        // Remove the logical volume
+        if (logic207BiSource) {
+            delete logic207BiSource;
+            logic207BiSource = nullptr;
+        }
+
+        // Remove the solid volume
+        if (solid207BiSource) {
+            delete solid207BiSource;
+            solid207BiSource = nullptr;
+        }
+
+        // Remove the visualization attributes
+        if (visAttributes207BiSource) {
+            delete visAttributes207BiSource;
+            visAttributes207BiSource = nullptr;
+        }
+    }
+
+    // Notify the RunManager about geometry changes
+    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+    G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
+// void ICESPICEDetectorConstruction::Set207BiSourcePosition(G4double val) {
+//     Source207BiPosition = val;
+
+//     if (f207BiSourceEnabled) {
+//         // Recreate the source with the new position
+//         ToggleFSU207BiSource(false);
+//         ToggleFSU207BiSource(true);
+//     }
+// }
+
+void ICESPICEDetectorConstruction::Set207BiSourcePosition(G4double val) {
+    Source207BiPosition = val;
+
+    if (physi207BiSource) {
+        physi207BiSource->SetTranslation(G4ThreeVector(0, 0, Source207BiPosition + Source207BiThickness / 2));
+        G4cout << "Updated source position to: " << Source207BiPosition / mm << " mm" << G4endl;
+
+        // Force geometry and visualization updates
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+        G4RunManager::GetRunManager()->ReinitializeGeometry();
+    } else {
+        G4cout << "Warning: Source physical volume not initialized!" << G4endl;
+    }
 }

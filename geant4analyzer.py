@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import warnings
 import os
 from lmfit import minimize, Parameters
-import sigfig
+import lmfit
+from tabulate import tabulate
 
 # for virtual environment on mac
 # source $(brew --prefix root)/bin/thisroot.sh  # for ROOT
@@ -14,9 +15,12 @@ class Geant4Analyzer:
         
         self.scale = None
         self.scale_range = None
+        self.rchi2 = None
 
         self.threshold_result = None
         self.threshold_range = None
+
+        self.fits = {}
 
         if geant4_root_file_path is None:
             self.geant4_root_file_path = None
@@ -124,6 +128,16 @@ class Geant4Analyzer:
             np.array(bin_uncertainties),
         )
     
+    def set_experimental_histogram_noise_to_zero(self, noise_value: float):
+        # Set any bin content below the noise value that corresponds to the bin center to 0
+
+        # check to see if the experimental histogram is available
+        if self.experimental_bin_centers is None:
+            raise ValueError("Experimental histogram is not available.")
+        
+        noise_mask = self.experimental_bin_centers < noise_value
+        self.experimental_bin_content[noise_mask] = 0
+
     def gaussian_smear_simulation(self, fwhm):
         if self.geant4_root_file is None:
             raise ValueError("Geant4 histogram not available.")
@@ -188,16 +202,21 @@ class Geant4Analyzer:
 
             # Extract the bins within the specified range
             geant4_content = self.geant4_bin_content[range_mask]
+            geant4_uncertainties = self.geant4_bin_uncertainties[range_mask]
             experiment_content = self.experimental_bin_content[range_mask]
+            experiment_uncertainties = self.experimental_bin_uncertainties[range_mask]
         else:
             geant4_content = self.geant4_bin_content
+            geant4_uncertainties = self.geant4_bin_uncertainties
             experiment_content = self.experimental_bin_content
+            experiment_uncertainties = self.experimental_bin_uncertainties
 
         # Define the residuals function
         def residuals(params):
             scale_factor = params['scale']
             scaled_geant4 = geant4_content * scale_factor
-            return scaled_geant4 - experiment_content
+            residual = (scaled_geant4 - experiment_content) / np.sqrt(geant4_uncertainties**2 + experiment_uncertainties**2)
+            return residual
 
         # Define parameters
         params = Parameters()
@@ -223,9 +242,20 @@ class Geant4Analyzer:
         self.geant4_bin_content *= optimal_scale
         self.geant4_bin_uncertainties *= optimal_scale
 
+        # Calculate chi-squared
+        scaled_geant4 = geant4_content * optimal_scale
+        total_uncertainties = np.sqrt(geant4_uncertainties**2 + experiment_uncertainties**2)
+        chi_squared = np.sum(((scaled_geant4 - experiment_content) / total_uncertainties) ** 2)
+
+        # Degrees of freedom
+        degrees_of_freedom = len(geant4_content) - len(result.var_names)  # Number of bins - number of fit parameters
+        reduced_chi_squared = chi_squared / degrees_of_freedom
+        self.rchi2 = reduced_chi_squared
+        print(f"Reduced chi-squared: {reduced_chi_squared:.2f} (χ² = {chi_squared:.2f}, DoF = {degrees_of_freedom})")
+
         return optimal_scale
 
-    def apply_threshold_to_geant4(self, threshold_range):
+    def apply_threshold_to_geant4(self, threshold_range, initial_guess = (300.0, 2000.0, 300.0)):
         """
         Fits an arctan threshold function to the experimental data and applies it to the Geant4 histogram.
 
@@ -247,9 +277,9 @@ class Geant4Analyzer:
 
         # Define lmfit parameters
         threshold_params = Parameters()
-        threshold_params.add('width', value=90.0)   # Initial guess for threshold smoothness
-        threshold_params.add('scale', value=2000.0)  # Initial guess for scaling factor
-        threshold_params.add('phase', value=1.0)   # Initial guess for phase offset
+        threshold_params.add('width', value=initial_guess[0])   # Initial guess for threshold smoothness
+        threshold_params.add('scale', value=initial_guess[1])  # Initial guess for scaling factor
+        threshold_params.add('phase', value=initial_guess[2])   # Initial guess for phase offset
 
         # Perform threshold fitting
         threshold_result = minimize(threshold_residuals, threshold_params,
@@ -261,8 +291,7 @@ class Geant4Analyzer:
 
         fitted_width = threshold_result.params['width'].value
         fitted_width_uncertainty = threshold_result.params['width'].stderr
-        
-        
+           
         fitted_scale = threshold_result.params['scale'].value
         fitted_scale_uncertainty = threshold_result.params['scale'].stderr
         
@@ -280,35 +309,247 @@ class Geant4Analyzer:
         # Set uncertainties to zero for bins within the threshold region
         self.geant4_bin_uncertainties[below_threshold_mask] = 0
 
-        print(f"Threshold range: {threshold_range}")
-        print(f"Threshold fit parameters: width = {formatted_round(fitted_width, fitted_width_uncertainty)}, scale = {formatted_round(fitted_scale, fitted_scale_uncertainty)}, phase = {formatted_round(fitted_phase, fitted_phase_uncertainty)}")
         self.threshold_range = threshold_range
         self.threshold_result = threshold_result
+
+        print(f"Threshold range: {threshold_range}")
+        print(f"Threshold fit parameters: width = {formatted_round(fitted_width, fitted_width_uncertainty)}, scale = {formatted_round(fitted_scale, fitted_scale_uncertainty)}, phase = {formatted_round(fitted_phase, fitted_phase_uncertainty)}")
+
+    def GaussianFit(self, name: str, region_markers: tuple, peak_markers: list,
+                            equal_sigma: bool = True, free_position: bool = True,
+                            background_params: dict = None, ax: plt.Axes = None):
+        """
+        Multiple Gaussian fit function with background model support.
         
-    def plot_experiment(self, ax: plt.Axes):
+        Parameters:
+        - x_data, y_data: Lists of data points.
+        - peak_markers: List of peak positions for the Gaussians.
+        - equal_sigma: Whether to constrain all Gaussians to have the same sigma.
+        - free_position: Whether to allow the positions of Gaussians to vary.
+        - background_params: Dictionary containing background model type and parameters.
+        """
+
+        if self.experimental_bin_centers is None or self.experimental_bin_content is None:
+            raise ValueError("Experimental data is not available for fitting.")
+
+        x_data = self.experimental_bin_centers
+        y_data = self.experimental_bin_content
+        bin_width = x_data[1] - x_data[0]
+        
+        # reduce the data to the region of interest
+        region_mask = (x_data >= region_markers[0]) & (x_data <= region_markers[1])
+        x_data = x_data[region_mask]
+        y_data = y_data[region_mask]
+        
+        # Default background params if none are provided
+        if background_params is None:
+            background_params = {
+                'bg_type': 'linear',
+                'slope': ("slope", -np.inf, np.inf, 0.0, True),
+                'intercept': ("intercept", -np.inf, np.inf, 0.0, True),
+                'a': ("a", -np.inf, np.inf, 0.0, True),
+                'b': ("b", -np.inf, np.inf, 0.0, True),
+                'c': ("c", -np.inf, np.inf, 0.0, True),
+                'exponent': ("exponent", -np.inf, np.inf, 0.0, True),
+                'amplitude': ("amplitude", -np.inf, np.inf, 0.0, True),
+                'decay': ("decay", -np.inf, np.inf, 0.0, True),
+            }
+        
+        bg_type = background_params.get('bg_type', 'linear')
+        slope = background_params.get('slope')
+        intercept = background_params.get('intercept')
+        a = background_params.get('a')
+        b = background_params.get('b')
+        c = background_params.get('c')
+        amplitude = background_params.get('amplitude')
+        exponent = background_params.get('exponent')
+        decay = background_params.get('decay')
+
+        # Initialize the model with or without a background based on bg_type
+        if bg_type == 'linear': 
+            model = lmfit.models.LinearModel(prefix='bg_')
+            params = model.make_params(slope=slope[3], intercept=intercept[3])
+            params['bg_slope'].set(min=slope[1], max=slope[2], value=slope[3], vary=slope[4])
+            params['bg_intercept'].set(min=intercept[1], max=intercept[2], value=intercept[3], vary=intercept[4])
+        elif bg_type == 'quadratic':
+            model = lmfit.models.QuadraticModel(prefix='bg_')
+            params = model.make_params(a=a[3], b=b[3], c=c[3])
+            params['bg_a'].set(min=a[1], max=a[2], value=a[3], vary=a[4])
+            params['bg_b'].set(min=b[1], max=b[2], value=b[3], vary=b[4])
+            params['bg_c'].set(min=c[1], max=c[2], value=c[3], vary=c[4])
+        elif bg_type == 'exponential':
+            model = lmfit.models.ExponentialModel(prefix='bg_')
+            params = model.make_params(amplitude=amplitude[3], decay=decay[3])
+            params['bg_amplitude'].set(min=amplitude[1], max=amplitude[2], value=amplitude[3], vary=amplitude[4])
+            params['bg_decay'].set(min=decay[1], max=decay[2], value=decay[3], vary=decay[4])
+        elif bg_type == 'powerlaw':
+            model = lmfit.models.PowerLawModel(prefix='bg_')
+            params = model.make_params(amplitude=amplitude[3], exponent=exponent[3])
+            params['bg_amplitude'].set(min=amplitude[1], max=amplitude[2], value=amplitude[3], vary=amplitude[4])
+            params['bg_exponent'].set(min=exponent[1], max=exponent[2], value=exponent[3], vary=exponent[4])
+        elif bg_type == 'none':
+            model = None
+            params = lmfit.Parameters()
+        else:
+            raise ValueError("Unsupported background model")
+
+        first_gaussian = lmfit.Model(gaussian, prefix=f'g0_')
+
+        if model is None:
+            model = first_gaussian
+        else:
+            model += first_gaussian
+        
+        if len(peak_markers) == 0:
+            peak_markers = [x_data[np.argmax(y_data)]]
+
+
+        peak_markers = sorted(peak_markers)  # sort the peak markers in ascending order
+
+        estimated_amplitude = 1000
+        estimated_sigma = 10
+
+        params.update(first_gaussian.make_params(amplitude=estimated_amplitude, mean=peak_markers[0], sigma=estimated_sigma))
+        params['g0_sigma'].set(min=0)  # Initial constraint for the first Gaussian's sigma
+        params[f"g0_amplitude"].set(min=0)
+
+        params.add(f'g0_fwhm', expr=f'2.35482 * g0_sigma')  # FWHM = 2 * sqrt(2 * ln(2)) * sigma
+        params[f"g0_fwhm"].set(min=0)
+
+        params.add(f'g0_area', expr=f'g0_amplitude * sqrt(2 * pi) * g0_sigma / {bin_width}')  # Area under the Gaussian
+        params[f"g0_area"].set(min=0)
+
+        if not free_position:
+            params['g0_mean'].set(vary=False)
+
+        params['g0_mean'].set(min=x_data[0], max=peak_markers[1] if len(peak_markers) > 1 else x_data[-1])
+
+        # Add additional Gaussians
+        for i, peak in enumerate(peak_markers[1:], start=1):
+            g = lmfit.Model(gaussian, prefix=f'g{i}_')
+            model += g
+
+            estimated_amplitude = 1000
+            params.update(g.make_params(amplitude=estimated_amplitude, mean=peak, sigma=10))
+
+            min_mean = peak_markers[i-1]
+            max_mean = peak_markers[i+1] if i + 1 < len(peak_markers) else x_data[-1]
+            params[f'g{i}_mean'].set(min=min_mean, max=max_mean)
+
+            params.add(f'g{i}_fwhm', expr=f'2.35482 * g{i}_sigma')
+            params[f"g{i}_fwhm"].set(min=0)
+
+            params.add(f'g{i}_area', expr=f'g{i}_amplitude * sqrt(2 * pi) * g{i}_sigma / {bin_width}')
+            params[f"g{i}_area"].set(min=0)
+
+            if equal_sigma:
+                params[f'g{i}_sigma'].set(expr='g0_sigma')
+            else:
+                params[f'g{i}_sigma'].set(min=0)
+
+            params[f'g{i}_amplitude'].set(min=0)
+
+            if not free_position:
+                params[f'g{i}_mean'].set(vary=False)
+
+        # Fit the model to the data
+        result = model.fit(y_data, params, x=x_data)
+
+        print("\nInitial Parameter Guesses:")
+        params.pretty_print()
+
+        print("\nFit Report:")
+        print(result.fit_report())
+
+        # Store the fit result
+        self.fits[name] = result
+
+        # Plot the fit if axes are provided
+        if ax is not None:
+            # Plot the total fit
+            ax.plot(x_data, result.best_fit, '-', color='blue', linewidth=1)
+
+            # Plot the background model if it exists
+            if bg_type != 'none':
+                bg_prefix = 'bg_'
+                background_fit = result.eval_components(x=x_data)[bg_prefix]
+                ax.plot(x_data, background_fit, '-', color='green', linewidth=1)
+
+            # Plot individual Gaussian components
+            for i, peak in enumerate(peak_markers):
+                gaussian_prefix = f'g{i}_'
+                gaussian_fit = result.eval_components(x=x_data)[gaussian_prefix]
+                ax.plot(x_data, gaussian_fit, '-', color='purple', linewidth=1, label=f"Gaussian {i+1} (Peak at {peak:.2f} keV)")
+
+    def print_fit_parameters(self):
+        """
+        Print the fit parameters (mean, FWHM, and area) for all fits stored in self.fits
+        using the `tabulate` library for better formatting. Starts Fit # from 0 and 
+        avoids repeating Fit # for multiple entries under the same fit.
+        """
+        if not self.fits:
+            print("No fits available to display.")
+            return
+
+        print("\nGaussian Fit Parameters")
+
+        # Table headers and data rows
+        headers = ["Fit #", "Index", "Mean", "FWHM", "Area"]
+        rows = []
+
+        # Iterate over all fits
+        for fit_num, (fit_name, result) in enumerate(self.fits.items()):
+            # Determine the number of Gaussian components in this fit
+            num_gaussians = sum(1 for key in result.params.keys() if key.startswith("g") and "_mean" in key)
+
+            for i in range(num_gaussians):
+                # Extract Gaussian parameters
+                mean = result.params[f'g{i}_mean'].value
+                mean_uncertainty = result.params[f'g{i}_mean'].stderr or 0.0
+                fwhm = result.params[f'g{i}_fwhm'].value
+                fwhm_uncertainty = result.params[f'g{i}_fwhm'].stderr or 0.0
+                area = result.params[f'g{i}_area'].value
+                area_uncertainty = result.params[f'g{i}_area'].stderr or 0.0
+
+                # Format the values with uncertainties
+                mean_formatted = formatted_round(mean, mean_uncertainty)
+                fwhm_formatted = formatted_round(fwhm, fwhm_uncertainty)
+                area_formatted = formatted_round(area, area_uncertainty)
+
+                # Add a row to the table
+                # Display the Fit # only for the first row of each fit
+                rows.append([f"Fit {fit_num}" if i == 0 else "", i, mean_formatted, fwhm_formatted, area_formatted])
+
+        # Print the table using `tabulate`
+        print(tabulate(rows, headers=headers))
+
+    def plot_experiment(self, ax: plt.Axes, color="dodgerblue", label=None, plot_uncertainity=False):
         if self.experimental_bin_content is None or self.experimental_bin_edges is None:
             raise ValueError("Geant4 simulation data is not available for plotting.")
         
+        name = self.experimental_histogram_name if label is None else label
+
         ax.stairs(
             values=self.experimental_bin_content,
             edges=self.experimental_bin_edges,
-            label=f"{self.experimental_histogram_name}",
-            color="dodgerblue",
+            label=f"{name}",
+            color=color,
             linewidth=0.5,
         )
 
-        ax.fill_between(
-            self.experimental_bin_centers,
-            self.experimental_bin_content - self.experimental_bin_uncertainties,
-            self.experimental_bin_content + self.experimental_bin_uncertainties,
-            color='dodgerblue',
-            alpha=0.5,
-        )
+        if plot_uncertainity:
+            ax.fill_between(
+                self.experimental_bin_centers,
+                self.experimental_bin_content - self.experimental_bin_uncertainties,
+                self.experimental_bin_content + self.experimental_bin_uncertainties,
+                color=color,
+                alpha=0.5,
+            )
 
         ax.set_ylabel("Counts")
         ax.set_xlabel("Energy [keV]")
 
-        ax.legend(loc='upper center')
+        ax.legend(loc='upper left')
         ax.minorticks_on()
         ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=3)
         ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=5)
@@ -336,12 +577,21 @@ class Geant4Analyzer:
         ax.set_ylabel("Counts")
         ax.set_xlabel("Energy [keV]")
 
-        ax.legend(loc='upper center')
+        # ax.set_ylim(bottom=0.1)
+        # ax.set_yscale('log')
+
+        ax.legend(loc='upper left')
         ax.minorticks_on()
         ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=3)
         ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=5)
 
     def plot_residuals(self, ax: plt.Axes):
+        """
+        Plots residuals between the experimental and Geant4 histograms.
+
+        Args:
+            ax (plt.Axes): The axis on which to plot the residuals.
+        """
         if self.experimental_bin_centers is None or self.geant4_bin_centers is None:
             raise ValueError("Experimental and Geant4 bin centers must be available for plotting residuals.")
 
@@ -349,10 +599,9 @@ class Geant4Analyzer:
             raise ValueError("Experimental and Geant4 bin centers must have the same length.")
 
         residuals = self.experimental_bin_content - self.geant4_bin_content
-
         residuals_uncertainty = np.sqrt(self.experimental_bin_uncertainties**2 + self.geant4_bin_uncertainties**2)
 
-        # plot points with fill between as the error bars
+        # Plot points with fill between as the error bars
         ax.plot(self.experimental_bin_centers, residuals, 'o', color='salmon', markersize=0.5, label="Residuals")
         ax.fill_between(
             self.experimental_bin_centers, 
@@ -364,13 +613,22 @@ class Geant4Analyzer:
         ax.axhline(0, color='black', linestyle='-', linewidth=0.5)
 
         ax.set_xlabel("Energy [keV]")
-        ax.set_ylabel("Residuals [keV]")
+        ax.set_ylabel("Residuals")
 
-        # ax.legend(loc='upper center')
+        # Add reduced chi-squared text to the plot
+        if self.rchi2 is not None:
+            ax.text(
+                0.95, 0.95, 
+                f"Reduced χ² = {self.rchi2:.2f}", 
+                transform=ax.transAxes, 
+                ha='right',
+                va='top',
+            )
+
         ax.minorticks_on()
-        ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=3)
-        ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=5)
-
+        ax.tick_params(axis='both', which='minor', direction='in', top=True, right=True, left=True, bottom=True, length=3)
+        ax.tick_params(axis='both', which='major', direction='in', top=True, right=True, left=True, bottom=True, length=5)
+   
     def plot_percent_difference(self, ax: plt.Axes):
         """
         Plots the percent difference between experimental and simulation histograms.
@@ -408,12 +666,12 @@ class Geant4Analyzer:
         ax.set_xlabel("Energy [keV]")
         ax.set_ylabel("Percent Difference [%]")
 
-        ax.legend(loc='upper center')
+        ax.legend(loc='upper left')
         ax.minorticks_on()
         ax.tick_params(axis='both', which='minor', direction='in', top=True, right=True, left=True, bottom=True, length=3)
         ax.tick_params(axis='both', which='major', direction='in', top=True, right=True, left=True, bottom=True, length=5)
 
-    def plot(self, experiment=True, simulation=True, residuals=False, percent_difference=False, same_axes=False):
+    def plot(self, experiment=True, simulation=True, residuals=False, percent_difference=False, same_axes=False, save=None):
         """
         Combines experimental, simulation, and residuals plots based on user input.
 
@@ -447,12 +705,12 @@ class Geant4Analyzer:
             # Plot scale range
             if self.scale_range:
                 for ax in axs:
-                    ax.axvspan(self.scale_range[0], self.scale_range[1], color='lightgreen', alpha=0.3, label="Scaling Range")
+                    ax.axvspan(self.scale_range[0], self.scale_range[1], color='lightgreen', alpha=0.2, label="Scaling Range")
 
             # Plot threshold range
             if self.threshold_range:
                 for ax in axs:
-                    ax.axvspan(self.threshold_range[0], self.threshold_range[1], color='lightsalmon', alpha=0.3, label="Threshold Range")
+                    ax.axvspan(self.threshold_range[0], self.threshold_range[1], color='lightsalmon', alpha=0.2, label="Threshold Range")
 
             # Plot experiment
             if experiment:
@@ -485,6 +743,10 @@ class Geant4Analyzer:
             # Show plot
             # plt.show()
 
+            if save is not None:
+                plt.savefig(save, dpi=300)
+                print(f"Plot saved to {save}")
+
         except ValueError as e:
             warnings.warn(f"ValueError encountered: {e}")
         except Exception as e:
@@ -506,29 +768,12 @@ def threshold_residuals(params, x, data):
     model = arctan_threshold(x, width, scale, phase)
     return data - model
 
+def gaussian(x, amplitude, mean, sigma):
+    return amplitude * np.exp(-(x - mean)**2 / (2 * sigma**2))
+
 def formatted_round(value, uncertainty):
     import sigfig
-    return sigfig.round(value, uncertainty, style='Drake', sep='external_brackets', spacer='')
-
-if __name__ == "__main__":
-    simulation_root_file = "./207Bi/Sept2024_LSU/geant_sim/run_98_ICESPICE_RadDecay_z83_a207_e0keV_f70mm_g30mm_n100000000_PIPS1000_AllProcesses_Si02Window50nm_Source500nmThick.root"
-    simulation_histogram_name = "Esil"
-
-    experimental_root_file = "./207Bi/Sept2024_LSU/exp_data/207Bi_ICESPICE_f70mm_g30mm_run_14_15.root"
-    experimental_histogram_name = "PIPS1000EnergyCalibrated"
-
-    analyzer = Geant4Analyzer(geant4_root_file_path=simulation_root_file, geant4_histogram_name=simulation_histogram_name, experimental_root_file_path=experimental_root_file, experimental_histogram_name=experimental_histogram_name)
-
-    # axes = analyzer.plot(experiment=True, simulation=True)
-    # axes[1].set_yscale('log')
-    # plt.show()
-
-    analyzer.gaussian_smear_simulation(fwhm=10)
-    analyzer.scale_geant4_to_experiment(scaling_range=(462, 1075))
-    analyzer.apply_threshold_to_geant4(threshold_range=(300, 462))
-    axes = analyzer.plot(experiment=True, simulation=True, residuals=True, same_axes=True)
-    
-    for ax in axes:
-        ax.set_xlim(200, 1200)
-
-    plt.show()
+    if uncertainty is None:
+        return sigfig.round(value, style='Drake', sep='external_brackets', spacer='')
+    else:
+        return sigfig.round(value, uncertainty, style='Drake', sep='external_brackets', spacer='')

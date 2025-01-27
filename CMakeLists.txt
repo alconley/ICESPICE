@@ -59,8 +59,6 @@ set(ICESPICE_SCRIPT
     comsol_output_5N42_1x1x16in_x50_y50_z70_res1_2mm.mag
     comsol_output_6N42_1x1x16in_x50_y50_z70_res1_2mm.mag
     comsol_output_5N42_1x1x8in_with_mounts_x50_y50_z70_res1_2mm.mag
-    Plots.C
-    Fold.C
   )
 
 foreach(_script ${ICESPICE_SCRIPT})
@@ -74,7 +72,8 @@ endforeach()
 # Copy the entire cad_files directory to the build directory
 file(COPY ${PROJECT_SOURCE_DIR}/cad_files DESTINATION ${PROJECT_BINARY_DIR})
 
-configure_file(${PROJECT_SOURCE_DIR}/207Bi/bi207.mac ${PROJECT_BINARY_DIR}/bi207.mac COPYONLY)
+# configure_file(${PROJECT_SOURCE_DIR}/207Bi/bi207.mac ${PROJECT_BINARY_DIR}/bi207.mac COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/207Bi/Jan2025/Jan2025_207Bi.mac ${PROJECT_BINARY_DIR}/Jan2025_207Bi.mac COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/207Pb/pb207.mac ${PROJECT_BINARY_DIR}/pb207.mac COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/TransmissionProbablilty/transmission_prob.mac ${PROJECT_BINARY_DIR}/transmission_prob.mac COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/BackScattering/backscattering.mac ${PROJECT_BINARY_DIR}/backscattering.mac COPYONLY)
