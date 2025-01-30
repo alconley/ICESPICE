@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 
 import sys
 sys.path.append('/Users/alconley/Projects/ICESPICE')
+sys.path.append('/home/alconley/git_workspace/ICESPICE')
 from geant4analyzer import Geant4Analyzer
 
 # source $(brew --prefix root)/bin/thisroot.sh  # for ROOT
@@ -26,14 +27,14 @@ if __name__ == "__main__":
     #     same_axes=True,
     # )
 
-
+    geant4_path = "../207Bi/Jan2025/run_0_Jan2025_207BiDecay_PIPS1000_f70mm_g30mm_n1000000000_Source1nmThick.root"
     no_icespice_analyzer = Geant4Analyzer(
         experimental_root_file_path="../207Bi/Jan2025/run_56_noICESPICE_f100mm_g0mm.root", 
         experimental_histogram_name="PIPS1000EnergyCalibrated",
-        geant4_root_file_path="../207Bi/Jan2025/run_0_Jan2025_207BiDecay_PIPS1000_f70mm_g30mm_n1000000000_Source1nmThick.root",
+        geant4_root_file_path=geant4_path,
         geant4_histogram_name="Esil"
     )
-
+    
     no_icespice_analyzer.set_experimental_histogram_noise_to_zero(40)
     no_icespice_analyzer.gaussian_smear_simulation(10.4)
     no_icespice_analyzer.scale_geant4_to_experiment(scaling_range=(370, 1075))
@@ -43,6 +44,7 @@ if __name__ == "__main__":
         simulation=True,
         residuals=True,
         same_axes=True,
+        save=geant4_path.split(".root")[0] + ".png"
     )
 
  
