@@ -56,7 +56,7 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
                 /std::log(2.));
 
   G4LossTableManager::Instance();
-  G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(0.01*eV, 1*GeV);
+  G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(100.0*eV, 1*GeV);
   SetDefaultCutValue(1*micrometer);
 
   G4EmParameters* params = G4EmParameters::Instance();
