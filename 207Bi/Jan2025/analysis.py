@@ -27,7 +27,7 @@ if __name__ == "__main__":
     #     same_axes=True,cd Pro
     # )
 
-    geant4_path = "../207Bi/Jan2025/run_4_Jan2025_207BiDecay_PIPS1000_f70mm_g30mm_n1000000000_Source2000nmThick.root"
+    geant4_path = "../207Bi/Jan2025/run_5_Jan2025_207BiDecay_PIPS1000_f70mm_g30mm_n1000000000_Source200nmThick.root"
     no_icespice_analyzer = Geant4Analyzer(
         experimental_root_file_path="../207Bi/Jan2025/run_56_noICESPICE_f100mm_g0mm.root", 
         experimental_histogram_name="PIPS1000EnergyCalibrated",
