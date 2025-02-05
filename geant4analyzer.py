@@ -481,6 +481,7 @@ class Geant4Analyzer:
         # Plot the fit if axes are provided
         if ax is not None:
             # Plot the total fit
+
             ax.plot(x_data, result.best_fit, '-', color='blue', linewidth=1)
 
             # Plot the background model if it exists
@@ -492,8 +493,14 @@ class Geant4Analyzer:
             # Plot individual Gaussian components
             for i, peak in enumerate(peak_markers):
                 gaussian_prefix = f'g{i}_'
-                gaussian_fit = result.eval_components(x=x_data)[gaussian_prefix]
-                ax.plot(x_data, gaussian_fit, '-', color='purple', linewidth=1, label=f"Gaussian {i+1} (Peak at {peak:.2f} keV)")
+
+                mean = result.params[f'{gaussian_prefix}mean'].value
+                sigma = result.params[f'{gaussian_prefix}sigma'].value
+
+                x = np.linspace(mean - 5 * sigma, mean + 5 * sigma, 1000)
+
+                gaussian_fit = result.eval_components(x=x)[gaussian_prefix]
+                ax.plot(x, gaussian_fit, '-', color='purple', linewidth=1)
 
     def print_fit_parameters(self):
         """
@@ -594,7 +601,7 @@ class Geant4Analyzer:
 
         return mean, mean_uncertainty, fwhm, fwhm_uncertainty, area, area_uncertainty
 
-    def plot_experiment(self, ax: plt.Axes, color="dodgerblue", label=None, plot_uncertainity=False):
+    def plot_experiment(self, ax: plt.Axes, color="dodgerblue", label=None, linewidth=0.5, plot_uncertainity=False):
         if self.experimental_bin_content is None or self.experimental_bin_edges is None:
             raise ValueError("Experimental data is not available for plotting.")
         
@@ -605,7 +612,7 @@ class Geant4Analyzer:
             edges=self.experimental_bin_edges,
             label=f"{name}",
             color=color,
-            linewidth=0.5,
+            linewidth=linewidth,
         )
 
         if plot_uncertainity:
@@ -620,30 +627,36 @@ class Geant4Analyzer:
         ax.set_ylabel("Counts")
         ax.set_xlabel("Energy [keV]")
 
-        ax.legend(loc='upper left')
+        # ax.legend(loc='upper left')
         ax.minorticks_on()
         ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=3)
         ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=5)
 
-    def plot_simulation(self, ax: plt.Axes):
+    def plot_simulation(self, ax: plt.Axes, color="lightcoral", label=None, linewidth=0.5, plot_uncertainity=True):
         if self.geant4_bin_content is None or self.geant4_bin_edges is None:
             raise ValueError("Geant4 simulation data is not available for plotting.")
         
+        if label is None:
+            label = self.geant4_histogram_name
+        else: 
+            label = label
+
         ax.stairs(
             values=self.geant4_bin_content,
             edges=self.geant4_bin_edges,
-            label=f"Geant4: {self.geant4_histogram_name}",
-            color="lightcoral",
-            linewidth=0.5,
+            label=label,
+            color=color,
+            linewidth=linewidth,
         )
 
-        ax.fill_between(
-            self.geant4_bin_centers,
-            self.geant4_bin_content - self.geant4_bin_uncertainties,
-            self.geant4_bin_content + self.geant4_bin_uncertainties,
-            color='lightcoral',
-            alpha=0.5,
-        )
+        if plot_uncertainity:
+            ax.fill_between(
+                self.geant4_bin_centers,
+                self.geant4_bin_content - self.geant4_bin_uncertainties,
+                self.geant4_bin_content + self.geant4_bin_uncertainties,
+                color=color,
+                alpha=0.5,
+            )
 
         ax.set_ylabel("Counts")
         ax.set_xlabel("Energy [keV]")
@@ -651,7 +664,7 @@ class Geant4Analyzer:
         # ax.set_ylim(bottom=0.1)
         # ax.set_yscale('log')
 
-        ax.legend(loc='upper left')
+        # ax.legend(loc='upper left')
         ax.minorticks_on()
         ax.tick_params(axis='both',which='minor',direction='in',top=True,right=True,left=True,bottom=True,length=3)
         ax.tick_params(axis='both',which='major',direction='in',top=True,right=True,left=True,bottom=True,length=5)
