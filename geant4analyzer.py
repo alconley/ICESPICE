@@ -578,7 +578,7 @@ class Geant4Analyzer:
         print(f"\nAverage FWHM: {average_fwhm:.2f} keV")
         return average_fwhm
 
-    def fit_stats(self, name: str):
+    def fit_stats(self, name: str, index: int = 0):
         """
         Print the fit statistics for a given fit stored in self.fits.
 
@@ -592,12 +592,12 @@ class Geant4Analyzer:
 
         result = self.fits[name]
 
-        mean = result.params['g0_mean'].value
-        mean_uncertainty = result.params['g0_mean'].stderr or 0.0
-        fwhm = result.params['g0_fwhm'].value
-        fwhm_uncertainty = result.params['g0_fwhm'].stderr or 0.0
-        area = result.params['g0_area'].value
-        area_uncertainty = result.params['g0_area'].stderr or 0.0
+        mean = result.params[f'g{index}_mean'].value
+        mean_uncertainty = result.params[f'g{index}_mean'].stderr or 0.0
+        fwhm = result.params[f'g{index}_fwhm'].value
+        fwhm_uncertainty = result.params[f'g{index}_fwhm'].stderr or 0.0
+        area = result.params[f'g{index}_area'].value
+        area_uncertainty = result.params[f'g{index}_area'].stderr or 0.0
 
         return mean, mean_uncertainty, fwhm, fwhm_uncertainty, area, area_uncertainty
 

@@ -4,6 +4,7 @@ import sys
 sys.path.append('/Users/alconley/Projects/ICESPICE')
 sys.path.append('/home/alconley/git_workspace/ICESPICE')
 from geant4analyzer import Geant4Analyzer
+import numpy as np
 
 # source $(brew --prefix root)/bin/thisroot.sh  # for ROOT
 
@@ -65,7 +66,47 @@ if __name__ == "__main__":
     no_icespice_analyzer.plot_residuals(ax=axes[5])
 
 
-
+    # get fit parameters for Experiment
+    _,_,_,_, area_564K, area_564K_uncertainity = no_icespice_analyzer.fit_stats(name='Experiment: 564-K')
+    _,_,_,_, area_564L, area_564L_uncertainity = no_icespice_analyzer.fit_stats(name='Experiment: 564-LM', index=0)
+    _,_,_,_, area_564M, area_564M_uncertainity = no_icespice_analyzer.fit_stats(name='Experiment: 564-LM', index=1)
+    _,_,_,_, area_1064K, area_1064K_uncertainity = no_icespice_analyzer.fit_stats(name='Experiment: 1064-K')
+    _,_,_,_, area_1064L, area_1064L_uncertainity = no_icespice_analyzer.fit_stats(name='Experiment: 1064-LM', index=0)
+    _,_,_,_, area_1064M, area_1064M_uncertainity = no_icespice_analyzer.fit_stats(name='Experiment: 1064-LM', index=1)
+    
+    # get fit parameters for Simulation
+    _,_,_,_, sim_area_564K, sim_area_564K_uncertainity = no_icespice_analyzer.fit_stats(name='Simulation: 564-K')
+    _,_,_,_, sim_area_564L, sim_area_564L_uncertainity = no_icespice_analyzer.fit_stats(name='Simulation: 564-LM', index=0)
+    _,_,_,_, sim_area_564M, sim_area_564M_uncertainity = no_icespice_analyzer.fit_stats(name='Simulation: 564-LM', index=1)
+    _,_,_,_, sim_area_1064K, sim_area_1064K_uncertainity = no_icespice_analyzer.fit_stats(name='Simulation: 1064-K')
+    _,_,_,_, sim_area_1064L, sim_area_1064L_uncertainity = no_icespice_analyzer.fit_stats(name='Simulation: 1064-LM', index=0)
+    _,_,_,_, sim_area_1064M, sim_area_1064M_uncertainity = no_icespice_analyzer.fit_stats(name='Simulation: 1064-LM', index=1)
+    
+    # Compare areas of peaks
+    ratio_564K = sim_area_564K / area_564K
+    ratio_564L = sim_area_564L / area_564L
+    ratio_564M = sim_area_564M / area_564M
+    ratio_1064K = sim_area_1064K / area_1064K
+    ratio_1064L = sim_area_1064L / area_1064L
+    ratio_1064M = sim_area_1064M / area_1064M
+    
+    # Compare uncertainities of peaks
+    ratio_564K_uncertainity = ratio_564K * np.sqrt((sim_area_564K_uncertainity/sim_area_564K)**2 + (area_564K_uncertainity/area_564K)**2)
+    ratio_564L_uncertainity = ratio_564L * np.sqrt((sim_area_564L_uncertainity/sim_area_564L)**2 + (area_564L_uncertainity/area_564L)**2)
+    ratio_564M_uncertainity = ratio_564M * np.sqrt((sim_area_564M_uncertainity/sim_area_564M)**2 + (area_564M_uncertainity/area_564M)**2)
+    ratio_1064K_uncertainity = ratio_1064K * np.sqrt((sim_area_1064K_uncertainity/sim_area_1064K)**2 + (area_1064K_uncertainity/area_1064K)**2)
+    ratio_1064L_uncertainity = ratio_1064L * np.sqrt((sim_area_1064L_uncertainity/sim_area_1064L)**2 + (area_1064L_uncertainity/area_1064L)**2)
+    ratio_1064M_uncertainity = ratio_1064M * np.sqrt((sim_area_1064M_uncertainity/sim_area_1064M)**2 + (area_1064M_uncertainity/area_1064M)**2)
+    
+    # plot ratio vs energy
+    ratio_x = [481.6935, 553.8372, 565.8473, 975.651, 1047.795, 1059.805]
+    ratio_y = [ratio_564K, ratio_564L, ratio_564M, ratio_1064K, ratio_1064L, ratio_1064M]
+    ratio_y_uncertainity = [ratio_564K_uncertainity, ratio_564L_uncertainity, ratio_564M_uncertainity, ratio_1064K_uncertainity, ratio_1064L_uncertainity, ratio_1064M_uncertainity]
+    
+    axes[2].errorbar(ratio_x, ratio_y, yerr=ratio_y_uncertainity, fmt='o', color='black', markersize=2)
+    axes[2].set_xlabel("Energy (keV)")
+    axes[2].set_ylabel(r"Area$_{Geant4}$ / Area$_{Experiment}$")
+    
 
     # no_icespice_analyzer.plot_simulation(ax=axes[3])
 

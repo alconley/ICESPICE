@@ -2,8 +2,8 @@
 /control/alias f 10
 /control/alias g 0
 /control/alias n 150000000
-/control/alias runno 7
-/control/alias thickness 100
+/control/alias runno 8
+/control/alias thickness 500
 /control/alias detector 1000
 /control/alias File run_{runno}_Jan2025_207BiDecay_PIPS{detector}_f{f}mm_g{g}mm_n{n}_Source{thickness}nmThick
 
