@@ -11,7 +11,12 @@ from tabulate import tabulate
 # source $(brew --prefix root)/bin/thisroot.sh  # for ROOT
 
 class Geant4Analyzer:
-    def __init__(self, geant4_root_file_path: str = None, geant4_histogram_name: str = None, experimental_root_file_path: str = None, experimental_histogram_name: str = None):
+    def __init__(self, 
+                 geant4_root_file_path: str = None, 
+                 geant4_histogram_name: str = None, 
+                 experimental_root_file_path: str = None, 
+                 experimental_histogram_name: str = None
+                 ):
         
         self.scale = None
         self.scale_range = None
@@ -315,9 +320,10 @@ class Geant4Analyzer:
         print(f"Threshold range: {threshold_range}")
         print(f"Threshold fit parameters: width = {formatted_round(fitted_width, fitted_width_uncertainty)}, scale = {formatted_round(fitted_scale, fitted_scale_uncertainty)}, phase = {formatted_round(fitted_phase, fitted_phase_uncertainty)}")
 
-    def GaussianFit(self, name: str, region_markers: tuple, peak_markers: list,
+    def GaussianFit(self, name: str, region_markers: tuple, peak_markers: list, 
                             equal_sigma: bool = True, free_position: bool = True,
-                            background_params: dict = None, ax: plt.Axes = None):
+                            background_params: dict = None, ax: plt.Axes = None, 
+                            use_geant4_data: bool = False):
         """
         Multiple Gaussian fit function with background model support.
         
@@ -329,12 +335,20 @@ class Geant4Analyzer:
         - background_params: Dictionary containing background model type and parameters.
         """
 
-        if self.experimental_bin_centers is None or self.experimental_bin_content is None:
-            raise ValueError("Experimental data is not available for fitting.")
+        if use_geant4_data is False:
+            if self.experimental_bin_centers is None or self.experimental_bin_content is None:
+                raise ValueError("Experimental data is not available for fitting.")
 
-        x_data = self.experimental_bin_centers
-        y_data = self.experimental_bin_content
-        bin_width = x_data[1] - x_data[0]
+            x_data = self.experimental_bin_centers
+            y_data = self.experimental_bin_content
+            bin_width = x_data[1] - x_data[0]
+        else:
+            if self.geant4_bin_centers is None or self.geant4_bin_content is None:
+                raise ValueError("Geant4 data is not available for fitting.")
+            
+            x_data = self.geant4_bin_centers
+            y_data = self.geant4_bin_content
+            bin_width = x_data[1] - x_data[0]
         
         # reduce the data to the region of interest
         region_mask = (x_data >= region_markers[0]) & (x_data <= region_markers[1])
@@ -490,20 +504,22 @@ class Geant4Analyzer:
         if not self.fits:
             print("No fits available to display.")
             return
-
-        print("\nGaussian Fit Parameters")
+            
+        print("\Gaussian Fit Parameters")
 
         # Table headers and data rows
-        headers = ["Fit #", "Index", "Mean", "FWHM", "Area"]
+        headers = ["Name", "Fit #", "Index", "Mean", "FWHM", "Area"]
         rows = []
 
         # Iterate over all fits
+
         for fit_num, (fit_name, result) in enumerate(self.fits.items()):
             # Determine the number of Gaussian components in this fit
             num_gaussians = sum(1 for key in result.params.keys() if key.startswith("g") and "_mean" in key)
 
             for i in range(num_gaussians):
                 # Extract Gaussian parameters
+                name = fit_name
                 mean = result.params[f'g{i}_mean'].value
                 mean_uncertainty = result.params[f'g{i}_mean'].stderr or 0.0
                 fwhm = result.params[f'g{i}_fwhm'].value
@@ -518,14 +534,69 @@ class Geant4Analyzer:
 
                 # Add a row to the table
                 # Display the Fit # only for the first row of each fit
-                rows.append([f"Fit {fit_num}" if i == 0 else "", i, mean_formatted, fwhm_formatted, area_formatted])
+                # rows.append([f"Fit {fit_num}" if i == 0 else "", i, mean_formatted, fwhm_formatted, area_formatted])
+
+                rows.append([f"{name}" if i == 0 else "", f"Fit {fit_num}" if i == 0 else "", i, mean_formatted, fwhm_formatted, area_formatted])
 
         # Print the table using `tabulate`
         print(tabulate(rows, headers=headers))
 
+    def average_fwhm(self):
+        """
+        Calculate the average FWHM of the Gaussian fits stored in self.fits.
+        """
+
+        if not self.fits:
+            print("No fits available to calculate average FWHM.")
+            return None
+
+        # Initialize variables to store the sum of FWHMs and the number of Gaussian components
+        total_fwhm = 0
+        num_gaussians = 0
+
+        # Iterate over all fits
+        for fit_name, result in self.fits.items():
+            for param_name in result.params.keys():
+                if param_name.endswith("_fwhm"):
+                    total_fwhm += result.params[param_name].value
+                    num_gaussians += 1
+
+        if num_gaussians == 0:
+            print("No Gaussian components found to calculate average FWHM.")
+            return None
+
+        # Calculate the average FWHM
+        average_fwhm = total_fwhm / num_gaussians
+
+        print(f"\nAverage FWHM: {average_fwhm:.2f} keV")
+        return average_fwhm
+
+    def fit_stats(self, name: str):
+        """
+        Print the fit statistics for a given fit stored in self.fits.
+
+        Parameters:
+        - name: The name of the fit to display statistics for.
+        """
+
+        if name not in self.fits:
+            print(f"Fit '{name}' not found.")
+            return
+
+        result = self.fits[name]
+
+        mean = result.params['g0_mean'].value
+        mean_uncertainty = result.params['g0_mean'].stderr or 0.0
+        fwhm = result.params['g0_fwhm'].value
+        fwhm_uncertainty = result.params['g0_fwhm'].stderr or 0.0
+        area = result.params['g0_area'].value
+        area_uncertainty = result.params['g0_area'].stderr or 0.0
+
+        return mean, mean_uncertainty, fwhm, fwhm_uncertainty, area, area_uncertainty
+
     def plot_experiment(self, ax: plt.Axes, color="dodgerblue", label=None, plot_uncertainity=False):
         if self.experimental_bin_content is None or self.experimental_bin_edges is None:
-            raise ValueError("Geant4 simulation data is not available for plotting.")
+            raise ValueError("Experimental data is not available for plotting.")
         
         name = self.experimental_histogram_name if label is None else label
 
