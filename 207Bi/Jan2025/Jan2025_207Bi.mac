@@ -36,3 +36,4 @@
 /run/beamOn {n}
 
 /control/shell cp {File}.root ../207Bi/Jan2025
+/control/shell git add ../207Bi/Jan2025/{File}.root && git commit -m "Add {File}.root" && git push
