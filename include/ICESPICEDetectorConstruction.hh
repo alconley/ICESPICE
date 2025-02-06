@@ -62,6 +62,7 @@ public:
   const G4VPhysicalVolume* GetDetectorWindowPV() const { return physiDetectorWindow; }
   const G4VPhysicalVolume* GetDetectorHousingPV() const { return physiDetectorHousing; }
   const G4VPhysicalVolume* GetDetectorHolderPV() const { return physiDetectorHolder; }
+  const G4VPhysicalVolume* Get207BiSourcePV() const { return physi207BiSource; }
 
   void FSU207BiSource();
   void Set207BiSourcePosition(G4double val);

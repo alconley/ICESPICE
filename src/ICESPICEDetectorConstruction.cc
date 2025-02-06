@@ -1213,7 +1213,9 @@ void ICESPICEDetectorConstruction::FSU207BiSource() {
                                                               "SourceBacking");
 
     // Position the backing directly behind the source
-    G4ThreeVector backingPosition(0, 0, Source207BiThickness / 2 + sourceBackingThickness / 2);
+    G4ThreeVector backingPosition(0, 0, Source207BiThickness / 2 + sourceBackingThickness / 2 + 0.001);
+    // G4ThreeVector backingPosition(0, 0, Source207BiThickness / 2 - sourceBackingThickness / 2);
+
 
     new G4PVPlacement(nullptr,              // No rotation
                       backingPosition,      // Placement position relative to the source
@@ -1229,32 +1231,32 @@ void ICESPICEDetectorConstruction::FSU207BiSource() {
     visAttributesSourceBacking->SetForceSolid(true);
     logicSourceBacking->SetVisAttributes(visAttributesSourceBacking);
 
-    // Add the holder housing around the source backing
-    G4Tubs* solidHolder = new G4Tubs("Holder",
-                                     sourceBackingRadius, holderRadius,
-                                     holderLength / 2,
-                                     0.0 * deg, 360.0 * deg);
+    // // Add the holder housing around the source backing
+    // G4Tubs* solidHolder = new G4Tubs("Holder",
+    //                                  sourceBackingRadius, holderRadius,
+    //                                  holderLength / 2,
+    //                                  0.0 * deg, 360.0 * deg);
 
-    G4LogicalVolume* logicHolder = new G4LogicalVolume(solidHolder,
-                                                       StainlessSteel, // Material for the holder
-                                                       "Holder");
+    // G4LogicalVolume* logicHolder = new G4LogicalVolume(solidHolder,
+    //                                                    StainlessSteel, // Material for the holder
+    //                                                    "Holder");
 
-    // Position the holder to enclose the backing
-    G4ThreeVector holderPosition(0, 0, Source207BiThickness / 2 + sourceBackingThickness / 2 - 0.25 * mm);
+    // // Position the holder to enclose the backing
+    // G4ThreeVector holderPosition(0, 0, Source207BiThickness / 2 + sourceBackingThickness / 2 - 0.25 * mm);
 
-    new G4PVPlacement(nullptr,            // No rotation
-                      holderPosition,     // Placement position relative to the source
-                      logicHolder,        // Logical volume
-                      "Holder",           // Name
-                      logic207BiSource,   // Parent volume (source)
-                      false,              // No boolean operation
-                      0);                 // Copy number
+    // new G4PVPlacement(nullptr,            // No rotation
+    //                   holderPosition,     // Placement position relative to the source
+    //                   logicHolder,        // Logical volume
+    //                   "Holder",           // Name
+    //                   logic207BiSource,   // Parent volume (source)
+    //                   false,              // No boolean operation
+    //                   0);                 // Copy number
 
-    // Set visualization attributes for the holder
-    G4VisAttributes* visAttributesHolder = new G4VisAttributes(G4Colour(0.3, 0.3, 0.3)); // Dark gray
-    visAttributesHolder->SetVisibility(true);
-    visAttributesHolder->SetForceSolid(true);
-    logicHolder->SetVisAttributes(visAttributesHolder);
+    // // Set visualization attributes for the holder
+    // G4VisAttributes* visAttributesHolder = new G4VisAttributes(G4Colour(0.3, 0.3, 0.3)); // Dark gray
+    // visAttributesHolder->SetVisibility(true);
+    // visAttributesHolder->SetForceSolid(false);
+    // logicHolder->SetVisAttributes(visAttributesHolder);
 
     // Apply GPS commands for particle source
     G4UImanager* UI = G4UImanager::GetUIpointer();
