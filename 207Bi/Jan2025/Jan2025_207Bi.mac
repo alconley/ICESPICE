@@ -16,7 +16,7 @@
 /event/verbose 0           # output for event-level processes (tracking within events)
 /tracking/verbose 0        # output for particle tracking processes
 
-/run/setCut 1 micrometer
+/run/setCut 1 micrometer/
 /process/em/fluo False
 /process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
 

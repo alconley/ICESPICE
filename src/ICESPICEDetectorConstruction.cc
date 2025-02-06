@@ -27,7 +27,7 @@
 // Possibility to turn off (0) magnetic field and measurement volume. 
 #define MAG 0
 
-#define ICESPICE_5N42_1x1x1_8in_FLAG 1 
+#define ICESPICE_5N42_1x1x1_8in_FLAG 0 
 #define ICESPICE_3N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_5N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_6N42_1x1x1_16in_FLAG 0 
