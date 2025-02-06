@@ -27,7 +27,7 @@
 // Possibility to turn off (0) magnetic field and measurement volume. 
 #define MAG 0
 
-#define ICESPICE_5N42_1x1x1_8in_FLAG 0 
+#define ICESPICE_5N42_1x1x1_8in_FLAG 1 
 #define ICESPICE_3N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_5N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_6N42_1x1x1_16in_FLAG 0 
@@ -342,7 +342,7 @@ void ICESPICEDetectorConstruction::SetDetectorPosition(G4double val) {
 void ICESPICEDetectorConstruction::PIPS1000Detector() {
   DetectorActiveArea = 50.0*mm2; // Active area of the detector
   DetectorThickness = 1000.*micrometer; // Thickness of the detector
-  DetectorWindowThickness = 50.*nanometer; // Thickness of the detector window
+  DetectorWindowThickness = 60.*nanometer; // Thickness of the detector window
   G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
 
     // Create the cylindrical detector (G4Tubs)
