@@ -342,7 +342,7 @@ void ICESPICEDetectorConstruction::SetDetectorPosition(G4double val) {
 void ICESPICEDetectorConstruction::PIPS1000Detector() {
   DetectorActiveArea = 50.0*mm2; // Active area of the detector
   DetectorThickness = 1000.*micrometer; // Thickness of the detector
-  DetectorWindowThickness = 60.*nanometer; // Thickness of the detector window
+  DetectorWindowThickness = 70.*nanometer; // Thickness of the detector window
   G4double DetectorRadius = std::sqrt(DetectorActiveArea / 3.14);
 
     // Create the cylindrical detector (G4Tubs)

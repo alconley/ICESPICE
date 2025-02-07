@@ -2,10 +2,10 @@
 /control/alias f 10
 /control/alias g 0
 /control/alias n 150000000
-/control/alias runno 10
+/control/alias runno 11
 /control/alias thickness 100
 /control/alias detector 1000
-/control/alias File run_{runno}_Jan2025_207BiDecay_PIPS{detector}_f{f}mm_g{g}mm_n{n}_Source{thickness}nmThick_60nmSi02Window
+/control/alias File run_{runno}_Jan2025_207BiDecay_PIPS{detector}_f{f}mm_g{g}mm_n{n}_Source{thickness}nmThick_70nmSi02Window
 
 # Initialize the run manager (prepare the simulation geometry and physics)
 /run/initialize
@@ -16,7 +16,7 @@
 /event/verbose 0           # output for event-level processes (tracking within events)
 /tracking/verbose 0        # output for particle tracking processes
 
-/run/setCut 1 micrometer/
+/run/setCut 1 micrometer
 /process/em/fluo False
 /process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
 
