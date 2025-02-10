@@ -10,7 +10,7 @@ import numpy as np
 
 if __name__ == "__main__":
 
-    geant4_path = "../207Bi/Jan2025/run_12_Jan2025_207BiDecay_PIPS1000_f10mm_g0mm_n150000000_Source100nmThick_100nmSi02Window.root"
+    geant4_path = "../207Bi/Jan2025/run_13_Jan2025_207BiDecay_PIPS1000_f9mm_g0mm_n150000000_Source100nmThick.root"
     # geant4_path = None
     no_icespice_analyzer = Geant4Analyzer(
         experimental_root_file_path="../207Bi/Jan2025/run_80_noICESPICE_f10mm_g0mm.root", 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     no_icespice_analyzer.plot_simulation(ax=axes[1], label="Geant4: Gaussion Smeared", linewidth=1)
 
     no_icespice_analyzer.scale_geant4_to_experiment(scaling_range=(370, 1075))
-    no_icespice_analyzer.plot_simulation(ax=axes[1], label=f"Geant4: Best Scale={no_icespice_analyzer.scale:.3}", color='mediumpurple')
+    no_icespice_analyzer.plot_simulation(ax=axes[1], label=f"Geant4: Best Scale={no_icespice_analyzer.scale:.5}", color='mediumpurple')
 
     no_icespice_analyzer.apply_threshold_to_geant4(threshold_range=(200,370), initial_guess=(200, 10000, 200))
     no_icespice_analyzer.plot_simulation(ax=axes[1], label=f"Geant4: w/threshold {no_icespice_analyzer.threshold_range}", color='deepskyblue', plot_uncertainity=False)

@@ -1,14 +1,22 @@
 # variables
-/control/alias f 10
+/control/alias f 9
 /control/alias g 0
 /control/alias n 150000000
-/control/alias runno 13
+/control/alias runno 14
 /control/alias thickness 100
 /control/alias detector 1000
 /control/alias File run_{runno}_Jan2025_207BiDecay_PIPS{detector}_f{f}mm_g{g}mm_n{n}_Source{thickness}nmThick
 
 # Initialize the run manager (prepare the simulation geometry and physics)
 /run/initialize
+
+# These must come right after the initialization
+/process/em/deexcitation region false false false
+/process/em/fluo false
+/process/em/auger false
+/process/em/pixe false
+/process/em/deexcitationIgnoreCut true
+/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
 
 # Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
 /control/verbose 0         # output for general control commands
@@ -17,8 +25,6 @@
 /tracking/verbose 0        # output for particle tracking processes
 
 /run/setCut 1 micrometer
-/process/em/fluo False
-/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
 
 /ICESPICE/DetectorPosition -{g}          # Position the detector
 
