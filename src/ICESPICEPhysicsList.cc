@@ -59,10 +59,10 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(100.0*eV, 1*GeV);
   SetDefaultCutValue(1*micrometer);
 
-  G4EmParameters* params = G4EmParameters::Instance();
-  params->SetDeexcitationIgnoreCut(false);
-  params->SetApplyCuts(true);
-  params->Dump();
+  // G4EmParameters* params = G4EmParameters::Instance();
+  // params->SetDeexcitationIgnoreCut(false);
+  // params->SetApplyCuts(true);
+  // params->Dump();
 }
 
 ICESPICEPhysicsList::~ICESPICEPhysicsList() {
@@ -100,7 +100,6 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
   // G4Radioactivation* radioactiveDecay = new G4Radioactivation();
 
   radioactiveDecay->SetARM(true);        //Atomic Rearangement
-  radioactiveDecay->SetThresholdForVeryLongDecayTime(1e+60);
 
   // Initialize atomic deexcitation
   G4LossTableManager* man = G4LossTableManager::Instance();
@@ -120,6 +119,8 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
       deex = new G4UAtomicDeexcitation();
       deex->InitialiseAtomicDeexcitation();
       deex->SetFluo(false);
+      deex->SetPIXE(false);
+      deex->SetAuger(false);
       deex->SetVerboseLevel(1);
       man->SetAtomDeexcitation(deex);
   }
@@ -127,6 +128,6 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
   // Register radioactive decay for relevant particles
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
   ph->RegisterProcess(radioactiveDecay, G4GenericIon::GenericIon());
-  ph->RegisterProcess(radioactiveDecay, G4Electron::Electron());
-  ph->RegisterProcess(radioactiveDecay, G4Gamma::Gamma());
+  // ph->RegisterProcess(radioactiveDecay, G4Electron::Electron());
+  // ph->RegisterProcess(radioactiveDecay, G4Gamma::Gamma());
 }

@@ -10,7 +10,7 @@ import numpy as np
 
 if __name__ == "__main__":
 
-    geant4_path = "../207Bi/Jan2025/run_13_Jan2025_207BiDecay_PIPS1000_f9mm_g0mm_n150000000_Source100nmThick.root"
+    geant4_path = "../207Bi/Jan2025/run_14_Jan2025_207BiDecay_PIPS1000_f9mm_g0mm_n75000000_Source100nmThick.root"
     # geant4_path = None
     no_icespice_analyzer = Geant4Analyzer(
         experimental_root_file_path="../207Bi/Jan2025/run_80_noICESPICE_f10mm_g0mm.root", 
