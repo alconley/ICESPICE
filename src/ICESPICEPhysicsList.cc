@@ -59,7 +59,12 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(100.0*eV, 1*GeV);
   SetDefaultCutValue(1*micrometer);
 
-  // G4EmParameters* params = G4EmParameters::Instance();
+  G4EmParameters* params = G4EmParameters::Instance();
+  params->SetPhotoeffectBelowKShell(0);
+  params->SetFluo(false);
+  params->SetAuger(false);
+  params->SetAugerCascade(false);
+  params->SetPixe(false);
   // params->SetDeexcitationIgnoreCut(false);
   // params->SetApplyCuts(true);
   // params->Dump();
@@ -99,28 +104,27 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
   
   // G4Radioactivation* radioactiveDecay = new G4Radioactivation();
 
-  radioactiveDecay->SetARM(true);        //Atomic Rearangement
+  radioactiveDecay->SetARM(false);        //Atomic Rearangement
 
   // Initialize atomic deexcitation
   G4LossTableManager* man = G4LossTableManager::Instance();
   G4VAtomDeexcitation* deex = man->AtomDeexcitation();
   if (!deex) {
-     G4EmParameters::Instance()->SetFluo(true);
-     G4EmParameters::Instance()->SetAugerCascade(true);
      deex = new G4UAtomicDeexcitation();
      deex->InitialiseAtomicDeexcitation();
      deex->SetAuger(false);
+     deex->SetAugerCascade(false);
      deex->SetFluo(false);
      deex->SetPIXE(false);
      deex->SetVerboseLevel(1);
      man->SetAtomDeexcitation(deex);
   } else {
-      G4EmParameters::Instance()->SetFluo(false);
       deex = new G4UAtomicDeexcitation();
       deex->InitialiseAtomicDeexcitation();
       deex->SetFluo(false);
       deex->SetPIXE(false);
       deex->SetAuger(false);
+      deex->SetAugerCascade(false);
       deex->SetVerboseLevel(1);
       man->SetAtomDeexcitation(deex);
   }

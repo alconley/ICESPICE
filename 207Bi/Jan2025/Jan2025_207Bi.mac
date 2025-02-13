@@ -2,7 +2,7 @@
 /control/alias f 9
 /control/alias g 0
 /control/alias n 75000000
-/control/alias runno 14
+/control/alias runno 15
 /control/alias thickness 100
 /control/alias detector 1000
 /control/alias File run_{runno}_Jan2025_207BiDecay_PIPS{detector}_f{f}mm_g{g}mm_n{n}_Source{thickness}nmThick
@@ -15,9 +15,9 @@
 /process/em/fluo false
 /process/em/auger false
 /process/em/pixe false
-/process/em/deexcitationIgnoreCut true
+/process/em/deexcitationIgnoreCut false
 /process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
-/process/eLoss/StepFunction 0.2 1 um
+/process/eLoss/StepFunction 0.2 0.1 um
 
 /process/em/printParameters
 
