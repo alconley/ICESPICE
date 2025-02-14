@@ -57,14 +57,14 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
 
   G4LossTableManager::Instance();
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(100.0*eV, 1*GeV);
-  SetDefaultCutValue(1*micrometer);
+  SetDefaultCutValue(0.1*micrometer);
 
   G4EmParameters* params = G4EmParameters::Instance();
-  params->SetPhotoeffectBelowKShell(0);
-  params->SetFluo(false);
-  params->SetAuger(false);
-  params->SetAugerCascade(false);
-  params->SetPixe(false);
+  // params->SetPhotoeffectBelowKShell(0);
+  // params->SetFluo(false);
+  // params->SetAuger(false);
+  // params->SetAugerCascade(false);
+  // params->SetPixe(false);
   // params->SetDeexcitationIgnoreCut(false);
   // params->SetApplyCuts(true);
   // params->Dump();
@@ -102,36 +102,19 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
 {  
   G4RadioactiveDecay* radioactiveDecay = new G4RadioactiveDecay();
   
-  // G4Radioactivation* radioactiveDecay = new G4Radioactivation();
 
-  radioactiveDecay->SetARM(false);        //Atomic Rearangement
+  radioactiveDecay->SetARM(true);        //Atomic Rearangement
 
   // Initialize atomic deexcitation
   G4LossTableManager* man = G4LossTableManager::Instance();
   G4VAtomDeexcitation* deex = man->AtomDeexcitation();
-  if (!deex) {
-     deex = new G4UAtomicDeexcitation();
-     deex->InitialiseAtomicDeexcitation();
-     deex->SetAuger(false);
-     deex->SetAugerCascade(false);
-     deex->SetFluo(false);
-     deex->SetPIXE(false);
-     deex->SetVerboseLevel(1);
-     man->SetAtomDeexcitation(deex);
-  } else {
-      deex = new G4UAtomicDeexcitation();
-      deex->InitialiseAtomicDeexcitation();
-      deex->SetFluo(false);
-      deex->SetPIXE(false);
-      deex->SetAuger(false);
-      deex->SetAugerCascade(false);
-      deex->SetVerboseLevel(1);
-      man->SetAtomDeexcitation(deex);
-  }
+
+    deex = new G4UAtomicDeexcitation();
+    deex->InitialiseAtomicDeexcitation();
+    deex->SetVerboseLevel(1);
+    man->SetAtomDeexcitation(deex);
 
   // Register radioactive decay for relevant particles
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
   ph->RegisterProcess(radioactiveDecay, G4GenericIon::GenericIon());
-  // ph->RegisterProcess(radioactiveDecay, G4Electron::Electron());
-  // ph->RegisterProcess(radioactiveDecay, G4Gamma::Gamma());
 }

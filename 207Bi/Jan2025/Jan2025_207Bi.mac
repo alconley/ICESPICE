@@ -11,13 +11,12 @@
 /run/initialize
 
 # These must come right after the initialization
-# /process/em/deexcitation region false false false
 /process/em/fluo false
 /process/em/auger false
 /process/em/pixe false
-/process/em/deexcitationIgnoreCut false
 /process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
-/process/eLoss/StepFunction 0.2 0.1 um
+/process/eLoss/StepFunction 0.1 10 nm
+#/process/eLoss/LambdaFactor 0.1
 
 /process/em/printParameters
 
