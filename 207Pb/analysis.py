@@ -142,8 +142,8 @@ def geant4_simulation_results(root_file_path, fwhm, plot=True):
             ax.set_xlabel(r"Energy [keV]")
             ax.set_ylabel(r"Counts/keV")
             ax.set_yscale("log")
-            ax.set_ylim(bottom=1)
-            ax.set_xlim(0, 2000)
+            ax.set_ylim(bottom=0.1)
+            ax.set_xlim(30, 2000)
             
             ax.axvline(x=481.6935, color='green', linestyle='--', linewidth=1)
             ax.axvline(x=553.8372, color='green', linestyle='--', linewidth=1)
