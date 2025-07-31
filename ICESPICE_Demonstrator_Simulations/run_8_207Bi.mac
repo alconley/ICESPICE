@@ -1,7 +1,7 @@
 # variables
 /control/alias f 75
 /control/alias g 25
-/control/alias n 7920000
+/control/alias n 100000000
 /control/alias runno 8
 /control/alias thickness 100
 /control/alias detector 1000
@@ -36,7 +36,7 @@
 /analysis/setFileName {File}
 
 # Print progress every # events during the simulation run 
-/run/printProgress 10000000
+/run/printProgress 1000000
 
 # Begin the simulation with # particles
 /run/beamOn {n}
