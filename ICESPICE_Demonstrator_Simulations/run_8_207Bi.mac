@@ -1,7 +1,7 @@
 # variables
 /control/alias f 75
 /control/alias g 25
-/control/alias n 79200000
+/control/alias n 7920000
 /control/alias runno 8
 /control/alias thickness 100
 /control/alias detector 1000
@@ -15,7 +15,7 @@
 /process/em/auger false
 /process/em/pixe false
 /process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
-/process/eLoss/StepFunction 0.1 10 nm
+#/process/eLoss/StepFunction 0.1 10 nm
 /process/em/printParameters
 
 # Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
@@ -42,3 +42,4 @@
 /run/beamOn {n}
 
 /control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
