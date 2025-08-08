@@ -31,6 +31,9 @@
 #include "G4UAtomicDeexcitation.hh"
 #include "G4NuclearLevelData.hh"
 #include "G4DeexPrecoParameters.hh"
+#include "G4HadronicParameters.hh"
+#include "G4eCoulombScatteringModel.hh"
+#include "G4CoulombScattering.hh"
 
 ICESPICEPhysicsList::ICESPICEPhysicsList() 
 : G4VModularPhysicsList() {
@@ -44,9 +47,11 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
   fDecPhysicsList = new G4DecayPhysics(verboseLevel);
 
   // mandatory for G4NuclideTable
-  G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(1.0*picosecond);
+  // G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(1.0*picosecond);
+  G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(1e+60 * year);
   G4NuclideTable::GetInstance()->SetLevelTolerance(1.0*eV);
-   
+  G4HadronicParameters::Instance()
+        ->SetTimeThresholdForRadioactiveDecay(1.0e+60 * year);
   //read new PhotonEvaporation data set 
   G4DeexPrecoParameters* deex = 
     G4NuclearLevelData::GetInstance()->GetParameters();
@@ -62,7 +67,7 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
   G4EmParameters* params = G4EmParameters::Instance();
   // params->SetPhotoeffectBelowKShell(0);
   // params->SetFluo(false);
-  // params->SetAuger(false);
+    params->SetAuger(true);
   // params->SetAugerCascade(false);
   // params->SetPixe(false);
   // params->SetDeexcitationIgnoreCut(false);
@@ -83,11 +88,17 @@ void ICESPICEPhysicsList::ConstructParticle()
 void ICESPICEPhysicsList::ConstructProcess()
 {
   AddTransportation();
-
   fEmPhysicsList->ConstructProcess();
 
-  fDecPhysicsList->ConstructProcess();
+  // Fine-tune multiple scattering parameters
+  G4EmParameters* emParams = G4EmParameters::Instance();
 
+  emParams->SetMscStepLimitType(fUseSafety);         // Alternatives: fMinimal, fUseDistanceToBoundary
+  emParams->SetMscRangeFactor(0.02);                 // Reduce range factor (default is 0.04)
+  emParams->SetMscGeomFactor(2.5);                   // Slightly reduce from default of 3.5
+  emParams->SetStepFunction(0.1, 1*um);              // Stricter control over MSC step size
+
+  fDecPhysicsList->ConstructProcess();
   AddRadioactiveDecay();
 }
 
@@ -113,6 +124,7 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
     deex->InitialiseAtomicDeexcitation();
     deex->SetVerboseLevel(1);
     man->SetAtomDeexcitation(deex);
+    
 
   // Register radioactive decay for relevant particles
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();

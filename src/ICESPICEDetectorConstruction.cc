@@ -150,15 +150,15 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   Acetal = acetal;
 
   // // Define Galactic Vacuum for the world volume
-  // G4Material* gal_vac = nist->FindOrBuildMaterial("G4_Galactic");
-  // Vacuum = gal_vac;
+  G4Material* gal_vac = nist->FindOrBuildMaterial("G4_Galactic");
+  Vacuum = gal_vac;
 
   // define vacuum to be 10^-2 Torr
-  G4Material* air = nist->FindOrBuildMaterial("G4_AIR");
-  G4Material* vacuum = new G4Material(name="vacuum", 1.33e-11 * g/cm3, ncomponents=1,
-                                      kStateGas, 293.15 * kelvin, 1.333 * pascal);
-  vacuum->AddMaterial(air, fractionmass=1.);
-  Vacuum = vacuum;
+  // G4Material* air = nist->FindOrBuildMaterial("G4_AIR");
+  // G4Material* vacuum = new G4Material(name="vacuum", 1.33e-11 * g/cm3, ncomponents=1,
+  //                                     kStateGas, 293.15 * kelvin, 1.333 * pascal);
+  // vacuum->AddMaterial(air, fractionmass=1.);
+  // Vacuum = vacuum;
 
   // SiO2 for the detector window
   G4Material* sio2 = new G4Material("SiO2", 2.2*g/cm3, ncomponents = 2);
