@@ -59,6 +59,7 @@ public:
   const G4VPhysicalVolume* GetWorld() const          {return physiWorld;};           
   const G4VPhysicalVolume* GetMeasureVolume() const { return physiDetector; } 
   const G4VPhysicalVolume* GetSiliconPV() const { return physiDetector; } 
+  G4LogicalVolume* GetSiliconLV() const { return logicDetector; }
   const G4VPhysicalVolume* GetDetectorWindowPV() const { return physiDetectorWindow; }
   const G4VPhysicalVolume* GetDetectorHousingPV() const { return physiDetectorHousing; }
   const G4VPhysicalVolume* GetDetectorHolderPV() const { return physiDetectorHolder; }
@@ -88,6 +89,7 @@ private:
   G4Tubs*            solidDetector; 
   G4double           DetectorActiveArea;
   G4double           DetectorThickness;
+  G4VPhysicalVolume* physiPIPSStack;
 
   
   G4VPhysicalVolume* physiDetectorWindow;

@@ -15,8 +15,6 @@ class ICESPICEPhysicsList: public G4VModularPhysicsList {
 
     void AddRadioactiveDecay();
 
-    // void SetCuts() override;
-
   private:
     G4String                             fEmName;
     G4VPhysicsConstructor*               fEmPhysicsList;

@@ -3,27 +3,22 @@
 /control/alias g 25
 /control/alias n 100000000
 /control/alias runno 8
-/control/alias thickness 1000
+/control/alias thickness 50
 /control/alias detector 1000
-/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}_207BiThickness{thickness}nm_MSC_adjustment
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}_207BiThickness{thickness}nm_rotated_source
 
-# Initialize the run manager (prepare the simulation geometry and physics)
+/run/setCut 1 micrometer
 /run/initialize
-
-# These must come right after the initialization
 /process/em/printParameters
 
-# Set the verbosity levels of different components of the simulation: 0=no output, 1,2,3 = more information
 /control/verbose 0         # output for general control commands
 /run/verbose 0             # output for the run manager (initialization, execution)
 /event/verbose 0           # output for event-level processes (tracking within events)
 /tracking/verbose 0        # output for particle tracking processes
 
-/run/setCut 1 micrometer
 
 /ICESPICE/DetectorPosition -25.4         # Position the detector
 #/ICESPICE/DetectorPosition -{g}         # Position the detector
-
 
 /ICESPICE/FSU207BiSourceEnable 1
 /ICESPICE/FSU207BiSourceThickness {thickness} nanometer
@@ -33,7 +28,7 @@
 /analysis/setFileName {File}
 
 # Print progress every # events during the simulation run 
-/run/printProgress 10000000
+/run/printProgress 1000000
 
 # Begin the simulation with # particles
 /run/beamOn {n}

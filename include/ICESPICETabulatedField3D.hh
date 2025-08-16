@@ -47,7 +47,6 @@ class ICESPICETabulatedField3D
  : public G4MagneticField
 #endif
 {
-  
   // Storage space for the table
   std::vector< std::vector< std::vector< double > > > xField;
   std::vector< std::vector< std::vector< double > > > yField;

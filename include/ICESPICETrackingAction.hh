@@ -46,8 +46,7 @@ public:
     ICESPICETrackingAction();
     virtual ~ICESPICETrackingAction();
     
-    // virtual void PreUserTrackingAction(const G4Track*);
-    virtual void PreUserTrackingAction(const G4Track* track) override;
+    virtual void PreUserTrackingAction(const G4Track*);
     virtual void PostUserTrackingAction(const G4Track*);
     
 };

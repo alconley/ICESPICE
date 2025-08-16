@@ -44,9 +44,7 @@ class ICESPICESteppingVerbose;
 
 class ICESPICESteppingVerbose : public G4SteppingVerbose {
 
-public:   
-  
-  //Constructor/Destructor
+public:     
   ICESPICESteppingVerbose();
   ~ICESPICESteppingVerbose();
   

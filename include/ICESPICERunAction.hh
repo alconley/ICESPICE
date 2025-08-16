@@ -54,13 +54,7 @@ public:
 
   void BeginOfRunAction(const G4Run*);
   void EndOfRunAction(const G4Run*);
-    
-  void  SetRndmFreq(G4int   val)  {saveRndm = val;}
-  G4int GetRndmFreq()             {return saveRndm;}
-
-
-private:
-  G4int saveRndm;
+  
 };
 
 #endif

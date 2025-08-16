@@ -67,7 +67,7 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
   G4EmParameters* params = G4EmParameters::Instance();
   // params->SetPhotoeffectBelowKShell(0);
   // params->SetFluo(false);
-    params->SetAuger(true);
+    params->SetAuger(false);
   // params->SetAugerCascade(false);
   // params->SetPixe(false);
   // params->SetDeexcitationIgnoreCut(false);
@@ -93,10 +93,15 @@ void ICESPICEPhysicsList::ConstructProcess()
   // Fine-tune multiple scattering parameters
   G4EmParameters* emParams = G4EmParameters::Instance();
 
-  emParams->SetMscStepLimitType(fUseSafety);         // Alternatives: fMinimal, fUseDistanceToBoundary
-  emParams->SetMscRangeFactor(0.02);                 // Reduce range factor (default is 0.04)
-  emParams->SetMscGeomFactor(2.5);                   // Slightly reduce from default of 3.5
-  emParams->SetStepFunction(0.1, 1*um);              // Stricter control over MSC step size
+  // emParams->SetLowestElectronEnergy(100*eV);     // optional: low-energy tracking
+  // emParams->SetLowestMuHadEnergy(100*eV);        // optional
+  // emParams->SetNumberOfBinsPerDecade(20);        // optional
+  // emParams->Se;                // Cut For Secondaries
+
+  // emParams->SetMscThetaLimit(0.01*rad);                   // Reduce from default of 0.25rad
+  // emParams->SetMscRangeFactor(0.02);                 // Reduce range factor (default is 0.04)
+  // emParams->SetMscGeomFactor(1.5);                   // Slightly reduce from default of 3.5
+  // emParams->SetStepFunction(0.1, 10*um);              // Stricter control over MSC step size
 
   fDecPhysicsList->ConstructProcess();
   AddRadioactiveDecay();

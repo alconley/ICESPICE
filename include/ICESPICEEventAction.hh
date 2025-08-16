@@ -60,7 +60,6 @@ class ICESPICEEventAction : public G4UserEventAction
 
     void AddSil(G4double de);
 
-        
   private:
     G4String                 drawFlag;
     G4int                    printModulo;
