@@ -32,6 +32,8 @@
 #
 # Draw coordinate axes:
 /vis/scene/add/axes
+# Draw the gps
+/vis/scene/add/gps white
 #
 # Draw smooth trajectories at end of event, showing trajectory points
 # as markers 2 pixels wide:

@@ -65,11 +65,11 @@ ICESPICEPhysicsList::ICESPICEPhysicsList()
   SetDefaultCutValue(0.1*micrometer);
 
   G4EmParameters* params = G4EmParameters::Instance();
-  // params->SetPhotoeffectBelowKShell(0);
-  // params->SetFluo(false);
+  params->SetPhotoeffectBelowKShell(0);
+  params->SetFluo(false);
     params->SetAuger(false);
-  // params->SetAugerCascade(false);
-  // params->SetPixe(false);
+  params->SetAugerCascade(false);
+  params->SetPixe(false);
   // params->SetDeexcitationIgnoreCut(false);
   // params->SetApplyCuts(true);
   // params->Dump();
@@ -119,7 +119,7 @@ void ICESPICEPhysicsList::AddRadioactiveDecay()
   G4RadioactiveDecay* radioactiveDecay = new G4RadioactiveDecay();
   
 
-  radioactiveDecay->SetARM(true);        //Atomic Rearangement
+  radioactiveDecay->SetARM(false);        //Atomic Rearangement
 
   // Initialize atomic deexcitation
   G4LossTableManager* man = G4LossTableManager::Instance();

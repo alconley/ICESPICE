@@ -69,6 +69,11 @@ public:
   void Set207BiSourcePosition(G4double val);
   void UpdateFSU207BiSourceThickness(G4double newThickness);
   void ToggleFSU207BiSource(G4bool enable);
+  void RebuildFSU207BiSource_();
+  void RemoveFSU207BiSource_();
+  
+  void Set207BiSourceTheta(G4double theta_deg);
+  void Set207BiSourcePhi(G4double phi_deg);
 
 private:
 
@@ -124,6 +129,8 @@ private:
   G4bool f207BiSourceEnabled; // To enable/disable the source
   G4double Source207BiThickness; // Thickness of the source
   G4double Source207BiPosition; // Position of the source
+  G4double Source207BiTheta; // [deg]
+  G4double Source207BiPhi;   // [deg]
   G4LogicalVolume* logic207BiSource; // Logical volume of the source
   G4VPhysicalVolume* physi207BiSource; // Physical volume of the source
   G4Tubs*            solid207BiSource;

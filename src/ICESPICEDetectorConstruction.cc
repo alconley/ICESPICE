@@ -27,7 +27,7 @@
 // Possibility to turn off (0) magnetic field and measurement volume. 
 #define MAG 1
 
-#define ICESPICE_5N42_1x1x1_8in_FLAG 1 
+#define ICESPICE_5N42_1x1x1_8in_FLAG 1
 #define ICESPICE_3N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_5N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_6N42_1x1x1_16in_FLAG 0 
@@ -39,7 +39,7 @@
 
 #define DETECTORHOLDER 0 // AC: Volume for detector holder
 
-#define BI207SOURCEBACKING 1
+#define BI207SOURCEBACKING 0
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -63,6 +63,8 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
   DetectorPosition=-25.4*mm; // AC
   Source207BiPosition=70.*mm; // AC
   Source207BiThickness=100.0*nanometer; // AC
+  Source207BiTheta = 0.*deg; // default matches your current code
+  Source207BiPhi   = 0.*deg;
   DefineCommands();
 }  
 
@@ -237,7 +239,7 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
   ICESPICE_6N42_1x1x1_16in();
 #endif
 
-if (f207BiSourceEnabled) {
+if (f207BiSourceEnabled && !physi207BiSource) {
     FSU207BiSource();
 }
 
@@ -328,6 +330,23 @@ void ICESPICEDetectorConstruction::DefineCommands() {
     sourceThicknessCommand.SetParameterName("thickness", true);
     sourceThicknessCommand.SetRange("thickness > 0");
     sourceThicknessCommand.SetDefaultValue("1000.0");
+
+    // NEW: 207Bi Source Orientation
+    auto& sourceThetaCmd =
+        fMessenger->DeclareMethodWithUnit("FSU207BiSourceTheta", "deg",
+            &ICESPICEDetectorConstruction::Set207BiSourceTheta,
+            "Set polar angle (theta) of the 207Bi source face direction.");
+    sourceThetaCmd.SetParameterName("theta", true);
+    sourceThetaCmd.SetRange("theta>=0. && theta<=180.");
+    sourceThetaCmd.SetDefaultValue("180.");
+
+    auto& sourcePhiCmd =
+        fMessenger->DeclareMethodWithUnit("FSU207BiSourcePhi", "deg",
+            &ICESPICEDetectorConstruction::Set207BiSourcePhi,
+            "Set azimuthal angle (phi) of the 207Bi source face direction.");
+    sourcePhiCmd.SetParameterName("phi", true);
+    sourcePhiCmd.SetRange("phi>=0. && phi<360.");
+    sourcePhiCmd.SetDefaultValue("0.");
 
 }
 
@@ -1175,172 +1194,26 @@ void ICESPICEDetectorConstruction::ICESPICE_6N42_1x1x1_16in() {
     logicMagnet->SetVisAttributes(MagnetVisAtt);
 }
 
-// void ICESPICEDetectorConstruction::FSU207BiSource() {
-//     // Define the geometry, material, and placement of the 207Bi source
-//     G4double sourceRadius = 2.5 * mm;    // Radius of the source
-//     G4double sourceBackingRadius = sourceRadius + 1.0 * mm; // Radius of the source backing
-//     G4double sourceBackingThickness = 10.0 * mm;            // Thickness of the source backing
-//     G4double holderRadius = sourceBackingRadius + 3.0 * mm; // Radius of the holder
-//     G4double holderLength = sourceBackingThickness + 0.5 * mm; // Length of the holder
-//     G4double theta = 45.0 * deg;
-//     G4double phi = 0.0 * deg;
-
-//     // Create a cylinder for the 207Bi source
-//     solid207BiSource = new G4Tubs("FSU207BiSource",
-//                                   0.0, sourceRadius,
-//                                   Source207BiThickness / 2,
-//                                   0.0 * deg, 360.0 * deg);
-
-//     logic207BiSource = new G4LogicalVolume(solid207BiSource,
-//                                            Bi, // Material: Bismuth
-//                                            "FSU207BiSource");
-
-//     // Position the source at the specified SourcePosition
-//     G4ThreeVector sourcePositionVector(0, 0, Source207BiPosition + Source207BiThickness / 2);
-
-//     physi207BiSource = new G4PVPlacement(nullptr,                // No rotation
-//                                          sourcePositionVector,   // Placement position
-//                                          logic207BiSource,       // Logical volume
-//                                          "FSU207BiSource",               // Name
-//                                          logicWorld,             // Parent volume
-//                                          false,                  // No boolean operation
-//                                          0);                     // Copy number
-
-//     // Set visualization attributes for the source
-//     visAttributes207BiSource = new G4VisAttributes(G4Colour(1.0, 0.5, 1.0)); // Light purple
-//     visAttributes207BiSource->SetVisibility(true);
-//     visAttributes207BiSource->SetForceSolid(true);
-//     logic207BiSource->SetVisAttributes(visAttributes207BiSource);
-
-//     // Add source backing behind the source
-//     G4Tubs* solidSourceBacking = new G4Tubs("SourceBacking",
-//                                             0.0, sourceBackingRadius,
-//                                             sourceBackingThickness / 2,
-//                                             0.0 * deg, 360.0 * deg);
-
-//     G4LogicalVolume* logicSourceBacking = new G4LogicalVolume(solidSourceBacking,
-//                                                               StainlessSteel, // Material for backing
-//                                                               "SourceBacking");
-
-//     // Position the backing directly behind the source
-//     G4ThreeVector backingPosition(0, 0, Source207BiThickness / 2 + sourceBackingThickness / 2);
-//     // G4ThreeVector backingPosition(0, 0, Source207BiThickness / 2 - sourceBackingThickness / 2);
-
-
-//     new G4PVPlacement(nullptr,              // No rotation
-//                       backingPosition,      // Placement position relative to the source
-//                       logicSourceBacking,   // Logical volume
-//                       "SourceBacking",      // Name
-//                       logic207BiSource,     // Parent volume (source)
-//                       false,                // No boolean operation
-//                       0);                   // Copy number
-
-//     // Set visualization attributes for the source backing
-//     G4VisAttributes* visAttributesSourceBacking = new G4VisAttributes(G4Colour(0.3, 0.3, 0.3)); // Gray
-//     visAttributesSourceBacking->SetVisibility(true);
-//     visAttributesSourceBacking->SetForceSolid(true);
-//     logicSourceBacking->SetVisAttributes(visAttributesSourceBacking);
-
-//     // Add the holder housing around the source backing
-//     G4Tubs* solidHolder = new G4Tubs("Holder",
-//                                      sourceBackingRadius, holderRadius,
-//                                      holderLength / 2,
-//                                      0.0 * deg, 360.0 * deg);
-
-//     G4LogicalVolume* logicHolder = new G4LogicalVolume(solidHolder,
-//                                                        StainlessSteel, // Material for the holder
-//                                                        "Holder");
-
-//     // Position the holder to enclose the backing
-//     G4ThreeVector holderPosition(0, 0, Source207BiThickness / 2 + sourceBackingThickness / 2 - 0.25 * mm);
-
-//     new G4PVPlacement(nullptr,            // No rotation
-//                       holderPosition,     // Placement position relative to the source
-//                       logicHolder,        // Logical volume
-//                       "Holder",           // Name
-//                       logic207BiSource,   // Parent volume (source)
-//                       false,              // No boolean operation
-//                       0);                 // Copy number
-
-//     // Set visualization attributes for the holder
-//     G4VisAttributes* visAttributesHolder = new G4VisAttributes(G4Colour(0.3, 0.3, 0.3)); // Dark gray
-//     visAttributesHolder->SetVisibility(true);
-//     visAttributesHolder->SetForceSolid(true);
-//     logicHolder->SetVisAttributes(visAttributesHolder);
-
-//     // Apply GPS commands for particle source
-//     G4UImanager* UI = G4UImanager::GetUIpointer();
-//     G4String command;
-
-//     // Set the source center at SourcePosition
-//     // Adjust the GPS center to match the source position
-//     std::ostringstream positionCommand;
-//     positionCommand << "/gps/pos/centre 0 0 " << (Source207BiPosition + Source207BiThickness / 2) / mm << " mm";
-//     UI->ApplyCommand(positionCommand.str());
-
-//     // Set isotropic angular distribution
-//     command = "/gps/ang/type iso";
-//     UI->ApplyCommand(command);
-
-//     // Set volume and shape of the source
-//     command = "/gps/pos/type Volume";
-//     UI->ApplyCommand(command);
-//     command = "/gps/pos/shape Cylinder";
-//     UI->ApplyCommand(command);
-//     command = "/gps/pos/radius 2.5 mm";
-//     UI->ApplyCommand(command);
-
-//     // Set the height of the cylinder based on the source thickness
-//     std::ostringstream halfZCommand;
-//     halfZCommand << "/gps/pos/halfz " << (Source207BiThickness) / nm << " nanometer";
-//     UI->ApplyCommand(halfZCommand.str());
-
-//     command = "/gps/pos/confine FSU207BiSource";
-//     UI->ApplyCommand(command);
-
-//     // Set particle type and ion definition
-//     command = "/gps/particle ion";
-//     UI->ApplyCommand(command);
-
-//     // Define the ion parameters (example: Z=83 for Bi, A=207, E=0)
-//     G4int Z = 83;  // Atomic number of Bi
-//     G4int A = 207; // Mass number
-//     G4double E = 0; // Excitation energy
-//     std::ostringstream ionCommand;
-//     ionCommand << "/gps/ion " << Z << " " << A << " 0 " << E;
-//     UI->ApplyCommand(ionCommand.str());
-
-//     // Set monoenergetic energy distribution
-//     command = "/gps/ene/type Mono";
-//     UI->ApplyCommand(command);
-//     command = "/gps/ene/mono 0 eV";
-//     UI->ApplyCommand(command);
-
-//     G4cout << "207Bi source geometry and GPS configuration updated successfully." << G4endl;
-// }
-
 void ICESPICEDetectorConstruction::FSU207BiSource() {
     // ---- Geometry knobs (unchanged) ----
     G4double sourceRadius = 2.5 * mm;
     G4double sourceBackingRadius = sourceRadius + 1.0 * mm;
     G4double sourceBackingThickness = 10.0 * mm;
     G4double holderRadius = sourceBackingRadius + 3.0 * mm;
-    G4double holderLength = sourceBackingThickness + 0.5 * mm;
+    G4double holderLength = sourceBackingThickness + 2.0 * mm;
 
-    // --- Experimental ICESPICE direction (from source): theta=120°, phi=45°
-    const G4double theta = 120.0 * deg;
-    const G4double phi   = 45.0  * deg;
+    // Live UI-controlled angles:
+    const G4double theta_y = Source207BiTheta; // rotation about +Y
+    const G4double phi_x   = Source207BiPhi;   // rotation about +X
 
-    // Desired world direction that the SOURCE FACE should point to
-    // Face is local -Z, so local -Z must align with d_hat
-    const G4double sTh = std::sin(theta);
-    const G4double cTh = std::cos(theta);
-    const G4double cPh = std::cos(phi);
-    const G4double sPh = std::sin(phi);
-    G4ThreeVector d_hat(sTh * cPh, sTh * sPh, cTh); // unit direction of detector in experiment
-    d_hat = d_hat.unit();
+    // Build the placement rotation: first Y (theta), then X (phi)
+    // This defines the world orientation of the source's LOCAL axes.
+    auto rot = new G4RotationMatrix();
+    rot->rotateY(theta_y);   // θ about Y
+    rot->rotateX(phi_x);     // then ϕ about X
 
-    // Build mother (source)
+    // Build mother (source disc). Its local axis convention:
+    //   -Z_local = "front face" (emitting surface)
     solid207BiSource = new G4Tubs("FSU207BiSource",
                                   0.0, sourceRadius,
                                   Source207BiThickness / 2,
@@ -1348,20 +1221,10 @@ void ICESPICEDetectorConstruction::FSU207BiSource() {
 
     logic207BiSource = new G4LogicalVolume(solid207BiSource, Bi, "FSU207BiSourceLV");
 
-    // ---- Rotation: map local axes to world so that local -Z == d_hat ----
-    // => local +Z must align with -d_hat
-    G4ThreeVector uz = (-d_hat).unit(); // world direction of local +Z
-    G4ThreeVector up(0, 1, 0);
-    if (std::fabs(uz.dot(up)) > 0.999) up = G4ThreeVector(1, 0, 0); // avoid collinearity
-    G4ThreeVector ux = up.cross(uz).unit();
-    G4ThreeVector uy = uz.cross(ux).unit();
-    auto rot = new G4RotationMatrix(ux, uy, uz); // columns are basis x,y,z
-
-    // ---- Keep source on Z axis (your original placement) ----
-    // Center sits at (0,0, Source207BiPosition + half-thickness)
+    // Place the source: keep on Z axis at given distance
     G4ThreeVector sourcePositionVector(0, 0, Source207BiPosition + Source207BiThickness / 2);
 
-    physi207BiSource = new G4PVPlacement(rot,                 // <-- apply rotation
+    physi207BiSource = new G4PVPlacement(rot,                 // <-- unified rotation
                                          sourcePositionVector,
                                          logic207BiSource,
                                          "FSU207BiSource",
@@ -1375,7 +1238,7 @@ void ICESPICEDetectorConstruction::FSU207BiSource() {
     visAttributes207BiSource->SetForceSolid(true);
     logic207BiSource->SetVisAttributes(visAttributes207BiSource);
 
-    // ---- Backing (placed at local +Z; with our rotation this points opposite the face) ----
+    // ---- Backing (placed at local +Z; opposite the emitting face) ----
     G4Tubs* solidSourceBacking = new G4Tubs("SourceBacking",
                                             0.0, sourceBackingRadius,
                                             sourceBackingThickness / 2,
@@ -1411,105 +1274,138 @@ void ICESPICEDetectorConstruction::FSU207BiSource() {
     visAttributesHolder->SetForceSolid(true);
     logicHolder->SetVisAttributes(visAttributesHolder);
 
+    // ---------------- GPS: isotropic positions in a sphere ----------------
     G4UImanager* UI = G4UImanager::GetUIpointer();
 
-    // Clear any stale GPS state
     UI->ApplyCommand("/gps/clear");
     UI->ApplyCommand("/gps/pos/clear");
     UI->ApplyCommand("/gps/ang/clear");
     UI->ApplyCommand("/gps/ene/clear");
 
-    // Compute centre z in mm
-    const G4double zc_mm = (Source207BiPosition + Source207BiThickness/2.0) / CLHEP::mm;
-    const G4double halfz_mm = (Source207BiThickness/2.0) / CLHEP::mm;
+    // Compute sphere center (middle of the source PV) and radius
+    const G4double zc_mm    = (Source207BiPosition + Source207BiThickness/2.0) / CLHEP::mm;
+    const G4double radius_mm = (Source207BiThickness/2.0) / CLHEP::mm;
 
-    // Define a rotated cylinder exactly matching the source disc
+    // Position distribution: sphere
     UI->ApplyCommand("/gps/pos/type Volume");
-    UI->ApplyCommand("/gps/pos/shape Cylinder");
+    UI->ApplyCommand("/gps/pos/shape Sphere");
 
-    // radius = sourceRadius = 2.5 mm
-    UI->ApplyCommand("/gps/pos/radius 2.5 mm");
-
-    // halfz = Source207BiThickness/2
     {
-        std::ostringstream cmd;
-        cmd << "/gps/pos/halfz " << std::scientific << halfz_mm << " mm";
-        UI->ApplyCommand(cmd.str());
+      std::ostringstream r; r.setf(std::ios::fixed);
+      r << "/gps/pos/radius " << radius_mm << " mm";
+      UI->ApplyCommand(r.str());
+    }
+    {
+      std::ostringstream c; c.setf(std::ios::fixed);
+      c << "/gps/pos/centre 0 0 " << zc_mm << " mm";
+      UI->ApplyCommand(c.str());
     }
 
-    // centre = same as PV centre
-    {
-        std::ostringstream cmd;
-        cmd << "/gps/pos/centre 0 0 " << std::fixed << zc_mm << " mm";
-        UI->ApplyCommand(cmd.str());
-    }
+    // (Optional) confine to logical volume if desired
+    // UI->ApplyCommand("/gps/pos/confine FSU207BiSource");
 
-    // Orientation so local -Z points along (theta=120°, phi=45°)
-    // rot1 = X', rot2 = Y' (unit, orthonormal); Z' = rot1 x rot2
-    UI->ApplyCommand("/gps/pos/rot1 0.6324555320 0.0 0.7745966692");
-    UI->ApplyCommand("/gps/pos/rot2 -0.4743416490 0.7905694150 0.3872983346");
-
-    // Angle/particle/energy as before
+    // Angular distribution: isotropic
     UI->ApplyCommand("/gps/ang/type iso");
-    UI->ApplyCommand("/gps/particle ion");
-    UI->ApplyCommand("/gps/ion 83 207 0 0");
-    UI->ApplyCommand("/gps/ene/type Mono");
-    UI->ApplyCommand("/gps/ene/mono 0 eV");
 
-    // (Optional) quick check
-    UI->ApplyCommand("/gps/verbose 1");
-    UI->ApplyCommand("/gps/pos/verbose 2");
-    UI->ApplyCommand("/gps/dump");
-    G4cout << "207Bi source kept on Z-axis at z = "
-           << (sourcePositionVector.z()/mm)
-           << " mm, rotated so face (-Z local) points toward "
-           << "theta=" << theta/deg << " deg, phi=" << phi/deg << " deg."
-           << G4endl;
+    // // ---------------- GPS setup ----------------
+    // G4UImanager* UI = G4UImanager::GetUIpointer();
+
+    // // Clear any stale GPS state
+    // UI->ApplyCommand("/gps/clear");
+    // UI->ApplyCommand("/gps/pos/clear");
+    // UI->ApplyCommand("/gps/ang/clear");
+    // UI->ApplyCommand("/gps/ene/clear");
+
+    // // Compute centre z in mm
+    // const G4double zc_mm   = (Source207BiPosition + Source207BiThickness/2.0) / CLHEP::mm;
+    // const G4double halfz_mm= (Source207BiThickness/2.0) / CLHEP::mm;
+
+    // // Define a rotated cylinder exactly matching the source disc
+    // UI->ApplyCommand("/gps/pos/type Volume");
+    // UI->ApplyCommand("/gps/pos/shape Cylinder");
+
+    // // radius = sourceRadius = 2.5 mm
+    // UI->ApplyCommand("/gps/pos/radius 2.5 mm");
+
+    // // halfz = Source207BiThickness/2
+    // {
+    //     std::ostringstream cmd;
+    //     cmd.setf(std::ios::fixed);
+    //     cmd << "/gps/pos/halfz " << halfz_mm << " mm";
+    //     UI->ApplyCommand(cmd.str());
+    // }
+
+    // // centre = same as PV centre
+    // {
+    //     std::ostringstream cmd;
+    //     cmd.setf(std::ios::fixed);
+    //     cmd << "/gps/pos/centre 0 0 " << zc_mm << " mm";
+    //     UI->ApplyCommand(cmd.str());
+    // }
+
+    // UI->ApplyCommand("/gps/ang/type iso");
+
+    // // ---- Debug print: show where the face (-Z_local) points in world ----
+    // G4ThreeVector face_dir_world = (*rot) * G4ThreeVector(0,0,-1); // emitting face direction
+    // G4cout << "207Bi source kept on Z-axis at z = "
+    //        << (sourcePositionVector.z()/mm) << " mm, "
+    //        << "theta_y=" << theta_y/deg << " deg, phi_x=" << phi_x/deg << " deg. "
+    //        << "Face (-Z_local) world dir = ("
+    //        << face_dir_world.x() << ", "
+    //        << face_dir_world.y() << ", "
+    //        << face_dir_world.z() << ")."
+    //        << G4endl;
+}
+
+// NEW: remove and rebuild helpers to avoid duplication
+void ICESPICEDetectorConstruction::RemoveFSU207BiSource_()
+{
+    if (physi207BiSource) { delete physi207BiSource; physi207BiSource = nullptr; }
+    if (logic207BiSource) { delete logic207BiSource; logic207BiSource = nullptr; }
+    if (solid207BiSource) { delete solid207BiSource; solid207BiSource = nullptr; }
+    if (visAttributes207BiSource) { delete visAttributes207BiSource; visAttributes207BiSource = nullptr; }
+}
+
+void ICESPICEDetectorConstruction::RebuildFSU207BiSource_()
+{
+    RemoveFSU207BiSource_();
+    FSU207BiSource();
+    auto* rm = G4RunManager::GetRunManager();
+    rm->GeometryHasBeenModified();     // enough for a pure placement change
+    rm->ReinitializeGeometry();      // usually NOT needed here
+}
+
+void ICESPICEDetectorConstruction::Set207BiSourceTheta(G4double theta_in)
+{
+    // theta_in is already in radians (user can type "180 deg" or "180")
+    // normalize if you like:
+    while (theta_in < 0.)          theta_in += 360.*deg;
+    while (theta_in >= 360.*deg)   theta_in -= 360.*deg;
+
+    G4cout << "Setting 207Bi source theta to: " << (theta_in/deg) << " degrees" << G4endl;
+    Source207BiTheta = theta_in;
+    if (f207BiSourceEnabled) RebuildFSU207BiSource_();
+}
+
+void ICESPICEDetectorConstruction::Set207BiSourcePhi(G4double phi_in)
+{
+    // phi_in is already in radians
+    while (phi_in < 0.)            phi_in += 360.*deg;
+    while (phi_in >= 360.*deg)     phi_in -= 360.*deg;
+
+    G4cout << "Setting 207Bi source phi to: " << (phi_in/deg) << " degrees" << G4endl;
+    Source207BiPhi = phi_in;
+    if (f207BiSourceEnabled) RebuildFSU207BiSource_();
 }
 
 void ICESPICEDetectorConstruction::UpdateFSU207BiSourceThickness(G4double newThickness) {
     G4cout << "Updating 207Bi source thickness to: " << newThickness / nanometer << " nanometer" << G4endl;
-
-    // Check if the thickness is actually changing
     if (Source207BiThickness == newThickness) {
         G4cout << "Thickness is already set to the given value. No update required." << G4endl;
         return;
     }
-
-    // Update the thickness variable
     Source207BiThickness = newThickness;
-
-    // Completely remove the old source geometry
-    if (physi207BiSource) {
-        G4cout << "Removing existing 207Bi source." << G4endl;
-        delete physi207BiSource;
-        physi207BiSource = nullptr;
-    }
-
-    if (logic207BiSource) {
-        delete logic207BiSource;
-        logic207BiSource = nullptr;
-    }
-
-    if (solid207BiSource) {
-        delete solid207BiSource;
-        solid207BiSource = nullptr;
-    }
-
-    if (visAttributes207BiSource) {
-        delete visAttributes207BiSource;
-        visAttributes207BiSource = nullptr;
-    }
-
-    // Recreate the 207Bi source with the updated thickness
-    if (f207BiSourceEnabled) {
-        G4cout << "Recreating 207Bi source with updated thickness." << G4endl;
-        FSU207BiSource();
-    }
-
-    // Notify the RunManager about the geometry change
-    G4RunManager::GetRunManager()->GeometryHasBeenModified();
-    G4RunManager::GetRunManager()->ReinitializeGeometry();
+    RebuildFSU207BiSource_();
 }
 
 void ICESPICEDetectorConstruction::ToggleFSU207BiSource(G4bool enable) {

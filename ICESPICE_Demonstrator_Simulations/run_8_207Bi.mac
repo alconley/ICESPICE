@@ -5,7 +5,7 @@
 /control/alias runno 8
 /control/alias thickness 50
 /control/alias detector 1000
-/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}_207BiThickness{thickness}nm_rotated_source
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}_207BiThickness{thickness}nm_rotated_source_modphysics
 
 /run/setCut 1 micrometer
 /run/initialize
