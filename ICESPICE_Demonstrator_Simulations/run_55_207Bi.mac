@@ -1,5 +1,5 @@
 # variables
-/control/alias n 100000000
+/control/alias n 1000000000
 /control/alias runno 55
 /control/alias thickness 1000
 /control/alias detector 1000
@@ -8,7 +8,7 @@
 
 /run/initialize
 
-/run/printProgress 1000000
+/run/printProgress 10000000
 
 /process/em/printParameters
 /control/verbose 0         # output for general control commands
