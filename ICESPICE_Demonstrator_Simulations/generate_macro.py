@@ -180,17 +180,17 @@ def generate_all_electrons_macro(
         f.write(macro)
     return out_path
 
-generate_all_electrons_macro(
-    N_total=1_000_000_000,
-    runno=56,
-    thickness_nm=1,
-    detector_um=1000,
-    f_mm=70, # mm
-    g_mm=30, # mm
-    cut=1, # um
-    theta_deg=0, # degrees
-    phi_deg=0 # degrees
-)
+# generate_all_electrons_macro(
+#     N_total=1_000_000_000,
+#     runno=56,
+#     thickness_nm=1,
+#     detector_um=1000,
+#     f_mm=70, # mm
+#     g_mm=30, # mm
+#     cut=1, # um
+#     theta_deg=0, # degrees
+#     phi_deg=0 # degrees
+# )
 
 # for f in [68, 69, 70 , 71, 72]:
 #     for g in [28, 29, 30, 31, 32]:

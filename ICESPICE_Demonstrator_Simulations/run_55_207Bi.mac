@@ -1,0 +1,256 @@
+# variables
+/control/alias n 100000000
+/control/alias runno 55
+/control/alias thickness 1000
+/control/alias detector 1000
+
+/run/setCut 1 micrometer
+
+/run/initialize
+
+/run/printProgress 1000000
+
+/process/em/printParameters
+/control/verbose 0         # output for general control commands
+/run/verbose 0             # output for the run manager (initialization, execution)
+/event/verbose 0           # output for event-level processes (tracking within events)
+/tracking/verbose 0        # output for particle tracking processes
+
+/ICESPICE/FSU207BiSourceEnable 1
+/ICESPICE/FSU207BiSourceThickness {thickness} nanometer
+
+/control/alias f 68
+
+/control/alias g 28
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 29
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 30
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 31
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 32
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias f 69
+
+/control/alias g 28
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 29
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 30
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 31
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 32
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias f 70
+
+/control/alias g 28
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 29
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 30
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 31
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 32
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+
+/control/alias f 71
+
+/control/alias g 28
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 29
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 30
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 31
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 32
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias f 72
+
+/control/alias g 28
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 29
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 30
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 31
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
+
+/control/alias g 32
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}
+/analysis/setFileName {File}
+/ICESPICE/DetectorPosition -{g}
+/ICESPICE/FSU207BiSourcePosition {f}
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations
+/control/shell git add ../ICESPICE_Demonstrator_Simulations/{File}.root && git commit -m "Add {File}.root" && git push
