@@ -25,9 +25,9 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 1
+#define MAG 0
 
-#define ICESPICE_5N42_1x1x1_8in_FLAG 1
+#define ICESPICE_5N42_1x1x1_8in_FLAG 0
 #define ICESPICE_3N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_5N42_1x1x1_16in_FLAG 0 
 #define ICESPICE_6N42_1x1x1_16in_FLAG 0 
@@ -39,7 +39,9 @@
 
 #define DETECTORHOLDER 0 // AC: Volume for detector holder
 
-#define BI207SOURCEBACKING 0
+#define BI207SOURCEBACKING 1
+
+#define TestingChamber 1
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -52,6 +54,7 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
     physiDetectorHolder(NULL), logicDetectorHolder(NULL), solidDetectorHolder(NULL),
     physiPIPSStack(NULL),
     Aluminum(NULL), Silicon(NULL), StainlessSteel(NULL), Tantalum(NULL), Nylon(NULL),
+    Silver(NULL),
     NdFeB(NULL), Acetal(NULL), Vacuum(NULL), SiO2(NULL), Bi(NULL),
 
     f207BiSourceEnabled(false), physi207BiSource(NULL), logic207BiSource(NULL), solid207BiSource(NULL), visAttributes207BiSource(NULL),
@@ -116,7 +119,7 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   G4Element* Nd = nist->FindOrBuildElement("Nd");
   G4Element* Si = nist->FindOrBuildElement("Si");
   G4Element* C = nist->FindOrBuildElement("C");
-  
+
   // Define N42 Magnet material (Neodymium Iron Boron) for magnets
   G4Material* Nd_magnet = new G4Material(name="N42_Magnet", 7.5*g/cm3, ncomponents=3);
     Nd_magnet->AddElement(Nd, natoms=2);
@@ -127,14 +130,14 @@ void ICESPICEDetectorConstruction::DefineMaterials()
   Aluminum = nist->FindOrBuildMaterial("G4_Al");
   Silicon = nist->FindOrBuildMaterial("G4_Si");
   Bi = nist->FindOrBuildMaterial("G4_Bi");
+  Silver = nist->FindOrBuildMaterial("G4_Ag");
+  Tantalum = nist->FindOrBuildMaterial("G4_Ta");
 
   G4Material* stainlesssteel = new G4Material("StainlessSteel", 8.00*g/cm3, 3);
     stainlesssteel->AddElement(Fe, 70 * perCent);  // 70% Iron
     stainlesssteel->AddElement(Cr, 18 * perCent);  // 18% Chromium
     stainlesssteel->AddElement(Ni, 12 * perCent);  // 12% Nickel
     StainlessSteel = stainlesssteel;
-
-  Tantalum = nist->FindOrBuildMaterial("G4_Ta");
 
   G4Material* nylon = new G4Material("Nylon", 1.14 * g / cm3, ncomponents = 4);
     // Add elements to Nylon
@@ -153,14 +156,14 @@ void ICESPICEDetectorConstruction::DefineMaterials()
 
   // // Define Galactic Vacuum for the world volume
   G4Material* gal_vac = nist->FindOrBuildMaterial("G4_Galactic");
-  Vacuum = gal_vac;
+  // Vacuum = gal_vac;
 
   // define vacuum to be 10^-2 Torr
-  // G4Material* air = nist->FindOrBuildMaterial("G4_AIR");
-  // G4Material* vacuum = new G4Material(name="vacuum", 1.33e-11 * g/cm3, ncomponents=1,
-  //                                     kStateGas, 293.15 * kelvin, 1.333 * pascal);
-  // vacuum->AddMaterial(air, fractionmass=1.);
-  // Vacuum = vacuum;
+  G4Material* air = nist->FindOrBuildMaterial("G4_AIR");
+  G4Material* vacuum = new G4Material(name="vacuum", 1.33e-11 * g/cm3, ncomponents=1,
+                                      kStateGas, 293.15 * kelvin, 1.333 * pascal);
+  vacuum->AddMaterial(air, fractionmass=1.);
+  Vacuum = vacuum;
 
   // SiO2 for the detector window
   G4Material* sio2 = new G4Material("SiO2", 2.2*g/cm3, ncomponents = 2);
@@ -200,7 +203,53 @@ G4VPhysicalVolume* ICESPICEDetectorConstruction::ConstructCalorimeter()
   // Visualization attributes
   G4VisAttributes* simpleWorldVisAtt= new G4VisAttributes(G4Colour(1.0,1.0,1.0)); //White
   simpleWorldVisAtt->SetVisibility(true);
+  simpleWorldVisAtt->SetForceSolid(false); // wireframe shell look; set true if you want solid
+
   logicWorld->SetVisAttributes(simpleWorldVisAtt);
+
+#if TestingChamber
+// Cylinder with diameter 6" and length with 10" centered at the origin, the walls are 1/4" thick. the material is stainless steel
+G4double radius = 3.0*2.54*cm;
+G4double height = 5.0*2.54*cm;
+G4double wallThickness = 0.25*2.54*cm;
+G4double y_shift = 20*mm; 
+
+// --- Testing Chamber: 6" OD x 10" L, 1/4" wall ---
+
+// Side wall (hollow cylinder)
+auto solidTC_Shell = new G4Tubs("TC_Shell",
+                                radius - wallThickness, // inner radius
+                                radius,                  // outer radius
+                                height,                  // half-length
+                                0.*deg, 360.*deg);
+
+auto logicTC_Shell = new G4LogicalVolume(solidTC_Shell, StainlessSteel, "TC_Shell");
+new G4PVPlacement(nullptr, G4ThreeVector(0, y_shift, 0), logicTC_Shell, "TC_Shell",
+                  logicWorld, false, 0);
+
+// Endcaps (disks), each 1/4" thick, sized to inner radius
+G4double capHalfThick = wallThickness/2.0;
+auto solidTC_Cap = new G4Tubs("TC_Cap",
+                              0.*mm,                   // solid disk
+                              radius - wallThickness,  // matches inner bore
+                              capHalfThick,            // half-thickness
+                              0.*deg, 360.*deg);
+
+auto logicTC_Cap = new G4LogicalVolume(solidTC_Cap, Aluminum, "TC_Cap");
+
+// Place caps flush with the shell ends, inside the bore
+new G4PVPlacement(nullptr, G4ThreeVector(0, y_shift,  (height - capHalfThick)),
+                  logicTC_Cap, "TC_Cap_Pos", logicWorld, false, 0);
+new G4PVPlacement(nullptr, G4ThreeVector(0, y_shift, -(height - capHalfThick)),
+                  logicTC_Cap, "TC_Cap_Neg", logicWorld, false, 1);
+
+// Visualization
+auto tcVis = new G4VisAttributes(G4Colour(0.7, 0.7, 0.7));
+tcVis->SetForceSolid(false); // wireframe shell look; set true if you want solid
+logicTC_Shell->SetVisAttributes(tcVis);
+logicTC_Cap->SetVisAttributes(tcVis);
+
+#endif
  
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 #if PIPS1000
@@ -375,7 +424,7 @@ void ICESPICEDetectorConstruction::SetDetectorPosition(G4double val) {
 void ICESPICEDetectorConstruction::PIPS1000Detector() {
     DetectorActiveArea = 50.0*mm2;             // Active area of the detector
     DetectorThickness = 1000.*micrometer;      // Thickness of the detector
-    DetectorWindowThickness = 50.*nanometer;   // Thickness of the detector window
+    DetectorWindowThickness = 54.*nanometer;   // Thickness of the detector window
     G4double DetectorRadius = std::sqrt(DetectorActiveArea / CLHEP::pi);
 
     // --- Active silicon detector ---
@@ -415,9 +464,13 @@ void ICESPICEDetectorConstruction::PIPS1000Detector() {
     auto detectorHousing = CADMesh::TessellatedMesh::FromPLY("./cad_files/pips1000/detector_housing.PLY");
     solidDetectorHousing = detectorHousing->GetSolid();
 
-    logicDetectorHousing = new G4LogicalVolume(solidDetectorHousing,
-                                               StainlessSteel,
-                                               "DetectorHousing");
+    // logicDetectorHousing = new G4LogicalVolume(solidDetectorHousing,
+    //                                            StainlessSteel,
+    //                                            "DetectorHousing");
+
+      logicDetectorHousing = new G4LogicalVolume(solidDetectorHousing,
+        Aluminum,
+        "DetectorHousing");
 
     // Position: align housing center to Si center in world
     physiDetectorHousing = new G4PVPlacement(nullptr,
@@ -1244,7 +1297,7 @@ void ICESPICEDetectorConstruction::FSU207BiSource() {
                                             sourceBackingThickness / 2,
                                             0.0 * deg, 360.0 * deg);
     G4LogicalVolume* logicSourceBacking =
-        new G4LogicalVolume(solidSourceBacking, StainlessSteel, "SourceBacking");
+        new G4LogicalVolume(solidSourceBacking, Silver, "SourceBacking");
 
     G4ThreeVector backingPosition(0, 0, Source207BiThickness / 2 + sourceBackingThickness / 2);
     new G4PVPlacement(nullptr, backingPosition,
@@ -1262,99 +1315,59 @@ void ICESPICEDetectorConstruction::FSU207BiSource() {
                                      holderLength / 2,
                                      0.0 * deg, 360.0 * deg);
     G4LogicalVolume* logicHolder =
-        new G4LogicalVolume(solidHolder, StainlessSteel, "Holder");
+        new G4LogicalVolume(solidHolder, Silver, "Holder");
 
     G4ThreeVector holderPosition(0, 0, Source207BiThickness / 2 + sourceBackingThickness / 2 - 0.25 * mm);
     new G4PVPlacement(nullptr, holderPosition,
-                      logicHolder, "Holder",
-                      logic207BiSource, false, 0);
+                      logicHolder, "Holder", logic207BiSource, false, 0);
 
     auto visAttributesHolder = new G4VisAttributes(G4Colour(0.3, 0.3, 0.3));
     visAttributesHolder->SetVisibility(true);
     visAttributesHolder->SetForceSolid(true);
     logicHolder->SetVisAttributes(visAttributesHolder);
 
-    // ---------------- GPS: isotropic positions in a sphere ----------------
+    // // ---------------- GPS setup ----------------
     G4UImanager* UI = G4UImanager::GetUIpointer();
 
+    // Clear any stale GPS state
     UI->ApplyCommand("/gps/clear");
     UI->ApplyCommand("/gps/pos/clear");
     UI->ApplyCommand("/gps/ang/clear");
     UI->ApplyCommand("/gps/ene/clear");
 
-    // Compute sphere center (middle of the source PV) and radius
-    const G4double zc_mm    = (Source207BiPosition + Source207BiThickness/2.0) / CLHEP::mm;
-    const G4double radius_mm = (Source207BiThickness/2.0) / CLHEP::mm;
+    // Compute centre z in mm
+    const G4double zc_mm   = (Source207BiPosition + Source207BiThickness/2.0) / CLHEP::mm;
+    const G4double halfz_mm= (Source207BiThickness/2.0) / CLHEP::mm;
 
-    // Position distribution: sphere
+    // Define a rotated cylinder exactly matching the source disc
     UI->ApplyCommand("/gps/pos/type Volume");
-    UI->ApplyCommand("/gps/pos/shape Sphere");
+    UI->ApplyCommand("/gps/pos/shape Cylinder");
 
+    // radius = sourceRadius = 2.5 mm
+    UI->ApplyCommand("/gps/pos/radius 2.5 mm");
+
+    // halfz = Source207BiThickness/2
     {
-      std::ostringstream r; r.setf(std::ios::fixed);
-      r << "/gps/pos/radius " << radius_mm << " mm";
-      UI->ApplyCommand(r.str());
+        std::ostringstream cmd;
+        cmd.setf(std::ios::fixed);
+        cmd << "/gps/pos/halfz " << halfz_mm << " mm";
+        UI->ApplyCommand(cmd.str());
     }
+
+    // centre = same as PV centre
     {
-      std::ostringstream c; c.setf(std::ios::fixed);
-      c << "/gps/pos/centre 0 0 " << zc_mm << " mm";
-      UI->ApplyCommand(c.str());
+        std::ostringstream cmd;
+        cmd.setf(std::ios::fixed);
+        cmd << "/gps/pos/centre 0 0 " << zc_mm << " mm";
+        UI->ApplyCommand(cmd.str());
     }
 
-    // (Optional) confine to logical volume if desired
-    // UI->ApplyCommand("/gps/pos/confine FSU207BiSource");
-
-    // Angular distribution: isotropic
     UI->ApplyCommand("/gps/ang/type iso");
 
-    // // ---------------- GPS setup ----------------
-    // G4UImanager* UI = G4UImanager::GetUIpointer();
-
-    // // Clear any stale GPS state
-    // UI->ApplyCommand("/gps/clear");
-    // UI->ApplyCommand("/gps/pos/clear");
-    // UI->ApplyCommand("/gps/ang/clear");
-    // UI->ApplyCommand("/gps/ene/clear");
-
-    // // Compute centre z in mm
-    // const G4double zc_mm   = (Source207BiPosition + Source207BiThickness/2.0) / CLHEP::mm;
-    // const G4double halfz_mm= (Source207BiThickness/2.0) / CLHEP::mm;
-
-    // // Define a rotated cylinder exactly matching the source disc
-    // UI->ApplyCommand("/gps/pos/type Volume");
-    // UI->ApplyCommand("/gps/pos/shape Cylinder");
-
-    // // radius = sourceRadius = 2.5 mm
-    // UI->ApplyCommand("/gps/pos/radius 2.5 mm");
-
-    // // halfz = Source207BiThickness/2
-    // {
-    //     std::ostringstream cmd;
-    //     cmd.setf(std::ios::fixed);
-    //     cmd << "/gps/pos/halfz " << halfz_mm << " mm";
-    //     UI->ApplyCommand(cmd.str());
-    // }
-
-    // // centre = same as PV centre
-    // {
-    //     std::ostringstream cmd;
-    //     cmd.setf(std::ios::fixed);
-    //     cmd << "/gps/pos/centre 0 0 " << zc_mm << " mm";
-    //     UI->ApplyCommand(cmd.str());
-    // }
-
-    // UI->ApplyCommand("/gps/ang/type iso");
-
-    // // ---- Debug print: show where the face (-Z_local) points in world ----
-    // G4ThreeVector face_dir_world = (*rot) * G4ThreeVector(0,0,-1); // emitting face direction
-    // G4cout << "207Bi source kept on Z-axis at z = "
-    //        << (sourcePositionVector.z()/mm) << " mm, "
-    //        << "theta_y=" << theta_y/deg << " deg, phi_x=" << phi_x/deg << " deg. "
-    //        << "Face (-Z_local) world dir = ("
-    //        << face_dir_world.x() << ", "
-    //        << face_dir_world.y() << ", "
-    //        << face_dir_world.z() << ")."
-    //        << G4endl;
+    // gps ion 207bi
+    UI->ApplyCommand("/gps/particle ion");
+    UI->ApplyCommand("/gps/ion 83 207 0 0");
+    UI->ApplyCommand("/gps/energy 0");
 }
 
 // NEW: remove and rebuild helpers to avoid duplication

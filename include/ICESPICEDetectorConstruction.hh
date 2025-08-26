@@ -120,6 +120,7 @@ private:
   G4Material*        Vacuum;  
   G4Material*        SiO2;
   G4Material*        Bi;
+  G4Material*        Silver;
 
   G4Cache<G4MagneticField*> fField;  //pointer to the thread-local fields
 

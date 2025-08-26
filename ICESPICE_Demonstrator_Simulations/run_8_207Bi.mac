@@ -1,11 +1,11 @@
 # variables
 /control/alias f 70
-/control/alias g 25
-/control/alias n 100000000
-/control/alias runno 8
-/control/alias thickness 50
+/control/alias g 30
+/control/alias n 1000000000
+/control/alias runno 56
+/control/alias thickness 1000
 /control/alias detector 1000
-/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}_207BiThickness{thickness}nm_rotated_source_modphysics
+/control/alias File run_{runno}_PIPS{detector}_f{f}mm_g{g}mm_n{n}_207BiThickness{thickness}nm_noICESPICE
 
 /run/setCut 1 micrometer
 /run/initialize
@@ -17,8 +17,8 @@
 /tracking/verbose 0        # output for particle tracking processes
 
 
-/ICESPICE/DetectorPosition -25.4         # Position the detector
-#/ICESPICE/DetectorPosition -{g}         # Position the detector
+#/ICESPICE/DetectorPosition -25.4         # Position the detector
+/ICESPICE/DetectorPosition -{g}         # Position the detector
 
 /ICESPICE/FSU207BiSourceEnable 1
 /ICESPICE/FSU207BiSourceThickness {thickness} nanometer
@@ -28,7 +28,7 @@
 /analysis/setFileName {File}
 
 # Print progress every # events during the simulation run 
-/run/printProgress 1000000
+/run/printProgress 10000000
 
 # Begin the simulation with # particles
 /run/beamOn {n}
