@@ -1,7 +1,7 @@
 
 def trans_prob(det=1000):
     n = 1000000
-    with open(f"../ICESPICE_Demonstrator_Simulations/PIPS{det}_transmission_prob_macro.mac", "w") as file:
+    with open(f"../ICESPICE_Demonstrator_Simulations/PIPS{det}_transmission_prob_macro_with_ICESPICE.mac", "w") as file:
 
 
         file.write("# Auto-generated Geant4 macro for transmission probability simulations\n")
@@ -25,20 +25,36 @@ def trans_prob(det=1000):
 
 # /control/alias pathsuffix 5N42_1x1x1_8in_PIPS{detector}/
 
-        for f in [68, 69, 70, 71, 72]:
+        # for f in [68, 69, 70, 71, 72]:
+        #     file.write(f"\n# --- f = {f} mm ---\n")
+        #     file.write(f"\n/gps/pos/centre 0 0 {f} mm\n")
+        #     for g in [28, 29, 30, 31, 32]:
+        #         file.write(f"\n# --- g = {g} mm ---\n")
+        #         file.write(f"/ICESPICE/DetectorPosition -{g}\n")
+
+        #         for e in range(50, 2001, 50):
+        #             file.write(f"\n/control/alias File trasmission_probability_PIPS{det}_f{f}mm_g{g}mm_n{n}_energy{e}keV\n")
+        #             file.write(f"/gps/ene/mono {e} keV\n")
+        #             file.write(f"/analysis/setFileName {{File}}\n")
+        #             file.write(f"/run/printProgress 100000\n")
+        #             file.write(f"/run/beamOn {{n}}\n")
+        #             file.write(f"/control/shell cp {{File}}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{{pathsuffix}}\n\n")
+
+        for f in [68, 72]:
             file.write(f"\n# --- f = {f} mm ---\n")
             file.write(f"\n/gps/pos/centre 0 0 {f} mm\n")
-            for g in [28, 29, 30, 31, 32]:
+            for g in [28, 32]:
                 file.write(f"\n# --- g = {g} mm ---\n")
                 file.write(f"/ICESPICE/DetectorPosition -{g}\n")
 
-                for e in range(50, 2001, 50):
+                for e in range(50, 2001, 25):
                     file.write(f"\n/control/alias File trasmission_probability_PIPS{det}_f{f}mm_g{g}mm_n{n}_energy{e}keV\n")
                     file.write(f"/gps/ene/mono {e} keV\n")
                     file.write(f"/analysis/setFileName {{File}}\n")
                     file.write(f"/run/printProgress 100000\n")
                     file.write(f"/run/beamOn {{n}}\n")
                     file.write(f"/control/shell cp {{File}}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{{pathsuffix}}\n\n")
+
 
 
 def generate_all_electrons_macro(
@@ -206,4 +222,4 @@ def generate_all_electrons_macro(
 #             phi_deg=0 # degrees
 #         )
 
-# trans_prob(det=1000)
+trans_prob(det=1000)
