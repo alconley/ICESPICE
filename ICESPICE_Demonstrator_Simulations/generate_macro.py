@@ -1,6 +1,6 @@
 
 def trans_prob(det=1000):
-    n = 1000000
+    n = 10000000
     with open(f"../ICESPICE_Demonstrator_Simulations/PIPS{det}_transmission_prob_macro_without_ICESPICE.mac", "w") as file:
 
 
@@ -45,7 +45,14 @@ def trans_prob(det=1000):
         for f in [68, 72]:
             file.write(f"\n# --- f = {f} mm ---\n")
             file.write(f"\n/gps/pos/centre 0 0 {f} mm\n")
-            for g in [28, 32]:
+            
+            if f == 68:
+                g_values = [28]
+            else:
+                g_values = [32]
+                
+            for g in g_values:
+            # for g in [28, 32]:
                 file.write(f"\n# --- g = {g} mm ---\n")
                 file.write(f"/ICESPICE/DetectorPosition -{g}\n")
 
