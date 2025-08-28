@@ -25,7 +25,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 // Possibility to turn off (0) magnetic field and measurement volume. 
-#define MAG 1
+#define MAG 0
 
 #define ICESPICE_5N42_1x1x1_8in_FLAG 1
 #define ICESPICE_3N42_1x1x1_16in_FLAG 0 
@@ -39,7 +39,7 @@
 
 #define DETECTORHOLDER 0 // AC: Volume for detector holder
 
-#define BI207SOURCEBACKING 1
+#define BI207SOURCEBACKING 0
 
 #define TestingChamber 1
 

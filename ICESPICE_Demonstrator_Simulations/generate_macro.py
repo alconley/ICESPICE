@@ -1,13 +1,15 @@
 
 def trans_prob(det=1000):
     n = 1000000
-    with open(f"../ICESPICE_Demonstrator_Simulations/PIPS{det}_transmission_prob_macro_with_ICESPICE.mac", "w") as file:
+    with open(f"../ICESPICE_Demonstrator_Simulations/PIPS{det}_transmission_prob_macro_without_ICESPICE.mac", "w") as file:
 
 
         file.write("# Auto-generated Geant4 macro for transmission probability simulations\n")
         file.write(f"\n/control/alias n {n}\n")
         if det == 1000 or det == 500:
-            file.write(f"/control/alias pathsuffix 5N42_1x1x1_8in_PIPS{det}\n")
+            # file.write(f"/control/alias pathsuffix 5N42_1x1x1_8in_PIPS{det}\n")
+            file.write(f"/control/alias pathsuffix PIPS{det}\n")
+            
         elif det == 300:
             file.write(f"/control/alias pathsuffix 5N42_1x1x1_16in_PIPS{det}\n")
 
@@ -47,7 +49,7 @@ def trans_prob(det=1000):
                 file.write(f"\n# --- g = {g} mm ---\n")
                 file.write(f"/ICESPICE/DetectorPosition -{g}\n")
 
-                for e in range(50, 2001, 25):
+                for e in range(100, 2001, 100):
                     file.write(f"\n/control/alias File trasmission_probability_PIPS{det}_f{f}mm_g{g}mm_n{n}_energy{e}keV\n")
                     file.write(f"/gps/ene/mono {e} keV\n")
                     file.write(f"/analysis/setFileName {{File}}\n")

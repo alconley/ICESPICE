@@ -1,0 +1,676 @@
+# Auto-generated Geant4 macro for transmission probability simulations
+
+/control/alias n 1000000
+/control/alias pathsuffix PIPS1000
+
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/run/setCut 1 um
+/run/initialize
+/gps/ang/type iso
+/gps/pos/type Point
+/gps/particle e-
+/gps/ene/type Mono
+
+# --- f = 68 mm ---
+
+/gps/pos/centre 0 0 68 mm
+
+# --- g = 28 mm ---
+/ICESPICE/DetectorPosition -28
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy100keV
+/gps/ene/mono 100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy200keV
+/gps/ene/mono 200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy300keV
+/gps/ene/mono 300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy400keV
+/gps/ene/mono 400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy500keV
+/gps/ene/mono 500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy600keV
+/gps/ene/mono 600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy700keV
+/gps/ene/mono 700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy800keV
+/gps/ene/mono 800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy900keV
+/gps/ene/mono 900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy1000keV
+/gps/ene/mono 1000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy1100keV
+/gps/ene/mono 1100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy1200keV
+/gps/ene/mono 1200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy1300keV
+/gps/ene/mono 1300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy1400keV
+/gps/ene/mono 1400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy1500keV
+/gps/ene/mono 1500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy1600keV
+/gps/ene/mono 1600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy1700keV
+/gps/ene/mono 1700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy1800keV
+/gps/ene/mono 1800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy1900keV
+/gps/ene/mono 1900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g28mm_n1000000_energy2000keV
+/gps/ene/mono 2000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+# --- g = 32 mm ---
+/ICESPICE/DetectorPosition -32
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy100keV
+/gps/ene/mono 100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy200keV
+/gps/ene/mono 200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy300keV
+/gps/ene/mono 300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy400keV
+/gps/ene/mono 400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy500keV
+/gps/ene/mono 500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy600keV
+/gps/ene/mono 600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy700keV
+/gps/ene/mono 700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy800keV
+/gps/ene/mono 800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy900keV
+/gps/ene/mono 900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy1000keV
+/gps/ene/mono 1000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy1100keV
+/gps/ene/mono 1100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy1200keV
+/gps/ene/mono 1200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy1300keV
+/gps/ene/mono 1300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy1400keV
+/gps/ene/mono 1400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy1500keV
+/gps/ene/mono 1500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy1600keV
+/gps/ene/mono 1600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy1700keV
+/gps/ene/mono 1700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy1800keV
+/gps/ene/mono 1800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy1900keV
+/gps/ene/mono 1900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f68mm_g32mm_n1000000_energy2000keV
+/gps/ene/mono 2000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+# --- f = 72 mm ---
+
+/gps/pos/centre 0 0 72 mm
+
+# --- g = 28 mm ---
+/ICESPICE/DetectorPosition -28
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy100keV
+/gps/ene/mono 100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy200keV
+/gps/ene/mono 200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy300keV
+/gps/ene/mono 300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy400keV
+/gps/ene/mono 400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy500keV
+/gps/ene/mono 500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy600keV
+/gps/ene/mono 600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy700keV
+/gps/ene/mono 700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy800keV
+/gps/ene/mono 800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy900keV
+/gps/ene/mono 900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy1000keV
+/gps/ene/mono 1000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy1100keV
+/gps/ene/mono 1100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy1200keV
+/gps/ene/mono 1200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy1300keV
+/gps/ene/mono 1300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy1400keV
+/gps/ene/mono 1400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy1500keV
+/gps/ene/mono 1500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy1600keV
+/gps/ene/mono 1600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy1700keV
+/gps/ene/mono 1700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy1800keV
+/gps/ene/mono 1800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy1900keV
+/gps/ene/mono 1900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g28mm_n1000000_energy2000keV
+/gps/ene/mono 2000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+# --- g = 32 mm ---
+/ICESPICE/DetectorPosition -32
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy100keV
+/gps/ene/mono 100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy200keV
+/gps/ene/mono 200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy300keV
+/gps/ene/mono 300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy400keV
+/gps/ene/mono 400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy500keV
+/gps/ene/mono 500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy600keV
+/gps/ene/mono 600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy700keV
+/gps/ene/mono 700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy800keV
+/gps/ene/mono 800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy900keV
+/gps/ene/mono 900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy1000keV
+/gps/ene/mono 1000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy1100keV
+/gps/ene/mono 1100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy1200keV
+/gps/ene/mono 1200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy1300keV
+/gps/ene/mono 1300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy1400keV
+/gps/ene/mono 1400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy1500keV
+/gps/ene/mono 1500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy1600keV
+/gps/ene/mono 1600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy1700keV
+/gps/ene/mono 1700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy1800keV
+/gps/ene/mono 1800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy1900keV
+/gps/ene/mono 1900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
+
+/control/alias File trasmission_probability_PIPS1000_f72mm_g32mm_n1000000_energy2000keV
+/gps/ene/mono 2000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../ICESPICE_Demonstrator_Simulations/transmission_prob_data/{pathsuffix}
+
