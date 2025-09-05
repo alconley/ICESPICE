@@ -39,7 +39,7 @@
 
 #define DETECTORHOLDER 0 // AC: Volume for detector holder
 
-#define BI207SOURCEBACKING 0
+#define BI207SOURCEBACKING 1
 
 #define TestingChamber 1
 
