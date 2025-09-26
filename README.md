@@ -60,22 +60,22 @@ The following guide walks you through the process of building and exporting a ma
 ![step_5](aux/step_5.PNG)  
 
 6: Get the design from SolidWorks using LiveLink  
-![step_6](aux/step_6.PNG)  
+![step_6](aux/step_6.png)  
 
 7: Link the active SolidWorks design to the COMSOL simulation  
 ![step_7](aux/step_7.PNG)  
 
 8: Create a box that will be used as the vacuum  
-![step_8](aux/step_8.PNG)  
+![step_8](aux/step_8.png)  
 
 9: Define dimensions of the box  
 ![step_9](aux/step_9.PNG)  
 
 10: Add material to the simulation  
-![step_10](aux/step_10.PNG)  
+![step_10](aux/step_10.png)  
 
 11: Search for materials from the list and add them to the component  
-![step_11](aux/step_11.PNG)  
+![step_11](aux/step_11.png)  
 
 12: Assign materials to components (use the scroll wheel to help with selecting the objects).  
 Here I am selecting the magnets. You can also adjust the properties of the material here.  
@@ -94,16 +94,16 @@ Here I am selecting the magnets. You can also adjust the properties of the mater
 ![step_16](aux/step_16.PNG)  
 
 17: Define cylindrical geometry for the magnetic field  
-![step_17](aux/step_17.PNG)  
+![step_17](aux/step_17.png)  
 
 18: Define a new magnetic flux conservation  
-![step_18](aux/step_18.PNG)  
+![step_18](aux/step_18.png)  
 
 19: Select the magnets, change the coordinate system, and set the flux direction  
 ![step_19](aux/step_19.PNG)  
 
 20: Optionally ignore edges of holders (useful for complex geometry if meshing fails)  
-![step_20](aux/step_20.PNG)  
+![step_20](aux/step_20.png)  
 
 21: Ignore edges of components using the 1060 Alloy material  
 ![step_21](aux/step_21.PNG)  
