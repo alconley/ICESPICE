@@ -107,8 +107,14 @@ y_value = 6000
 
 # Plot the horizontal line with caps
 ax.plot([x_start, x_end], [y_value, y_value], color='black', linewidth=0.5, linestyle='--', label=r'Backscattered e$^{-}$')
-ax.plot(x_start, y_value, marker='|', color='black', markersize=8)  # Start cap
-ax.plot(x_end, y_value, marker='|', color='black', markersize=8)    # End cap
+# ax.plot(x_start, y_value, marker='|', color='black', markersize=8)  # Start cap
+# ax.plot(x_end, y_value, marker='|', color='black', markersize=8)    # End cap
+
+# i want to plot arrows at both ends of the line
+ax.annotate('', xy=(x_start, y_value), xytext=(x_start + 20, y_value),
+            arrowprops=dict(arrowstyle='->', color='black', linewidth=0.5))
+ax.annotate('', xy=(x_end, y_value), xytext=(x_end - 20, y_value),
+            arrowprops=dict(arrowstyle='->', color='black', linewidth=0.5)) 
 
 
 # Sample data for the table
