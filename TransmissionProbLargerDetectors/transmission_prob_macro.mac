@@ -1,0 +1,460 @@
+# Auto-generated Geant4 macro for transmission probability simulations
+
+/control/alias n 1000000
+
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/run/setCut 1 um
+/run/initialize
+/gps/ang/type iso
+/gps/pos/type Point
+/gps/particle e-
+/gps/ene/type Mono
+
+# --- f = 70 mm ---
+
+/gps/pos/centre 0 0 70 mm
+
+# --- g = 30 mm ---
+/ICESPICE/DetectorPosition -30
+
+/ICESPICE/CustomActiveArea 200 mm2
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy2000keV
+/gps/ene/mono 2000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy2100keV
+/gps/ene/mono 2100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy2200keV
+/gps/ene/mono 2200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy2300keV
+/gps/ene/mono 2300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy2400keV
+/gps/ene/mono 2400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy2500keV
+/gps/ene/mono 2500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy2600keV
+/gps/ene/mono 2600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy2700keV
+/gps/ene/mono 2700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy2800keV
+/gps/ene/mono 2800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy2900keV
+/gps/ene/mono 2900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy3000keV
+/gps/ene/mono 3000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy3100keV
+/gps/ene/mono 3100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy3200keV
+/gps/ene/mono 3200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy3300keV
+/gps/ene/mono 3300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy3400keV
+/gps/ene/mono 3400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy3500keV
+/gps/ene/mono 3500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy3600keV
+/gps/ene/mono 3600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy3700keV
+/gps/ene/mono 3700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy3800keV
+/gps/ene/mono 3800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy3900keV
+/gps/ene/mono 3900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy4000keV
+/gps/ene/mono 4000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy4100keV
+/gps/ene/mono 4100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy4200keV
+/gps/ene/mono 4200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy4300keV
+/gps/ene/mono 4300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy4400keV
+/gps/ene/mono 4400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy4500keV
+/gps/ene/mono 4500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy4600keV
+/gps/ene/mono 4600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy4700keV
+/gps/ene/mono 4700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy4800keV
+/gps/ene/mono 4800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy4900keV
+/gps/ene/mono 4900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_200mm2_f70mm_g30mm_n1000000_energy5000keV
+/gps/ene/mono 5000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/ICESPICE/CustomActiveArea 500 mm2
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy2000keV
+/gps/ene/mono 2000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy2100keV
+/gps/ene/mono 2100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy2200keV
+/gps/ene/mono 2200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy2300keV
+/gps/ene/mono 2300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy2400keV
+/gps/ene/mono 2400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy2500keV
+/gps/ene/mono 2500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy2600keV
+/gps/ene/mono 2600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy2700keV
+/gps/ene/mono 2700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy2800keV
+/gps/ene/mono 2800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy2900keV
+/gps/ene/mono 2900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy3000keV
+/gps/ene/mono 3000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy3100keV
+/gps/ene/mono 3100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy3200keV
+/gps/ene/mono 3200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy3300keV
+/gps/ene/mono 3300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy3400keV
+/gps/ene/mono 3400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy3500keV
+/gps/ene/mono 3500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy3600keV
+/gps/ene/mono 3600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy3700keV
+/gps/ene/mono 3700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy3800keV
+/gps/ene/mono 3800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy3900keV
+/gps/ene/mono 3900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy4000keV
+/gps/ene/mono 4000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy4100keV
+/gps/ene/mono 4100 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy4200keV
+/gps/ene/mono 4200 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy4300keV
+/gps/ene/mono 4300 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy4400keV
+/gps/ene/mono 4400 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy4500keV
+/gps/ene/mono 4500 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy4600keV
+/gps/ene/mono 4600 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy4700keV
+/gps/ene/mono 4700 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy4800keV
+/gps/ene/mono 4800 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy4900keV
+/gps/ene/mono 4900 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/
+
+/control/alias File transmission_probability_5000umThick_200nmSiWindow_500mm2_f70mm_g30mm_n1000000_energy5000keV
+/gps/ene/mono 5000 keV
+/analysis/setFileName {File}
+/run/printProgress 100000
+/run/beamOn {n}
+/control/shell cp {File}.root ../TransmissionProbLargerDetectors/data/

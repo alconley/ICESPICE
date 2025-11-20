@@ -27,7 +27,8 @@ ICESPICERunAction::ICESPICERunAction()
 
     // analysisManager->SetNtupleMerging(true);
 
-    analysisManager->CreateH1("Esil","Edep in silicon", 2000, 0., 2000.0*keV);
+    // analysisManager->CreateH1("Esil","Edep in silicon", 2000, 0., 2000.0*keV);
+    analysisManager->CreateH1("Esil","Edep in silicon", 5000, 0., 5000.0*keV);
 
     // analysisManager->CreateNtuple("ICESPICE", "Edep");
     // analysisManager->CreateNtupleDColumn("Esil");

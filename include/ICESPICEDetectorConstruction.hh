@@ -51,6 +51,8 @@ public:
   void ICESPICE_5N42_1x1x1_16in();
   void ICESPICE_6N42_1x1x1_16in();
   void Bi207SourceBacking();
+  void CustomActiveAreaDetector(G4double val);
+  void UpdateCustomActiveArea(G4double val);
 
   void SetDetectorPosition(G4double val); 
   G4double GetDetectorPosition() const {return DetectorPosition;}; 
@@ -136,6 +138,7 @@ private:
   G4VPhysicalVolume* physi207BiSource; // Physical volume of the source
   G4Tubs*            solid207BiSource;
   G4VisAttributes* visAttributes207BiSource; // Visualization attributes for the source
+  G4double CustomActiveArea;
 
 private:
 

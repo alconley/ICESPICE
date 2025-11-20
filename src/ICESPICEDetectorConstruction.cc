@@ -33,15 +33,16 @@
 #define ICESPICE_6N42_1x1x1_16in_FLAG 0 
 
 #define PIPS1000 0
-#define PIPS500 1
+#define PIPS500 0
 #define PIPS300 0
 #define PIPS100 0
+#define CustomActiveAreaDetectorFlag 1
 
 #define DETECTORHOLDER 0 // AC: Volume for detector holder
 
-#define BI207SOURCEBACKING 1
+#define BI207SOURCEBACKING 0
 
-#define TestingChamber 1
+#define TestingChamber 0
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -68,6 +69,7 @@ ICESPICEDetectorConstruction::ICESPICEDetectorConstruction()
   Source207BiThickness=100.0*nanometer; // AC
   Source207BiTheta = 0.*deg; // default matches your current code
   Source207BiPhi   = 0.*deg;
+  CustomActiveArea = 300.0*mm2; // default active area
   DefineCommands();
 }  
 
@@ -268,6 +270,10 @@ logicTC_Cap->SetVisAttributes(tcVis);
   PIPS100Detector();
 #endif
 
+#if CustomActiveAreaDetectorFlag
+  CustomActiveAreaDetector(CustomActiveArea); // Example: set active area to 300 mm^2
+#endif
+
 #if SOURCEBACKING
   Bi207SourceBacking();
 #endif
@@ -396,6 +402,17 @@ void ICESPICEDetectorConstruction::DefineCommands() {
     sourcePhiCmd.SetParameterName("phi", true);
     sourcePhiCmd.SetRange("phi>=0. && phi<360.");
     sourcePhiCmd.SetDefaultValue("0.");
+
+        // Custom detector active area (for CustomActiveAreaDetector)
+    auto& customAreaCmd =
+        fMessenger->DeclareMethodWithUnit("CustomActiveArea", "mm2",
+            &ICESPICEDetectorConstruction::UpdateCustomActiveArea,
+            "Set active area of the custom PIPS detector");
+    customAreaCmd.SetParameterName("area", true);
+    customAreaCmd.SetRange("area > 0.");
+    customAreaCmd.SetDefaultValue("1200.0");
+
+    
 
 }
 
@@ -1475,4 +1492,100 @@ void ICESPICEDetectorConstruction::Set207BiSourcePosition(G4double val) {
     } else {
         G4cout << "Warning: Source physical volume not initialized!" << G4endl;
     }
+}
+
+void ICESPICEDetectorConstruction::UpdateCustomActiveArea(G4double val) {
+    G4cout << "Updating custom detector active area to: "
+           << (val / mm2) << " mm^2" << G4endl;
+
+    // keep internal state consistent
+    CustomActiveArea  = val;
+    DetectorActiveArea = val;
+
+  #if CustomActiveAreaDetectorFlag
+      // Optional: skip if truly unchanged
+      // if (solidDetector && std::fabs(DetectorActiveArea - val) < 1e-9*mm2) {
+      //     G4cout << "Active area already set to this value. No update required." << G4endl;
+      //     return;
+      // }
+
+      if (physiDetector)       { delete physiDetector;       physiDetector       = nullptr; }
+      if (physiDetectorWindow) { delete physiDetectorWindow; physiDetectorWindow = nullptr; }
+      if (logicDetector)       { delete logicDetector;       logicDetector       = nullptr; }
+      if (logicDetectorWindow) { delete logicDetectorWindow; logicDetectorWindow = nullptr; }
+      if (solidDetector)       { delete solidDetector;       solidDetector       = nullptr; }
+      if (solidDetectorWindow) { delete solidDetectorWindow; solidDetectorWindow = nullptr; }
+
+      CustomActiveAreaDetector(DetectorActiveArea);
+
+      auto* rm = G4RunManager::GetRunManager();
+      rm->GeometryHasBeenModified();
+      rm->ReinitializeGeometry();
+  #else
+      G4cerr << "UpdateCustomActiveArea called but CustomActiveArea is disabled at compile time."
+            << G4endl;
+  #endif
+}
+
+void ICESPICEDetectorConstruction::CustomActiveAreaDetector(G4double val) {
+    DetectorActiveArea = val;             // Active area of the detector
+    // DetectorThickness = 1000.*micrometer;      // Thickness of the detector
+    // DetectorWindowThickness = 54.*nanometer;   // Thickness of the detector window
+    // mimic the window and thickness on the Si(Li) data sheet, either 2mm or 5mm thickness
+    // DetectorThickness = 2000.*micrometer;      // Thickness of the detector
+    DetectorThickness = 5000.*micrometer;      // Thickness of the detector
+    DetectorWindowThickness = 0.2*micrometer;// Thickness of the detector window
+    G4double DetectorRadius = std::sqrt(DetectorActiveArea / CLHEP::pi);
+
+    // --- Active silicon detector ---
+    solidDetector = new G4Tubs("Detector",
+                               0., DetectorRadius,
+                               DetectorThickness/2.,
+                               0.*deg, 360.*deg);
+
+    logicDetector = new G4LogicalVolume(solidDetector,
+                                        Silicon,
+                                        "Detector");
+
+    // --- SiO2 window ---
+    solidDetectorWindow = new G4Tubs("DetectorWindow",
+                                     0, DetectorRadius,
+                                     DetectorWindowThickness / 2.,
+                                     0.*deg, 360.*deg);
+
+    logicDetectorWindow = new G4LogicalVolume(solidDetectorWindow,
+                                              SiO2,
+                                              "DetectorWindow");
+
+    const G4double kSurfaceEps = 0.5*nm;                 // keep your tiny gap
+    const G4double zSiCenter   = DetectorPosition - DetectorThickness/2.0;   // your Si center
+    const G4double zWindowWorld = zSiCenter + DetectorThickness/2.0          // Si +z face
+                                  + kSurfaceEps + DetectorWindowThickness/2.0; // just in front
+
+    physiDetectorWindow = new G4PVPlacement(nullptr,
+                                            G4ThreeVector(0, 0, zWindowWorld),
+                                            logicDetectorWindow,
+                                            "DetectorWindow",
+                                            logicWorld,
+                                            false,
+                                            0);
+
+    physiDetector = new G4PVPlacement(nullptr,
+                                      G4ThreeVector(0, 0, DetectorPosition - DetectorThickness/2.),
+                                      logicDetector,
+                                      "Detector",
+                                      logicWorld,
+                                      false,
+                                      0);
+
+    // --- Visualization attributes ---
+    G4VisAttributes* visAttributesDetector = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0)); // Green
+    visAttributesDetector->SetVisibility(true);
+    visAttributesDetector->SetForceSolid(true);
+    logicDetector->SetVisAttributes(visAttributesDetector);
+
+    G4VisAttributes* visAttributesWindow = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));   // Red
+    visAttributesWindow->SetVisibility(true);
+    visAttributesWindow->SetForceSolid(true);
+    logicDetectorWindow->SetVisAttributes(visAttributesWindow);
 }
